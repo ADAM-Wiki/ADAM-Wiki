@@ -4,7 +4,6 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { hinduizamArticles } from "../utils/articlesData";
 
-
 const calculateWordCount = (content: string[]): number => {
   return content.reduce((count, paragraph) => {
     const words = paragraph.trim().split(/\s+/).length;
@@ -20,7 +19,11 @@ const calculateReadingTime = (wordCount: number): string => {
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" };
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
   return new Intl.DateTimeFormat("sr-RS", options).format(date);
 };
 
@@ -39,10 +42,14 @@ export default function HinduizamArticlePage() {
         <Navbar onSearch={() => {}} />
         <main className="pt-20">
           <div className="max-w-7xl mx-auto px-6 py-20 text-center">
-            <h1 className="text-3xl font-serif font-medium text-white mb-4">Članak nije pronađen</h1>
-            <p className="text-brand-dim mb-8">Traženi članak nije dostupan ili URL nije ispravan.</p>
+            <h1 className="text-3xl font-serif font-medium text-white mb-4">
+              Članak nije pronađen
+            </h1>
+            <p className="text-brand-dim mb-8">
+              Traženi članak nije dostupan ili URL nije ispravan.
+            </p>
             <button
-              onClick={() => navigate("/hinduizam")}
+              onClick={() => navigate("/categories/hinduizam")}
               className="px-6 py-3 bg-brand-accent text-white rounded-lg hover:bg-white/10 transition"
             >
               Povratak na Hinduizam stranicu
@@ -62,13 +69,19 @@ export default function HinduizamArticlePage() {
         <section className="py-20 border-t border-white/5">
           <div className="max-w-5xl mx-auto px-6">
             <div className="flex items-center gap-4 mb-6">
-              <span className="text-xs font-mono text-brand-dim">HINDUIZAM</span>
-              <h1 className="text-3xl font-serif font-medium">{article.title}</h1>
+              <span className="text-xs font-mono text-brand-dim">
+                HINDUIZAM
+              </span>
+              <h1 className="text-3xl font-serif font-medium">
+                {article.title}
+              </h1>
             </div>
 
             <div className="flex flex-wrap gap-4 text-[11px] uppercase tracking-widest text-brand-dim font-medium mb-10">
               <span>{formatDate(article.dateCreated)}</span>
-              <span>{calculateReadingTime(calculateWordCount(article.content))}</span>
+              <span>
+                {calculateReadingTime(calculateWordCount(article.content))}
+              </span>
               <span>{calculateWordCount(article.content)} REČI</span>
             </div>
 

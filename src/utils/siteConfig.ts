@@ -1,3 +1,2 @@
-export const SITE_NAME = "Adam";
-export const SITE_URL = "https://mojsajt.com";
-
+export const SITE_NAME = "Adam-Wiki";
+export const SITE_URL = "https://drmrelvir.github.io/ADAM-Wiki";
