@@ -66,7 +66,7 @@ function HomePage() {
 
 export default function App() {
   return (
-    <Router>
+    <Router basename="/ADAM-Wiki">
       <ScrollToTop />
 
       <Routes>
