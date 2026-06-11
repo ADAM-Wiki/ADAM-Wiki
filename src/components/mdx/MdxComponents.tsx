@@ -69,7 +69,7 @@ export function MdxH3({ className = "", children, ...props }: HeadingProps) {
 export function MdxP({ className = "", children, ...props }: ParagraphProps) {
   return (
     <p
-      className={`leading-relaxed text-lg text-brand-text ${className}`}
+      className={`leading-relaxed text-lg font-serif text-brand-text ${className}`}
       {...props}
     >
       {children}
