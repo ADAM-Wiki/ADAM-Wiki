@@ -15,7 +15,7 @@ export const hadisMeta: GeneratedHadisMeta[] = [
   {
     "title": "Autentičnost hadisa: orijentalisti priznaju superiornost islamske nauke o isnadu?",
     "date": "2026-06-07",
-    "slug": "autenticnost-hadisa-orijentalisti-priznaju-superiornost-islamske-nauke-o+isnadu",
+    "slug": "autenticnost-hadisa-orijentalisti-priznaju-superiornost-islamske-nauke-o-isnadu",
     "category": "hadis",
     "tags": [
       "hadis",
