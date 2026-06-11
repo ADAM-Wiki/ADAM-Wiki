@@ -7,11 +7,27 @@ import { SITE_NAME } from "../utils/siteConfig";
 
 export default function KontaktPage() {
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setLoading(true);
+
+  const form = e.currentTarget;
+  const data = new FormData(form);
+
+  const res = await fetch("https://formspree.io/f/mgoqvalo", { // ← paste your ID
+    method: "POST",
+    body: data,
+    headers: { Accept: "application/json" },
+  });
+
+  setLoading(false);
+  if (res.ok) {
     setSent(true);
-  };
+    form.reset();
+  }
+};
 
   return (
     <div className="min-h-screen bg-brand-bg">
@@ -20,7 +36,7 @@ export default function KontaktPage() {
       </Helmet>
       <Navbar onSearch={() => {}} />
       <main className="pt-20">
-        <section className="py-20 border-t border-white/5">
+        <section className="py-20">
           <div className="max-w-xl mx-auto px-6">
             <div className="flex items-center gap-4 mb-10">
               <span className="text-xs font-mono text-brand-dim">KONTAKT</span>
@@ -40,7 +56,8 @@ export default function KontaktPage() {
                   <input
                     required
                     type="text"
-                    placeholder="Vaše ime"
+                    name="ime"
+                    placeholder="Vase ime"
                     className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-brand-dim outline-none focus:border-white/30 transition-colors"
                   />
                 </div>
@@ -49,6 +66,7 @@ export default function KontaktPage() {
                   <input
                     required
                     type="email"
+                    name="email"
                     placeholder="vasa@email.com"
                     className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-brand-dim outline-none focus:border-white/30 transition-colors"
                   />
@@ -58,15 +76,17 @@ export default function KontaktPage() {
                   <textarea
                     required
                     rows={5}
-                    placeholder="Vaša poruka..."
+                    name="poruka"
+                    placeholder="Vasa poruka..."
                     className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-brand-dim outline-none focus:border-white/30 transition-colors resize-none"
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full py-3 bg-white/5 border border-white/10 text-white text-sm rounded-lg hover:bg-white/10 hover:border-white/30 transition-colors"
+                  disabled={loading}
+                  className="w-full py-3 bg-white/5 border border-white/10 text-white text-sm rounded-lg hover:bg-white/10 hover:border-white/30 transition-colors disabled:opacity-50"
                 >
-                  Pošalji poruku
+                  {loading ? "Slanje..." : "Pošalji poruku"}
                 </button>
               </form>
             )}

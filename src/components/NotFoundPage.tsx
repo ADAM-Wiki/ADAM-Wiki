@@ -17,7 +17,7 @@ export default function NotFoundPage() {
       <Navbar onSearch={() => {}} />
 
       <main className="pt-20">
-        <section className="py-32 border-t border-white/5">
+        <section className="py-32">
           <div className="max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
 
             <span className="text-[120px] font-serif font-medium leading-none text-white/5 select-none">

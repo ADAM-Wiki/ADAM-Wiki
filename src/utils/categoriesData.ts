@@ -1,11 +1,10 @@
 export const topics: string[] = [
-  "HADIS",
+  "AHMEDIJE",
   "ATEIZAM",
-  "HRIŠĆANSTVO",
+  "HADIS",
   "HINDUIZAM",
-  "ŠERIJAT",
-  "KURAN",
-  "RAVNA ZEMLJA",
-  "NEMORAL",
+  "HRIŠĆANSTVO",
   "ISLAM",
+  "ISTORIJA",
+  "MUHAMMED",
 ];

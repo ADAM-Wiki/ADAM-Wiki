@@ -50,7 +50,7 @@ export default function TopicsGrid({ query = "" }: { query?: string }) {
                 className="group p-5 border border-white/5 hover:border-white/20 hover:bg-white/[0.02] transition-all cursor-pointer flex items-center gap-4"
                 onClick={() => handleTopicClick(topic)}
               >
-                <FileText className="w-4 h-4 text-brand-dim group-hover:text-brand-accent transition-colors" />
+                <FileText className="w-4 h-4 shrink-0 mt-0.5 text-brand-dim group-hover:text-brand-accent transition-colors" />
                 <span className="text-xs font-medium tracking-widest transition-colors group-hover:text-white uppercase">{topic}</span>
               </motion.div>
             ))}

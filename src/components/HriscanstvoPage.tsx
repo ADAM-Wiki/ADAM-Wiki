@@ -1,41 +1,42 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import ArticleCard from './ArticleCard';
-import { hriscanstvoArticles } from '../utils/articlesData';
-
-const calculateWordCount = (content: string[]): number => {
-  return content.reduce((count, paragraph) => {
-    const words = paragraph.trim().split(/\s+/).length;
-    return count + words;
-  }, 0);
-};
-
-const calculateReadingTime = (wordCount: number): string => {
-  const wordsPerMinute = 200;
-  const minutes = Math.ceil(wordCount / wordsPerMinute);
-  return `${minutes} min čitanja`;
-};
+import { Helmet } from "react-helmet-async";
+import { SITE_NAME, SITE_URL } from "../utils/siteConfig";
+import BackToTop from "./BackToTop";
+import { hriscanstvoMeta, type GeneratedhriscanstvoMeta } from "../lib/generated/hriscanstvoMeta";
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" };
-  return new Intl.DateTimeFormat("sr-RS", options).format(date);
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  return new Intl.DateTimeFormat("sr-Latn-RS", options).format(date);
 };
-
 
 export default function HriscanstvoPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const navigate = useNavigate();
+
+  const articles: GeneratedhriscanstvoMeta[] = hriscanstvoMeta;
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  const ARTICLES_PER_PAGE = 6;
+  const totalPages = Math.ceil(articles.length / ARTICLES_PER_PAGE);
+
+  const paginatedArticles = articles.slice(
+    (currentPage - 1) * ARTICLES_PER_PAGE,
+    currentPage * ARTICLES_PER_PAGE
+  );
+
   const handleNextPage = () => {
-    if (currentPage < 3) {
+    if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -52,120 +53,141 @@ export default function HriscanstvoPage() {
 
   return (
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
+      <Helmet>
+        <title>hriscanstvo | {SITE_NAME}</title>
+        <meta
+          name="description"
+          content="Islamski hriscanstvoi i njihova naučna objašnjenja. Istražite autentične hriscanstvoe Poslanika Muhammeda s.a.v.s."
+        />
+        <meta property="og:title" content={`hriscanstvo | ${SITE_NAME}`} />
+        <meta
+          property="og:description"
+          content="Islamski hriscanstvoi i njihova naučna objašnjenja."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`${SITE_URL}/categories/hriscanstvo`} />
+        <meta property="og:image" content={`${SITE_URL}/images/og-default.jpg`} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`hriscanstvo | ${SITE_NAME}`} />
+        <meta
+          name="twitter:description"
+          content="Islamski hriscanstvoi i njihova naučna objašnjenja."
+        />
+      </Helmet>
+
       <Navbar onSearch={setSearchQuery} />
 
       <main className="pt-20">
-        <section className="py-20 border-t border-white/5">
+        <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex items-center gap-4 mb-12">
-              <span className="text-xs font-mono text-brand-dim">HRISCANSTVO</span>
-              <h1 className="text-3xl font-serif font-medium">Kategorija: Hriscanstvo</h1>
+              <span className="text-xs font-mono text-brand-dim">hriscanstvo</span>
+              <h1 className="text-3xl font-serif font-medium">Kategorija: hriscanstvoi</h1>
             </div>
 
             <div className="prose prose-invert max-w-none">
               <div className="grid md:grid-cols-2 gap-8 mb-12">
                 <div className="p-6 border border-white/5 bg-white/[0.01] rounded-lg">
-                  <h3 className="text-xl font-medium mb-4 text-white">Šta je Hriscanstvo?</h3>
+                  <h3 className="text-xl font-medium mb-4 text-white">Šta je hriscanstvo?</h3>
                   <p className="text-brand-dim leading-relaxed">
-                    Hriscanstvo je religija bazirana na učenjima Isusa Hrista. U ovoj kategoriji
-                    istražujemo istoriju hriscanstva, njegova učenja, i njegov uticaj na civilizaciju.
+                    hriscanstvo je izvještaj o riječima, postupcima ili odobrenjima
+                    Poslanika Muhammeda (s.a.v.s.). Svaki hriscanstvo se sastoji od dva
+                    dijela: isnada (lanac prenosilaca) i matna (tekst hriscanstvoa).
                   </p>
                 </div>
 
                 <div className="p-6 border border-white/5 bg-white/[0.01] rounded-lg">
-                  <h3 className="text-xl font-medium mb-4 text-white">Teme u Kategoriji</h3>
+                  <h3 className="text-xl font-medium mb-4 text-white">Vrste hriscanstvoa</h3>
                   <ul className="text-brand-dim space-y-2">
-                    <li>• Uticaj na zapad</li>
-                    <li>• Istorija hriscanstva</li>
-                    <li>• Biblijske istine</li>
-                    <li>• Različite denominacije</li>
+                    <li>• Sahih - Autentični hriscanstvoi</li>
+                    <li>• Hasan - Dobri hriscanstvoi</li>
+                    <li>• Da'if - Slabi hriscanstvoi</li>
+                    <li>• Maudhu' - Izmišljeni hriscanstvoi</li>
                   </ul>
                 </div>
               </div>
 
-              {/* Articles */}
-               <div className="border-t border-white/5 pt-12">
-                              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {hriscanstvoArticles.map((article) => (
-                                  <div
-                                    key={article.slug}
-                                    onClick={() => navigate(`/hadis/article/${article.slug}`)}
-                                    className="p-6 border border-white/5 bg-white/[0.01] rounded-lg hover:border-white/20 transition-all cursor-pointer group"
-                                  >
-                                    <h4 className="text-lg font-medium mb-3 text-white group-hover:text-brand-accent transition-colors">
-                                      {article.title}
-                                    </h4>
-                                    <p className="text-sm text-brand-dim leading-relaxed mb-4">
-                                      {article.summary}
-                                    </p>
-                                    <div className="flex items-center gap-6 text-[10px] uppercase tracking-widest text-brand-dim font-medium">
-                                      <span>{formatDate(article.dateCreated)}</span>
-                                      <span>{calculateReadingTime(calculateWordCount(article.content))}</span>
-                                      <span>{calculateWordCount(article.content)} REČI</span>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
+              <div className="border-t border-white/5 pt-12">
+  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 not-prose">
+    {paginatedArticles.map((article: GeneratedhriscanstvoMeta) => {
+      const hasWordCount = typeof article.wordCount === "number" && article.wordCount > 0;
+      const wordCount = article.wordCount;
+      const readingTime = article.readingTimeMinutes;
 
-              {/* Pagination */}
-              <div className="flex items-center justify-between mt-16 pt-8 border-t border-white/5">
-                <button
-                  onClick={handlePrevPage}
-                  disabled={currentPage === 1}
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-brand-dim hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span>←</span>
-                  <span>Prethodna</span>
-                </button>
+      return (
+        <Link
+          key={article.slug}
+          to={`/categories/hriscanstvo/article/${article.slug}`}
+          className="block p-6 border border-white/5 bg-white/[0.01] rounded-lg hover:border-white/20 transition-all cursor-pointer group"
+        >
+          <h4 className="text-lg font-medium mb-3 text-white group-hover:text-brand-accent transition-colors leading-snug">
+            {article.title}
+          </h4>
 
-                <div className="flex items-center gap-2">
+          <p className="text-sm text-brand-dim leading-relaxed mb-5 line-clamp-3">
+            {article.description}
+          </p>
+
+          <div className="flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-widest text-brand-dim font-medium">
+            <span>{formatDate(article.date)}</span>
+            {hasWordCount && (
+              <>
+                <span className="text-white/10">·</span>
+                <span>{wordCount} REČI</span>
+                <span className="text-white/10">·</span>
+                <span>{readingTime} MIN ČITANJA</span>
+              </>
+            )}
+          </div>
+        </Link>
+      );
+    })}
+  </div>
+</div>
+
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between mt-16 pt-8 border-t border-white/5 not-prose">
                   <button
-                    onClick={() => handlePageClick(1)}
-                    className={`px-3 py-2 text-sm border rounded transition-colors ${
-                      currentPage === 1
-                        ? 'text-white bg-white/10 border-white/10'
-                        : 'text-brand-dim hover:text-white border-transparent hover:border-white/10'
-                    }`}
+                    onClick={handlePrevPage}
+                    disabled={currentPage === 1}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-brand-dim hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    1
+                    <span>←</span>
+                    <span>Prethodna</span>
                   </button>
+
+                  <div className="flex items-center gap-2">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => handlePageClick(page)}
+                        className={`px-3 py-2 text-sm border rounded transition-colors ${
+                          currentPage === page
+                            ? "text-white bg-white/10 border-white/10"
+                            : "text-brand-dim hover:text-white border-transparent hover:border-white/10"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+
                   <button
-                    onClick={() => handlePageClick(2)}
-                    className={`px-3 py-2 text-sm border rounded transition-colors ${
-                      currentPage === 2
-                        ? 'text-white bg-white/10 border-white/10'
-                        : 'text-brand-dim hover:text-white border-transparent hover:border-white/10'
-                    }`}
+                    onClick={handleNextPage}
+                    disabled={currentPage === totalPages}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-brand-dim hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    2
-                  </button>
-                  <button
-                    onClick={() => handlePageClick(3)}
-                    className={`px-3 py-2 text-sm border rounded transition-colors ${
-                      currentPage === 3
-                        ? 'text-white bg-white/10 border-white/10'
-                        : 'text-brand-dim hover:text-white border-transparent hover:border-white/10'
-                    }`}
-                  >
-                    3
+                    <span>Sledeća</span>
+                    <span>→</span>
                   </button>
                 </div>
-
-                <button
-                  onClick={handleNextPage}
-                  disabled={currentPage === 3}
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-brand-dim hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span>Sledeća</span>
-                  <span>→</span>
-                </button>
-              </div>
+              )}
             </div>
           </div>
         </section>
       </main>
 
+      <BackToTop />
       <Footer />
     </div>
   );

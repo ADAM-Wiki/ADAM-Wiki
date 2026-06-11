@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
 
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
@@ -16,11 +18,100 @@
   --color-brand-dim: #737373;
 }
 
+.toc-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-brand-dim) transparent;
+}
 
+.toc-scroll::-webkit-scrollbar {
+  width: 6px;
+}
 
+.toc-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
 
+.toc-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-brand-dim);
+  border-radius: 9999px;
+}
 
+.toc-scroll:hover::-webkit-scrollbar-thumb {
+  background: var(--color-brand-accent);
+}
 
+.toc-fade {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 32px,
+    black calc(100% - 24px),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 32px,
+    black calc(100% - 24px),
+    transparent
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+@media (hover: hover) {
+  .toc-item:hover {
+    color: var(--color-brand-accent);
+  }
+
+  .toc-item:hover span:first-child {
+    color: var(--color-brand-accent);
+    border-color: var(--color-brand-accent);
+  }
+}
+
+@media (hover: hover) {
+  .toc-item:hover {
+    color: var(--color-brand-accent);
+  }
+
+  .toc-item:hover span:nth-of-type(2) {
+    color: var(--color-brand-accent);
+  }
+
+  .toc-item:hover span:nth-of-type(1) {
+    color: var(--color-brand-accent);
+    border-color: var(--color-brand-accent);
+  }
+}
+
+.toc-item-active {
+  color: var(--color-brand-accent) !important;
+}
+
+.toc-item-active span:nth-of-type(1) {
+  color: var(--color-brand-accent) !important;
+  border-color: var(--color-brand-accent) !important;
+}
+
+article h2,
+article h3 {
+  scroll-margin-top: 120px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+html {
+  scroll-behavior: smooth !important;
+}
+
+body {
+  overflow-x: hidden;
+}
 
 @layer base {
   body {
@@ -28,8 +119,22 @@
   }
 }
 
-
 .serif-italic {
   font-family: var(--font-serif);
   font-style: italic;
+}
+
+.grid-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 36px 36px;
+  -webkit-mask-image:
+    radial-gradient(ellipse at center, black 45%, transparent 85%);
+  mask-image:
+    radial-gradient(ellipse at center, black 45%, transparent 85%);
+  opacity: 0.6;
 }

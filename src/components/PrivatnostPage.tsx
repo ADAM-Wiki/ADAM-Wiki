@@ -15,7 +15,7 @@ export default function PrivatnostPage() {
       </Helmet>
       <StaticNavbar />
       <main className="pt-20">
-        <section className="py-20 border-t border-white/5">
+        <section className="py-20">
           <div className="max-w-3xl mx-auto px-6">
 
             <div className="flex items-center gap-4 mb-10">
@@ -33,7 +33,7 @@ export default function PrivatnostPage() {
               </div>
 
               <div>
-                <h2 className="text-white font-medium mb-3">Kolacici</h2>
+                <h2 className="text-white font-medium mb-3">Kolačići</h2>
                 <p>
                   Koristimo isključivo tehničke kolačiće potrebne za funkcionisanje sajta.
                   Ne koristimo kolačiće za praćenje.
@@ -60,7 +60,7 @@ export default function PrivatnostPage() {
               </div>
 
               <p className="text-xs text-white/20 pt-4 border-t border-white/5">
-                Posljednje azuriranje: {year}
+                Posljednje ažuriranje: {year}
               </p>
             </div>
 

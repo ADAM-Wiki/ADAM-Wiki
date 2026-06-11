@@ -1,14 +1,8 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { Search, Menu, X } from "lucide-react";
+import { Search, Menu, X, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { searchContent, SearchResult } from "../utils/searchUtils";
 import SearchResults from "./SearchResults";
-
-
-interface SearchResultsProps {
-  results: SearchResult[];
-  onResultClick?: () => void; // add this
-}
+import { useSearch } from "../hooks/useSearch";
 
 interface NavbarProps {
   onSearch: (query: string) => void;
@@ -16,37 +10,69 @@ interface NavbarProps {
 
 export default function Navbar({ onSearch }: NavbarProps) {
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+
+  const { results, search, clear, isReady, isSearching } = useSearch();
+
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
-  const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const trimmedQuery = query.trim();
-    if (!trimmedQuery) {
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 200);
+
+    return () => window.clearTimeout(timer);
+  }, [query]);
+
+  useEffect(() => {
+    const trimmed = debouncedQuery.trim();
+
+    if (!searchOpen) return;
+
+    if (!trimmed) {
+      clear();
       return;
     }
-    onSearch(trimmedQuery);
-    setSearchOpen(false);
-    setSearchResults([]);
-  };
 
-  const handleQueryChange = (newQuery: string) => {
-    setQuery(newQuery);
-    if (newQuery.trim()) {
-      const results = searchContent(newQuery);
-      setSearchResults(results);
-    } else {
-      setSearchResults([]);
-    }
-  };
+    search(trimmed);
+  }, [debouncedQuery, searchOpen, search, clear]);
 
-  const handleSearchResultClick = () => {
-    setSearchOpen(false);
-    setSearchResults([]);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchOpen &&
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
+        resetSearch();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [searchOpen]);
+
+  const resetSearch = () => {
     setQuery("");
+    setDebouncedQuery("");
+    clear();
+    setSearchOpen(false);
+  };
+
+  const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const trimmedQuery = query.trim();
+    if (!trimmedQuery) return;
+
+    onSearch(trimmedQuery);
+    resetSearch();
   };
 
   const handleNavigation = (item: string) => {
@@ -60,111 +86,73 @@ export default function Navbar({ onSearch }: NavbarProps) {
       case "Tagovi":
         navigate("/tags");
         break;
-      case "Postovi":
-        navigate("/posts");
-        break;
       case "O nama":
         navigate("/about");
         break;
       default:
         break;
     }
+
     setMobileMenuOpen(false);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchOpen && wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
-        setSearchOpen(false);
-        setSearchResults([]);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [searchOpen]);
+  const showStatusBox = query.trim().length > 0 && (!isReady || isSearching);
+  const showResultsBox = query.trim().length > 0 && isReady && !isSearching;
 
   return (
-  <>
-    <nav className="fixed top-0 left-0 w-full z-50 border-b border-white/5 bg-brand-bg/80 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-
-        {/* LEFT — Hamburger + Logo */}
-        <div className="flex items-center gap-4">
-        <button
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="md:hidden w-5 h-5 text-brand-dim hover:text-white transition-colors"
-        >
-        {mobileMenuOpen ? <X /> : <Menu />}
-        </button>
-        <button
-        onClick={() => { navigate("/"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-        className="text-white font-bold text-sm uppercase tracking-widest"
-        >
-    Adam
-  </button>
-</div>
-
-        {/* CENTER — Nav links (always stays centered) */}
-        <div className="hidden md:flex items-center justify-center gap-6 absolute left-1/2 -translate-x-1/2">
-          {["Postovi", "Tagovi", "Kategorije", "O nama"].map((item) => (
+    <>
+      <nav className="fixed top-0 left-0 w-full z-50 border-b border-white/5 bg-brand-bg/80 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 h-16 grid grid-cols-[auto_1fr_auto] items-center gap-4">
+          <div className="flex items-center gap-4 min-w-0">
             <button
-              key={item}
-              onClick={() => handleNavigation(item)}
-              className="text-xs uppercase tracking-widest text-brand-dim hover:text-white transition-colors"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="md:hidden flex items-center justify-center w-10 h-10 text-brand-dim hover:text-white transition-colors shrink-0"
+              aria-label={mobileMenuOpen ? "Zatvori meni" : "Otvori meni"}
             >
-              {item}
-            </button>
-          ))}
-        </div>
-          
-        {/* RIGHT — Search (fixed width so center never moves) */}
-       <div className="flex items-center justify-end w-full" ref={wrapperRef}>
-        
-       
-
-          {!searchOpen ? (
-            
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs uppercase tracking-widest text-white hover:bg-white/20 transition"
-            >
-              Pretraži <Search className="w-4 h-4" />
-            </button>
-          ) : (
-            <form onSubmit={handleSearchSubmit} className="relative flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 max-w-[calc(100vw-120px)]">
-              <input
-                value={query}
-                onChange={(e) => handleQueryChange(e.target.value)}
-                placeholder="Unesite pojam za pretragu..."
-                className="min-w-[120px] md:min-w-[220px] bg-transparent text-sm text-white outline-none placeholder:text-brand-dim"
-                autoFocus
-              />
-              <button type="submit" className="text-xs uppercase tracking-widest text-white">
-                Pretraži <Search className="w-4 h-4 inline" />
-              </button>
-              
-              {searchResults.length > 0 && (
-                <SearchResults results={searchResults} query={query} onClose={handleSearchResultClick}
-/>
-
+              {mobileMenuOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Menu className="w-5 h-5" />
               )}
-              
-            </form>
-          )}
+            </button>
 
-         
+            <button
+              onClick={() => {
+                navigate("/");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="text-white font-bold text-sm uppercase tracking-widest whitespace-nowrap"
+            >
+              Adam
+            </button>
+          </div>
+
+          <div className="hidden md:flex items-center justify-center gap-6 min-w-0">
+            {["Tagovi", "Kategorije", "O nama"].map((item) => (
+              <button
+                key={item}
+                onClick={() => handleNavigation(item)}
+                className="text-xs uppercase tracking-widest text-brand-dim hover:text-white transition-colors whitespace-nowrap"
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-end min-w-0">
+            <button
+              onClick={() => navigate("/search")}
+              className="flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-2.5 py-2.5 text-xs uppercase tracking-widest text-white hover:bg-white/20 transition whitespace-nowrap"
+            >
+              <Search className="w-4 h-4 shrink-0" />
+            </button>
+          </div>
         </div>
+      </nav>
 
-      </div>
-    </nav>
-
-    {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-black pt-16">
-          {["Početna", "Postovi", "Tagovi", "Kategorije", "O nama"].map((item, index) => (
+          {["Početna", "Tagovi", "Kategorije", "O nama"].map((item, index) => (
             <button
               key={item}
               onClick={() => handleNavigation(item)}
@@ -176,6 +164,6 @@ export default function Navbar({ onSearch }: NavbarProps) {
           ))}
         </div>
       )}
-  </>
-);
+    </>
+  );
 }

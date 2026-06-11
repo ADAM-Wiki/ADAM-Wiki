@@ -12,7 +12,7 @@ export default function UsloviPage() {
       </Helmet>
       <Navbar onSearch={() => {}} />
       <main className="pt-20">
-        <section className="py-20 border-t border-white/5">
+        <section className="py-20">
           <div className="max-w-3xl mx-auto px-6">
             <div className="flex items-center gap-4 mb-10">
               <span className="text-xs font-mono text-brand-dim">LEGALNO</span>

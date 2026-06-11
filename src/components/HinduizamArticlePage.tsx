@@ -4,6 +4,7 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { hinduizamArticles } from "../utils/articlesData";
 
+
 const calculateWordCount = (content: string[]): number => {
   return content.reduce((count, paragraph) => {
     const words = paragraph.trim().split(/\s+/).length;

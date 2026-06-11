@@ -1,228 +1,473 @@
-// searchUtils.ts — search engine for site content
-// Searches only titles and excerpts — NOT full article content.
-// Now uses tokenised search (every word in the query must appear somewhere),
-// Unicode-normalised diacritic stripping, and word‑boundary scoring.
-// To add new categories: edit categoriesData.ts
-// To add new articles: edit articlesData.ts
-
-import { topics } from './categoriesData';
-import {
-  hadisArticles,
-  hriscanstvoArticles,
-  ateizmaArticles,
-  hinduizamArticles,
-  seriatArticles,
-  kuranArticles,
-  ravnaZemjaArticles,
-  nemoralArticles,
-  type ArticleData
-} from './articlesData';
+import MiniSearch from "minisearch";
+import { topics } from "./categoriesData";
+import { hadisMeta } from "../lib/generated/hadisMeta";
+import { hriscanstvoMeta } from "../lib/generated/hriscanstvoMeta";
+import { ahmedijeMeta } from "../lib/generated/ahmedijeMeta";
+import { ateizamMeta } from "../lib/generated/ateizamMeta";
+import { hinduizamMeta } from "../lib/generated/hinduizamMeta";
+import { islamMeta } from "../lib/generated/islamMeta";
+import { istorijaMeta } from "../lib/generated/istorijaMeta";
+import { muhammedMeta } from "../lib/generated/muhammedMeta";
+import { naukaMeta } from "../lib/generated/naukaMeta";
+import { odgovoriMeta } from "../lib/generated/odgovoriMeta";
+import { opovrgavanjeMeta } from "../lib/generated/opovrgavanjeMeta";
 
 const ARTICLE_SOURCES = [
-  { articles: hadisArticles,        basePath: "/hadis/article" },
-  { articles: hriscanstvoArticles,  basePath: "/hriscanstvo/article" },
-  { articles: ateizmaArticles,      basePath: "/ateizam/article" },
-  { articles: hinduizamArticles,    basePath: "/hinduizam/article" },
-  { articles: seriatArticles,       basePath: "/serijat/article" },
-  { articles: kuranArticles,        basePath: "/kuran/article" },
-  { articles: ravnaZemjaArticles,   basePath: "/ravna-zemlja/article" },
-  { articles: nemoralArticles,      basePath: "/moral/article" },
-];
-
-// ─── Public types ─────────────────────────────────────────────────────────────
+  { articles: hadisMeta, basePath: "/categories/hadis/article" },
+  { articles: hriscanstvoMeta, basePath: "/categories/hriscanstvo/article" },
+  { articles: ahmedijeMeta, basePath: "/categories/ahmedije/article" },
+  { articles: ateizamMeta, basePath: "/categories/ateizam/article" },
+  { articles: hinduizamMeta, basePath: "/categories/hinduizam/article" },
+  { articles: islamMeta, basePath: "/categories/islam/article" },
+  { articles: istorijaMeta, basePath: "/categories/istorija/article" },
+  { articles: muhammedMeta, basePath: "/categories/muhammed/article" },
+  { articles: naukaMeta, basePath: "/categories/nauka/article" },
+  { articles: odgovoriMeta, basePath: "/categories/odgovori/article" },
+  { articles: opovrgavanjeMeta, basePath: "/categories/opovrgavanje/article" },
+] as const;
 
 export interface SearchResult {
   id: string;
   title: string;
-  type: 'category' | 'article' | 'page';
+  type: "category" | "article" | "page";
   url: string;
   excerpt?: string;
+  snippet?: string;
   relevance: number;
 }
-
-// ─── Internal types ───────────────────────────────────────────────────────────
 
 interface BaseSearchData {
   id: string;
   title: string;
-  type: 'category' | 'article' | 'page';
+  type: "category" | "article" | "page";
   url: string;
   excerpt?: string;
+  _tags?: string;
 }
 
-// ─── Build categories from categoriesData.ts ─────────────────────────────────
+interface SearchDocument {
+  id: string;
+  articleId: string;
+  title: string;
+  type: "category" | "article" | "page";
+  url: string;
+  excerpt: string;
+  content: string;
+  originalContent: string;
+  tags: string;
+  chunkIndex: number;
+}
+
+const CATEGORY_URLS: Record<string, string> = {
+  HADIS: "/categories/hadis",
+  ATEIZAM: "/categories/ateizam",
+  HRIŠĆANSTVO: "/categories/hriscanstvo",
+  HINDUIZAM: "/categories/hinduizam",
+  ISLAM: "/categories/islam",
+  ISTORIJA: "/categories/istorija",
+  AHMEDIJE: "/categories/ahmedije",
+  "ODGOVORI NA SUMNJE": "/categories/odgovori",
+  "OPOVRGAVANJE SIJA": "/categories/opovrgavanje",
+  "NAUKA I ISLAM": "/categories/nauka",
+  MUHAMMED: "/categories/muhammed",
+};
 
 const CATEGORIES: BaseSearchData[] = topics
-  .filter((title: string, index: number, self: string[]) => self.indexOf(title) === index)
+  .filter(
+    (title: string, index: number, self: string[]) =>
+      self.indexOf(title) === index,
+  )
   .map((title: string) => ({
-    id:      title.toLowerCase().replace(/\s+/g, '-'),
+    id: title.toLowerCase().replace(/\s+/g, "-"),
     title,
-    type:    'category' as const,
-    url:     title === 'HADIS' ? '/hadis' : `/category/${title.toLowerCase()}`,
+    type: "category" as const,
+    url: CATEGORY_URLS[title] ?? "/categories",
     excerpt: `${title} articles and discussions`,
   }));
 
-// ─── Static pages ─────────────────────────────────────────────────────────────
-
 const PAGES: BaseSearchData[] = [
-  { id: 'home',       title: 'Početna',    type: 'page', url: '/',           excerpt: 'Home page with featured content' },
-  { id: 'categories', title: 'Kategorije', type: 'page', url: '/categories', excerpt: 'All categories overview' },
-  { id: 'posts',      title: 'Postovi',    type: 'page', url: '/posts',      excerpt: 'All posts and articles' },
-  { id: 'tags',       title: 'Tagovi',     type: 'page', url: '/tags',       excerpt: 'Browse by tags' },
-  { id: 'about',      title: 'O nama',     type: 'page', url: '/about',      excerpt: 'About us information' },
+  {
+    id: "home",
+    title: "Početna",
+    type: "page",
+    url: "/",
+    excerpt: "Home page with featured content",
+  },
+  {
+    id: "categories",
+    title: "Kategorije",
+    type: "page",
+    url: "/categories",
+    excerpt: "All categories overview",
+  },
+  {
+    id: "tags",
+    title: "Tagovi",
+    type: "page",
+    url: "/tags",
+    excerpt: "Browse by tags",
+  },
+  {
+    id: "about",
+    title: "O nama",
+    type: "page",
+    url: "/about",
+    excerpt: "About us information",
+  },
 ];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-/**
- * Normalizes Serbian/Croatian/Bosnian text for search matching.
- * Key rule: đ and dj both → "d" (same base), so they always match each other.
- * Order matters: handle multi-char sequences BEFORE single-char replacements.
- */
-function stripDiacritics(str: string): string {
-  return str
-    .toLowerCase()
-    .replace(/dž/gi, 'dz')
-    // đ and dj → same base "d" so they always match each other
-    .replace(/đ/g,   'd')
-    .replace(/Đ/g,   'd')
-    .replace(/dj/gi, 'd')
-    // NFD decompose + strip combining marks (č→c, ć→c, ž→z, š→s)
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
-}
-
-function escapeRegExp(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function levenshtein(a: string, b: string): number {
-  const m = a.length;
-  const n = b.length;
-  const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
-  for (let i = 0; i <= m; i++) dp[i][0] = i;
-  for (let j = 0; j <= n; j++) dp[0][j] = j;
-  for (let i = 1; i <= m; i++) {
-    for (let j = 1; j <= n; j++) {
-      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-      dp[i][j] = Math.min(
-        dp[i - 1][j] + 1,
-        dp[i][j - 1] + 1,
-        dp[i - 1][j - 1] + cost
-      );
-    }
-  }
-  return dp[m][n];
-}
-
-// ─── Index building ───────────────────────────────────────────────────────────
-
-const searchDataMap = new Map<string, BaseSearchData>();
-const allSearchableText = new Map<string, string>();
-
-function buildSearchIndex(): void {
-  const articleEntries: BaseSearchData[] = ARTICLE_SOURCES.flatMap(({ articles, basePath }) =>
-    articles.map((article: ArticleData) => ({
-      id:      article.slug,
-      title:   article.title,
-      type:    'article' as const,
-      url:     `${basePath}/${article.slug}`,
-      excerpt: article.summary,
-    }))
+function getMiniSearchOptions(query: string) {
+  const normalized = normalizeForSearch(query);
+  const tokens = normalized.split(/\s+/).filter(Boolean);
+  const longestTokenLength = tokens.reduce(
+    (max, token) => Math.max(max, token.length),
+    0,
   );
 
-  const allItems: BaseSearchData[] = [...CATEGORIES, ...PAGES, ...articleEntries];
+  if (longestTokenLength <= 2) {
+    return {
+      boost: { title: 5, tags: 3, content: 1 },
+      prefix: false,
+      fuzzy: false,
+    };
+  }
 
-  allItems.forEach(item => {
-    searchDataMap.set(item.id, item);
-    const text = stripDiacritics([item.title, item.excerpt ?? ''].join(' '));
-    allSearchableText.set(item.id, text);
-  });
+  if (longestTokenLength <= 4) {
+    return {
+      boost: { title: 5, tags: 3, content: 1 },
+      prefix: true,
+      fuzzy: false,
+    };
+  }
+
+  return {
+    boost: { title: 4, tags: 2, content: 1 },
+    prefix: true,
+    fuzzy: 0.2,
+  };
 }
 
-buildSearchIndex();
+export function normalizeForSearch(str: string): string {
+  const refs: string[] = [];
 
-// ─── Public API ───────────────────────────────────────────────────────────────
+  const normalizedDashes = str
+    .replace(/[\u2010\u2011\u2012\u2013\u2014\u2212]/g, "-")
+    .replace(/[:]\s*(\d+)\s*-\s*(\d+)/g, ":$1-$2");
+
+  const protectedStr = normalizedDashes.replace(
+    /\b\d+:\d+(?:-\d+)?\b/g,
+    (match) => {
+      const key = `quranrefplaceholder${refs.length}`;
+      refs.push(match.toLowerCase());
+      return ` ${key} `;
+    },
+  );
+
+  let normalized = protectedStr
+    .toLowerCase()
+    .replace(/\[([^\]]*)\]/g, "$1")
+    .replace(/[-/_]/g, " ")
+    .replace(/dž/gi, "dz")
+    .replace(/đ/gi, "d")
+    .replace(/dj/gi, "d")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\p{L}\p{N}\s:]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  refs.forEach((ref, index) => {
+    normalized = normalized.replace(`quranrefplaceholder${index}`, ref);
+  });
+
+  return normalized;
+}
+
+function expandArabicStyleQuery(query: string): string {
+  return query
+    .replace(/^(al|el|ibn|bin|abu|abd)(?=[a-z])/g, "$1 ")
+    .replace(/([a-z])(al|el|ibn|bin|abu|abd)(?=[a-z])/g, "$1 $2 ");
+}
+
+function expandSurahAliases(tokens: string[]): string[] {
+  const aliasMap: Record<string, string[]> = {
+    zilzal: ["zilzal", "zalzal", "zalzalah", "zalzala"],
+    zalzalah: ["zilzal", "zalzal", "zalzalah", "zalzala"],
+    baqara: ["baqara", "baqarah"],
+    fatiha: ["fatiha", "fatihah"],
+    ikhlas: ["ikhlas", "ihlas"],
+    yasin: ["yasin", "yaseen"],
+  };
+
+  const extra: string[] = [];
+
+  for (const token of tokens) {
+    const compact = token.replace(/\s+/g, "");
+    const stripped = compact.replace(/^(al|el|ez|az)/, "");
+
+    for (const aliases of Object.values(aliasMap)) {
+      if (aliases.includes(compact) || aliases.includes(stripped)) {
+        extra.push(...aliases);
+      }
+    }
+  }
+
+  return [...new Set(extra)];
+}
+
+function tokenizeForSearch(query: string): string[] {
+  const normalized = normalizeForSearch(query);
+  const referenceTokens = normalized.match(/\b\d+:\d+(?:-\d+)?\b/g) ?? [];
+
+  const expanded = expandArabicStyleQuery(
+    normalized.replace(/\b\d+:\d+(?:-\d+)?\b/g, " "),
+  );
+
+  const base = expanded.split(/\s+/).filter(Boolean);
+  const extra: string[] = [];
+
+  for (const token of base) {
+    if (
+      (token.startsWith("al") ||
+        token.startsWith("el") ||
+        token.startsWith("ez") ||
+        token.startsWith("az")) &&
+      token.length > 2
+    ) {
+      extra.push(token.slice(2));
+    }
+    if (token.startsWith("ibn") && token.length > 3) extra.push(token.slice(3));
+    if (token.startsWith("bin") && token.length > 3) extra.push(token.slice(3));
+    if (token.startsWith("abu") && token.length > 3) extra.push(token.slice(3));
+    if (token.startsWith("abd") && token.length > 3) extra.push(token.slice(3));
+  }
+
+  const aliasTokens = expandSurahAliases([...base, ...extra]);
+
+  return [
+    ...new Set([...referenceTokens, ...base, ...extra, ...aliasTokens]),
+  ].filter((token) => token.length >= 2);
+}
+
+export function getQueryTokens(query: string): string[] {
+  return tokenizeForSearch(query);
+}
+
+export function getHighlightVariants(query: string): string[] {
+  const tokens = tokenizeForSearch(query);
+  const normalized = normalizeForSearch(query);
+  const joinedTokens = tokens.join("");
+  const spacedTokens = tokens.join(" ");
+  const rawNoSpaces = normalized.replace(/\s+/g, "");
+
+  return [
+    ...new Set(
+      [normalized, rawNoSpaces, joinedTokens, spacedTokens, ...tokens].filter(
+        Boolean,
+      ),
+    ),
+  ];
+}
+
+function buildSnippet(
+  text: string,
+  queryTokens: string[],
+  maxLen = 220,
+): string | undefined {
+  if (!text.trim()) return undefined;
+
+  const normalizedText = normalizeForSearch(text);
+  let matchIndex = -1;
+  let matchLength = 0;
+
+  for (const token of queryTokens) {
+    const idx = normalizedText.indexOf(token);
+    if (idx !== -1 && (matchIndex === -1 || idx < matchIndex)) {
+      matchIndex = idx;
+      matchLength = token.length;
+    }
+  }
+
+  if (matchIndex === -1) {
+    return text.length > maxLen ? `${text.slice(0, maxLen).trim()}...` : text;
+  }
+
+  const start = Math.max(0, matchIndex - 70);
+  const end = Math.min(text.length, matchIndex + matchLength + 130);
+  const snippet = text.slice(start, end).trim();
+
+  return `${start > 0 ? "..." : ""}${snippet}${end < text.length ? "..." : ""}`;
+}
+
+const baseDataMap = new Map<string, BaseSearchData>();
+const documentMap = new Map<string, SearchDocument>();
+
+const searchDocuments: SearchDocument[] = [
+  ...CATEGORIES.map((item) => {
+    baseDataMap.set(item.id, item);
+    return {
+      id: item.id,
+      articleId: item.id,
+      title: normalizeForSearch(item.title),
+      type: item.type,
+      url: item.url,
+      excerpt: item.excerpt ?? "",
+      content: normalizeForSearch(item.excerpt ?? ""),
+      originalContent: item.excerpt ?? "",
+      tags: "",
+      chunkIndex: 0,
+    };
+  }),
+  ...PAGES.map((item) => {
+    baseDataMap.set(item.id, item);
+    return {
+      id: item.id,
+      articleId: item.id,
+      title: normalizeForSearch(item.title),
+      type: item.type,
+      url: item.url,
+      excerpt: item.excerpt ?? "",
+      content: normalizeForSearch(item.excerpt ?? ""),
+      originalContent: item.excerpt ?? "",
+      tags: "",
+      chunkIndex: 0,
+    };
+  }),
+  ...ARTICLE_SOURCES.flatMap(({ articles, basePath }) =>
+    articles.flatMap((article) => {
+      const baseId = `${basePath}::${article.slug}`;
+
+      const articleBase: BaseSearchData = {
+        id: baseId,
+        title: article.title,
+        type: "article",
+        url: `${basePath}/${article.slug}`,
+        excerpt: article.description,
+        _tags: article.tags?.join(" ") ?? "",
+      };
+
+      baseDataMap.set(baseId, articleBase);
+
+      return article.searchChunks.map((part, index) => ({
+        id: `${baseId}::${index}`,
+        articleId: baseId,
+        title: normalizeForSearch(article.title),
+        type: "article" as const,
+        url: `${basePath}/${article.slug}`,
+        excerpt: article.description,
+        content: normalizeForSearch(part),
+        originalContent: part,
+        tags: normalizeForSearch(article.tags?.join(" ") ?? ""),
+        chunkIndex: index,
+      }));
+    }),
+  ),
+];
+
+searchDocuments.forEach((doc) => documentMap.set(doc.id, doc));
+
+const miniSearch = new MiniSearch<SearchDocument>({
+  fields: ["title", "content", "tags"],
+  storeFields: [
+    "id",
+    "articleId",
+    "title",
+    "type",
+    "url",
+    "excerpt",
+    "content",
+    "originalContent",
+    "chunkIndex",
+  ],
+});
+
+miniSearch.addAll(searchDocuments);
+
+function getMinScore(query: string): number {
+  const normalized = normalizeForSearch(query);
+  const tokens = normalized.split(/\s+/).filter(Boolean);
+  const longestToken = tokens.reduce((max, t) => Math.max(max, t.length), 0);
+
+  if (longestToken <= 2) return 5;
+  if (longestToken <= 4) return 2.5;
+  return 1.5;
+}
 
 export function searchContent(query: string, limit = 20): SearchResult[] {
   if (!query.trim()) return [];
 
-  const rawQuery = stripDiacritics(query.trim());
-  const tokens = rawQuery.split(/\s+/).filter(Boolean);
-  const MAX_DIST = 1;
+  const normalizedQuery = normalizeForSearch(query);
+  if (normalizedQuery.length < 2) return [];
 
-  const results: { item: BaseSearchData; score: number }[] = [];
+  const tokens = tokenizeForSearch(query).filter((t) => t.length >= 2);
+  if (!tokens.length) return [];
 
-  allSearchableText.forEach((normalizedText, id) => {
-    const item = searchDataMap.get(id);
-    if (!item) return;
+  const expandedQuery = [...new Set(getHighlightVariants(query))].join(" ");
+  const hits = miniSearch.search(expandedQuery, getMiniSearchOptions(query));
 
-    const words = normalizedText.split(/\s+/);
-    let tokensMatched = 0;
-    let score = 1;
+  const minScore = getMinScore(query);
+  const filteredHits = hits.filter((hit) => hit.score >= minScore);
+  if (!filteredHits.length) return [];
 
-    for (const token of tokens) {
-      // 1. Exact word match
-      if (words.includes(token)) {
-        tokensMatched++;
-        score += 20;
-        continue;
-      }
+  const grouped = new Map<string, SearchResult>();
 
-      // 2. Substring match — handles different word endings (određivanje/određivanju)
-      if (normalizedText.includes(token)) {
-        tokensMatched++;
-        score += 15;
-        continue;
-      }
+  for (const hit of filteredHits) {
+    const doc = documentMap.get(String(hit.id));
+    if (!doc) continue;
 
-      // 3. Fuzzy match — only for tokens 3+ chars to avoid false matches on short words
-      if (token.length >= 3) {
-        let bestDist = MAX_DIST + 1;
-        for (const word of words) {
-          if (Math.abs(word.length - token.length) > MAX_DIST) continue;
-          const dist = levenshtein(word, token);
-          if (dist < bestDist) bestDist = dist;
-          if (bestDist === 0) break;
-        }
-        if (bestDist <= MAX_DIST) {
-          tokensMatched++;
-          score += (10 - bestDist * 3);
-        }
-      }
+    const base = baseDataMap.get(doc.articleId);
+    if (!base) continue;
+
+    const existing = grouped.get(base.id);
+    const snippet =
+      base.type === "article"
+        ? buildSnippet(doc.originalContent, tokens)
+        : base.excerpt;
+
+    const score = hit.score + (base.type === "article" ? 5 : 0);
+
+    if (!existing || score > existing.relevance) {
+      grouped.set(base.id, {
+        id: base.id,
+        title: base.title,
+        type: base.type,
+        url: base.url,
+        excerpt: base.excerpt,
+        snippet,
+        relevance: score,
+      });
     }
+  }
 
-    if (tokensMatched < tokens.length) return;
+  const articleResults = Array.from(grouped.values())
+    .filter((r) => r.type === "article")
+    .sort((a, b) => b.relevance - a.relevance)
+    .slice(0, limit - 3);
 
-    const title = stripDiacritics(item.title);
-    tokens.forEach(token => {
-      if (title.includes(token)) score += 20;
-      if (title.startsWith(token)) score += 15;
-      const boundaryRegex = new RegExp(`\\b${escapeRegExp(token)}\\b`, 'i');
-      if (boundaryRegex.test(title)) score += 10;
-    });
+  const otherResults = Array.from(grouped.values())
+    .filter((r) => r.type !== "article")
+    .sort((a, b) => b.relevance - a.relevance)
+    .slice(0, 3);
 
-    if (item.type === 'article') score += 5;
-    results.push({ item, score });
-  });
-
-  return results
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit)
-    .map(r => ({ ...r.item, relevance: r.score }));
+  return [...articleResults, ...otherResults]
+    .sort((a, b) => b.relevance - a.relevance)
+    .slice(0, limit);
 }
 
 export function getAllCategories(): string[] {
-  return CATEGORIES.map(c => c.title);
+  return CATEGORIES.map((c) => c.title);
 }
 
 export function getCategoryByTitle(title: string): BaseSearchData | undefined {
-  const lower = stripDiacritics(title);
-  return CATEGORIES.find(c => stripDiacritics(c.title) === lower);
+  const normalized = normalizeForSearch(title);
+  return CATEGORIES.find((c) => normalizeForSearch(c.title) === normalized);
+}
+
+export function expandQuery(query: string): string {
+  return expandArabicStyleQuery(normalizeForSearch(query));
 }
 
 export function rebuildSearchIndex(): void {
-  searchDataMap.clear();
-  allSearchableText.clear();
-  buildSearchIndex();
+  miniSearch.removeAll();
+  miniSearch.addAll(searchDocuments);
 }

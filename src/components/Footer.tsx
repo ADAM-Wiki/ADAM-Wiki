@@ -50,11 +50,7 @@ export default function Footer() {
                   Kontakt
                 </button>
               </li>
-              <li>
-                <button onClick={() => navigate("/saradnja")} className="hover:text-white transition-colors">
-                  Saradnja
-                </button>
-              </li>
+              
               <li>
                 <button onClick={() => navigate("/about")} className="hover:text-white transition-colors">
                   O Projektu
@@ -70,9 +66,9 @@ export default function Footer() {
             © {new Date().getFullYear()} ADAM RESEARCH DATABASE — SVA PRAVA ZADRŽANA
           </span>
           <div className="flex gap-8">
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-[10px] tracking-[0.2em] text-brand-dim hover:text-white transition-colors">TWITTER</a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-[10px] tracking-[0.2em] text-brand-dim hover:text-white transition-colors">INSTAGRAM</a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-[10px] tracking-[0.2em] text-brand-dim hover:text-white transition-colors">LINKEDIN</a>
+            <a href="https://www.youtube.com/@asocijacija-adam" target="_blank" rel="noopener noreferrer" className="text-[10px] tracking-[0.2em] text-brand-dim hover:text-white transition-colors">YOUTUBE</a>
+            <a href="https://www.facebook.com/asocijacijaadam" target="_blank" rel="noopener noreferrer" className="text-[10px] tracking-[0.2em] text-brand-dim hover:text-white transition-colors">FACEBOOK</a>
+            <a href="https://www.tiktok.com/@asocijacija.adam" target="_blank" rel="noopener noreferrer" className="text-[10px] tracking-[0.2em] text-brand-dim hover:text-white transition-colors">TIKTOK</a>
           </div>
         </div>
 
