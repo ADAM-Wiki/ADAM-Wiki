@@ -1,11 +1,14 @@
-import type { SearchResult } from "../utils/searchUtils";
+import type { SearchResult } from "../utils/searchShared";
 
 export interface SearchWorkerRequest {
+  type: "SEARCH";
   query: string;
   limit?: number;
+  requestId?: number;
 }
 
 export interface SearchWorkerResponse {
-  query: string;
-  results: SearchResult[];
+  type: "RESULTS" | "READY";
+  requestId?: number;
+  results?: SearchResult[];
 }

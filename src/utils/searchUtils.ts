@@ -33,6 +33,8 @@ export interface SearchResult {
   url: string;
   excerpt?: string;
   snippet?: string;
+  snippets?: string[];
+  matchCount?: number;
   relevance: number;
 }
 
@@ -53,7 +55,6 @@ interface SearchDocument {
   url: string;
   excerpt: string;
   content: string;
-  originalContent: string;
   tags: string;
   chunkIndex: number;
 }
@@ -143,7 +144,7 @@ function getMiniSearchOptions(query: string) {
   return {
     boost: { title: 4, tags: 2, content: 1 },
     prefix: true,
-    fuzzy: 0.2,
+    fuzzy: (term: string) => (term.length > 5 ? 1 : 0),
   };
 }
 
@@ -269,34 +270,115 @@ export function getHighlightVariants(query: string): string[] {
   ];
 }
 
+function getSnippetSearchTokens(queryTokens: string[]): string[] {
+  return [
+    ...new Set(
+      queryTokens
+        .map((token) => normalizeForSearch(token))
+        .filter(Boolean)
+        .map((token) => token.slice(0, Math.max(4, token.length - 1)))
+        .filter((token) => token.length >= 3),
+    ),
+  ];
+}
+
+function splitIntoSnippetBlocks(text: string): string[] {
+  return text
+    .split(/(?<=[.!?])\s+|\n+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function blockMatchesQuery(block: string, queryTokens: string[]): boolean {
+  const normalizedBlock = normalizeForSearch(block);
+  const snippetTokens = getSnippetSearchTokens(queryTokens);
+  return snippetTokens.some((token) => normalizedBlock.includes(token));
+}
+
+function countTokenOccurrences(text: string, queryTokens: string[]): number {
+  const normalizedText = normalizeForSearch(text);
+  const snippetTokens = getSnippetSearchTokens(queryTokens);
+
+  let total = 0;
+
+  for (const token of snippetTokens) {
+    let fromIndex = 0;
+
+    while (true) {
+      const index = normalizedText.indexOf(token, fromIndex);
+      if (index === -1) break;
+      total++;
+      fromIndex = index + token.length;
+    }
+  }
+
+  return total;
+}
+
+function buildMultipleSnippets(
+  text: string,
+  queryTokens: string[],
+  maxSnippets = 10,
+): string[] {
+  if (!text.trim() || !queryTokens.length) return [];
+
+  const normalizedText = normalizeForSearch(text);
+  const snippetTokens = getSnippetSearchTokens(queryTokens);
+  if (!snippetTokens.length) return [];
+
+  const windows: Array<{ start: number; end: number }> = [];
+
+  for (const token of snippetTokens) {
+    let fromIndex = 0;
+
+    while (true) {
+      const index = normalizedText.indexOf(token, fromIndex);
+      if (index === -1) break;
+
+      windows.push({
+        start: Math.max(0, index - 90),
+        end: Math.min(text.length, index + token.length + 140),
+      });
+
+      fromIndex = index + Math.max(1, token.length);
+    }
+  }
+
+  if (!windows.length) return [];
+
+  windows.sort((a, b) => a.start - b.start);
+
+  const merged: Array<{ start: number; end: number }> = [];
+  for (const win of windows) {
+    const last = merged[merged.length - 1];
+    if (last && win.start <= last.end - 40) {
+      last.end = Math.max(last.end, win.end);
+    } else {
+      merged.push({ ...win });
+    }
+  }
+
+  return merged
+    .slice(0, maxSnippets)
+    .map(({ start, end }) => {
+      const snippet = text.slice(start, end).trim();
+      return `${start > 0 ? "..." : ""}${snippet}${end < text.length ? "..." : ""}`;
+    })
+    .filter(Boolean);
+}
+
 function buildSnippet(
   text: string,
   queryTokens: string[],
   maxLen = 220,
 ): string | undefined {
-  if (!text.trim()) return undefined;
-
-  const normalizedText = normalizeForSearch(text);
-  let matchIndex = -1;
-  let matchLength = 0;
-
-  for (const token of queryTokens) {
-    const idx = normalizedText.indexOf(token);
-    if (idx !== -1 && (matchIndex === -1 || idx < matchIndex)) {
-      matchIndex = idx;
-      matchLength = token.length;
-    }
-  }
-
-  if (matchIndex === -1) {
+  const snippets = buildMultipleSnippets(text, queryTokens, 1);
+  const first = snippets[0];
+  if (!first) {
+    if (!text.trim()) return undefined;
     return text.length > maxLen ? `${text.slice(0, maxLen).trim()}...` : text;
   }
-
-  const start = Math.max(0, matchIndex - 70);
-  const end = Math.min(text.length, matchIndex + matchLength + 130);
-  const snippet = text.slice(start, end).trim();
-
-  return `${start > 0 ? "..." : ""}${snippet}${end < text.length ? "..." : ""}`;
+  return first.length > maxLen ? `${first.slice(0, maxLen).trim()}...` : first;
 }
 
 const baseDataMap = new Map<string, BaseSearchData>();
@@ -308,12 +390,11 @@ const searchDocuments: SearchDocument[] = [
     return {
       id: item.id,
       articleId: item.id,
-      title: normalizeForSearch(item.title),
+      title: item.title,
       type: item.type,
       url: item.url,
       excerpt: item.excerpt ?? "",
-      content: normalizeForSearch(item.excerpt ?? ""),
-      originalContent: item.excerpt ?? "",
+      content: item.excerpt ?? "",
       tags: "",
       chunkIndex: 0,
     };
@@ -323,12 +404,11 @@ const searchDocuments: SearchDocument[] = [
     return {
       id: item.id,
       articleId: item.id,
-      title: normalizeForSearch(item.title),
+      title: item.title,
       type: item.type,
       url: item.url,
       excerpt: item.excerpt ?? "",
-      content: normalizeForSearch(item.excerpt ?? ""),
-      originalContent: item.excerpt ?? "",
+      content: item.excerpt ?? "",
       tags: "",
       chunkIndex: 0,
     };
@@ -351,13 +431,12 @@ const searchDocuments: SearchDocument[] = [
       return article.searchChunks.map((part, index) => ({
         id: `${baseId}::${index}`,
         articleId: baseId,
-        title: normalizeForSearch(article.title),
+        title: article.title,
         type: "article" as const,
         url: `${basePath}/${article.slug}`,
         excerpt: article.description,
-        content: normalizeForSearch(part),
-        originalContent: part,
-        tags: normalizeForSearch(article.tags?.join(" ") ?? ""),
+        content: part,
+        tags: article.tags?.join(" ") ?? "",
         chunkIndex: index,
       }));
     }),
@@ -365,6 +444,16 @@ const searchDocuments: SearchDocument[] = [
 ];
 
 searchDocuments.forEach((doc) => documentMap.set(doc.id, doc));
+
+const allChunksByArticle = new Map<string, string[]>();
+
+for (const doc of searchDocuments) {
+  if (doc.type !== "article") continue;
+
+  const existing = allChunksByArticle.get(doc.articleId) ?? [];
+  existing.push(doc.content);
+  allChunksByArticle.set(doc.articleId, existing);
+}
 
 const miniSearch = new MiniSearch<SearchDocument>({
   fields: ["title", "content", "tags"],
@@ -376,21 +465,15 @@ const miniSearch = new MiniSearch<SearchDocument>({
     "url",
     "excerpt",
     "content",
-    "originalContent",
     "chunkIndex",
   ],
+  tokenize: (text) => tokenizeForSearch(text),
 });
 
 miniSearch.addAll(searchDocuments);
 
-function getMinScore(query: string): number {
-  const normalized = normalizeForSearch(query);
-  const tokens = normalized.split(/\s+/).filter(Boolean);
-  const longestToken = tokens.reduce((max, t) => Math.max(max, t.length), 0);
-
-  if (longestToken <= 2) return 5;
-  if (longestToken <= 4) return 2.5;
-  return 1.5;
+function getMinScore(_query: string): number {
+  return 0.05;
 }
 
 export function searchContent(query: string, limit = 20): SearchResult[] {
@@ -402,14 +485,20 @@ export function searchContent(query: string, limit = 20): SearchResult[] {
   const tokens = tokenizeForSearch(query).filter((t) => t.length >= 2);
   if (!tokens.length) return [];
 
-  const expandedQuery = [...new Set(getHighlightVariants(query))].join(" ");
-  const hits = miniSearch.search(expandedQuery, getMiniSearchOptions(query));
+  const searchString = tokens.join(" ");
+  const hits = miniSearch.search(searchString, getMiniSearchOptions(query));
 
   const minScore = getMinScore(query);
   const filteredHits = hits.filter((hit) => hit.score >= minScore);
   if (!filteredHits.length) return [];
 
-  const grouped = new Map<string, SearchResult>();
+  const groupedDocs = new Map<
+    string,
+    {
+      base: BaseSearchData;
+      relevance: number;
+    }
+  >();
 
   for (const hit of filteredHits) {
     const doc = documentMap.get(String(hit.id));
@@ -418,39 +507,91 @@ export function searchContent(query: string, limit = 20): SearchResult[] {
     const base = baseDataMap.get(doc.articleId);
     if (!base) continue;
 
-    const existing = grouped.get(base.id);
-    const snippet =
-      base.type === "article"
-        ? buildSnippet(doc.originalContent, tokens)
-        : base.excerpt;
-
     const score = hit.score + (base.type === "article" ? 5 : 0);
+    const existing = groupedDocs.get(base.id);
 
-    if (!existing || score > existing.relevance) {
-      grouped.set(base.id, {
+    if (!existing) {
+      groupedDocs.set(base.id, {
+        base,
+        relevance: score,
+      });
+    } else if (score > existing.relevance) {
+      existing.relevance = score;
+    }
+  }
+
+  const groupedResults: SearchResult[] = Array.from(groupedDocs.values()).map(
+    ({ base, relevance }) => {
+      const mergedText =
+        base.type === "article"
+          ? (allChunksByArticle.get(base.id) ?? []).join(" ")
+          : (base.excerpt ?? "");
+
+      if (
+        normalizeForSearch(query) === "arapsko" &&
+        base.url.includes(
+          "autenticnost-hadisa-orijentalisti-priznaju-superiornost-islamske-nauke-o-isnadu",
+        )
+      ) {
+        console.log("FULL MERGED TEXT:", mergedText);
+      }
+
+      const previewSource = mergedText.trim() || base.excerpt || "";
+
+      const rawSnippets =
+        base.type === "article"
+          ? buildMultipleSnippets(previewSource, tokens, 12)
+          : base.excerpt
+            ? [base.excerpt]
+            : [];
+
+      const fallbackSnippet = buildSnippet(previewSource, tokens);
+
+      const snippets =
+        rawSnippets.length > 0
+          ? rawSnippets
+          : fallbackSnippet
+            ? [fallbackSnippet]
+            : [];
+
+      const matchCount = snippets.length;
+
+      return {
         id: base.id,
         title: base.title,
         type: base.type,
         url: base.url,
         excerpt: base.excerpt,
-        snippet,
-        relevance: score,
-      });
-    }
-  }
+        snippet: snippets[0],
+        snippets,
+        matchCount,
+        relevance,
+      };
+    },
+  );
 
-  const articleResults = Array.from(grouped.values())
+  const articleResults = groupedResults
     .filter((r) => r.type === "article")
-    .sort((a, b) => b.relevance - a.relevance)
+    .sort((a, b) => {
+      if ((b.matchCount ?? 0) !== (a.matchCount ?? 0)) {
+        return (b.matchCount ?? 0) - (a.matchCount ?? 0);
+      }
+      return b.relevance - a.relevance;
+    })
     .slice(0, limit - 3);
 
-  const otherResults = Array.from(grouped.values())
+  const otherResults = groupedResults
     .filter((r) => r.type !== "article")
     .sort((a, b) => b.relevance - a.relevance)
     .slice(0, 3);
 
   return [...articleResults, ...otherResults]
-    .sort((a, b) => b.relevance - a.relevance)
+    .sort((a, b) => {
+      if ((b.matchCount ?? 0) !== (a.matchCount ?? 0)) {
+        return (b.matchCount ?? 0) - (a.matchCount ?? 0);
+      }
+      return b.relevance - a.relevance;
+    })
     .slice(0, limit);
 }
 

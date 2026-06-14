@@ -1,13 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Search,
-  X,
-  Loader2,
-  FileText,
-  Calendar,
-  FolderOpen,
-} from "lucide-react";
+import { normalizeForSearch, getQueryTokens } from "../utils/searchShared";
+import { Search, X, Loader2, FileText, FolderOpen } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "motion/react";
 import Navbar from "./Navbar";
@@ -35,65 +29,124 @@ function getCategoryLabel(url: string): string {
   return CATEGORY_LABELS[segment] ?? segment;
 }
 
-function getDateFromUrl(url: string): string | null {
-  // url format: categories/hadis/article/slug
-  // date not in URL, so we skip — pass date from meta if available
-  return null;
+function compactNormalize(str: string): string {
+  return normalizeForSearch(str).replace(/\s+/g, "");
 }
 
-function formatDate(dateString: string) {
-  return new Intl.DateTimeFormat("sr-Latn-RS", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(new Date(dateString));
+function findMatchRanges(
+  text: string,
+  query: string,
+): Array<{ start: number; end: number }> {
+  const tokens = getQueryTokens(query);
+  if (!tokens.length) return [];
+
+  const ranges: Array<{ start: number; end: number }> = [];
+  const words = [...text.matchAll(/\S+/g)];
+
+  for (const match of words) {
+    const word = match[0];
+    const wordStart = match.index ?? 0;
+    const normalizedWord = normalizeForSearch(word);
+    const compactWord = compactNormalize(word);
+
+    for (const token of tokens) {
+      const compactToken = compactNormalize(token);
+      let compactIndex = -1;
+
+      if (normalizedWord.includes(token)) {
+        compactIndex = compactNormalize(normalizedWord).indexOf(compactToken);
+      } else if (compactWord.includes(compactToken)) {
+        compactIndex = compactWord.indexOf(compactToken);
+      }
+
+      if (compactIndex === -1) continue;
+
+      let seen = 0;
+      let visualStart = -1;
+      let visualEnd = -1;
+
+      for (let i = 0; i < word.length; i++) {
+        const charCompact = compactNormalize(word[i]);
+        if (!charCompact) continue;
+
+        if (seen === compactIndex && visualStart === -1) {
+          visualStart = wordStart + i;
+        }
+
+        seen += charCompact.length;
+
+        if (seen >= compactIndex + compactToken.length) {
+          visualEnd = wordStart + i + 1;
+          break;
+        }
+      }
+
+      if (visualStart !== -1 && visualEnd !== -1) {
+        ranges.push({ start: visualStart, end: visualEnd });
+      }
+    }
+  }
+
+  ranges.sort((a, b) => a.start - b.start);
+
+  const merged: Array<{ start: number; end: number }> = [];
+  for (const range of ranges) {
+    const last = merged[merged.length - 1];
+    if (last && range.start <= last.end) {
+      last.end = Math.max(last.end, range.end);
+    } else {
+      merged.push({ ...range });
+    }
+  }
+
+  return merged;
 }
 
-// Arabic-aware highlight (reused from your SearchResults logic)
-function normalizeForSearch(str: string): string {
-  return str
-    .toLowerCase()
-    .replace(/[^\w\s]/g, " ")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .trim();
-}
+function highlightText(text: string, query: string): React.ReactElement {
+  if (!query.trim()) return <span>{text}</span>;
 
-function highlightText(text: string, query: string): React.ReactNode {
-  if (!query.trim() || !text) return <span>{text}</span>;
-  const normalized = normalizeForSearch(text);
-  const normalizedQuery = normalizeForSearch(query);
-  const tokens = normalizedQuery.split(/\s+/).filter(Boolean);
-  if (!tokens.length) return <span>{text}</span>;
+  const ranges = findMatchRanges(text, query);
+  if (!ranges.length) return <span>{text}</span>;
 
-  const pattern = tokens
-    .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-    .join("|");
-  const regex = new RegExp(`(${pattern})`, "gi");
-  const parts = text.split(regex);
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
 
-  return (
-    <>
-      {parts.map((part, i) =>
-        regex.test(part) ? (
-          <mark
-            key={i}
-            className="bg-brand-accent/25 text-brand-accent rounded px-0.5 not-italic font-medium"
-          >
-            {part}
-          </mark>
-        ) : (
-          <span key={i}>{part}</span>
-        ),
-      )}
-    </>
-  );
+  ranges.forEach((range, index) => {
+    if (range.start > lastIndex) {
+      parts.push(
+        <span key={`text-${index}-${lastIndex}`}>
+          {text.slice(lastIndex, range.start)}
+        </span>,
+      );
+    }
+
+    parts.push(
+      <mark
+        key={`highlight-${index}-${range.start}`}
+        className="bg-brand-accent/25 text-brand-accent rounded px-0.5 not-italic font-medium"
+      >
+        {text.slice(range.start, range.end)}
+      </mark>,
+    );
+
+    lastIndex = range.end;
+  });
+
+  if (lastIndex < text.length) {
+    parts.push(
+      <span key={`text-end-${lastIndex}`}>{text.slice(lastIndex)}</span>,
+    );
+  }
+
+  return <>{parts}</>;
 }
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [hoveredResult, setHoveredResult] = useState<SearchResult | null>(null);
+  const [mobilePreview, setMobilePreview] = useState<SearchResult | null>(null);
+
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
@@ -111,11 +164,14 @@ export default function SearchPage() {
 
   useEffect(() => {
     const trimmed = debouncedQuery.trim();
+
     if (!trimmed) {
       clear();
       setHoveredResult(null);
+      setMobilePreview(null);
       return;
     }
+
     search(trimmed);
   }, [debouncedQuery, search, clear]);
 
@@ -124,17 +180,43 @@ export default function SearchPage() {
     setDebouncedQuery("");
     clear();
     setHoveredResult(null);
+    setMobilePreview(null);
   };
 
-  const filteredResults: SearchResult[] = results;
-
   const articleResults = results.filter((r) => r.type === "article");
-
   const isLoading = query.trim().length > 0 && (!isReady || isSearching);
   const hasQuery = query.trim().length > 0;
 
-  // Auto-select first result as preview
   const previewResult = hoveredResult ?? articleResults[0] ?? null;
+  const activeMobilePreview = mobilePreview;
+
+  const displaySnippets =
+    previewResult?.snippets && previewResult.snippets.length > 0
+      ? previewResult.snippets
+      : previewResult?.snippet
+        ? [previewResult.snippet]
+        : previewResult?.excerpt
+          ? [previewResult.excerpt]
+          : [];
+
+  const displayMatchCount =
+    previewResult?.matchCount && previewResult.matchCount > 0
+      ? previewResult.matchCount
+      : displaySnippets.length;
+
+  const mobileDisplaySnippets =
+    activeMobilePreview?.snippets && activeMobilePreview.snippets.length > 0
+      ? activeMobilePreview.snippets
+      : activeMobilePreview?.snippet
+        ? [activeMobilePreview.snippet]
+        : activeMobilePreview?.excerpt
+          ? [activeMobilePreview.excerpt]
+          : [];
+
+  const mobileDisplayMatchCount =
+    activeMobilePreview?.matchCount && activeMobilePreview.matchCount > 0
+      ? activeMobilePreview.matchCount
+      : mobileDisplaySnippets.length;
 
   return (
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
@@ -147,7 +229,6 @@ export default function SearchPage() {
 
       <main className="pt-24 pb-20">
         <div className="max-w-6xl mx-auto px-6">
-          {/* Header */}
           <div className="mb-10">
             <span className="text-xs font-mono text-brand-dim tracking-widest uppercase">
               PRETRAGA
@@ -160,7 +241,6 @@ export default function SearchPage() {
             </p>
           </div>
 
-          {/* Search input */}
           <div className="relative mb-6 max-w-3xl">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dim pointer-events-none" />
             <input
@@ -183,7 +263,6 @@ export default function SearchPage() {
             ) : null}
           </div>
 
-          {/* Result count */}
           {hasQuery && !isLoading && (
             <p className="text-xs text-brand-dim font-mono mb-4 uppercase tracking-widest">
               {articleResults.length}{" "}
@@ -191,7 +270,6 @@ export default function SearchPage() {
             </p>
           )}
 
-          {/* Empty / loading state */}
           {!hasQuery && (
             <div className="text-center py-24 text-brand-dim">
               <Search className="w-8 h-8 mx-auto mb-4 opacity-30" />
@@ -210,14 +288,13 @@ export default function SearchPage() {
             </div>
           )}
 
-          {/* TWO-PANEL RESULTS */}
           {!isLoading && hasQuery && articleResults.length > 0 && (
             <div className="grid md:grid-cols-[1fr_400px] gap-0 border border-white/10 rounded-xl overflow-hidden">
-              {/* LEFT: Result list */}
               <div className="toc-scroll divide-y divide-white/5 overflow-y-auto max-h-[600px]">
                 <AnimatePresence>
                   {articleResults.map((result, index) => {
                     const isActive = previewResult?.id === result.id;
+
                     return (
                       <motion.div
                         key={result.id}
@@ -225,7 +302,13 @@ export default function SearchPage() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.02 }}
                         onMouseEnter={() => setHoveredResult(result)}
-                        onClick={() => navigate(`/${result.url}`)}
+                        onClick={() => {
+                          if (window.innerWidth < 768) {
+                            setMobilePreview(result);
+                          } else {
+                            navigate(result.url);
+                          }
+                        }}
                         className={`px-5 py-4 cursor-pointer transition-colors group ${
                           isActive ? "bg-white/[0.04]" : "hover:bg-white/[0.02]"
                         }`}
@@ -239,7 +322,6 @@ export default function SearchPage() {
                             }`}
                           />
                           <div className="min-w-0">
-                            {/* Article title */}
                             <p
                               className={`text-sm font-medium leading-snug truncate transition-colors ${
                                 isActive
@@ -249,7 +331,6 @@ export default function SearchPage() {
                             >
                               {result.title}
                             </p>
-                            {/* Category */}
                             <p className="text-[10px] font-mono uppercase tracking-widest text-brand-dim mt-1">
                               {getCategoryLabel(result.url)}
                             </p>
@@ -261,8 +342,7 @@ export default function SearchPage() {
                 </AnimatePresence>
               </div>
 
-              {/* RIGHT: Preview panel */}
-              <div className="border-l border-white/10 bg-white/[0.015] p-6 hidden md:flex flex-col justify-start min-h-[300px]">
+              <div className="hidden md:flex border-l border-white/10 bg-white/[0.015] p-6 flex-col justify-start min-h-[300px]">
                 <AnimatePresence mode="wait">
                   {previewResult ? (
                     <motion.div
@@ -273,7 +353,6 @@ export default function SearchPage() {
                       transition={{ duration: 0.15 }}
                       className="flex flex-col gap-5 h-full"
                     >
-                      {/* Title */}
                       <div>
                         <p className="text-[10px] font-mono uppercase tracking-widest text-brand-dim mb-2">
                           Članak
@@ -283,7 +362,6 @@ export default function SearchPage() {
                         </h2>
                       </div>
 
-                      {/* Meta */}
                       <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-2 text-xs text-brand-dim">
                           <FolderOpen className="w-3.5 h-3.5 shrink-0" />
@@ -291,27 +369,35 @@ export default function SearchPage() {
                         </div>
                       </div>
 
-                      {/* Matched text snippet */}
-                      {(previewResult.snippet || previewResult.excerpt) && (
-                        <div className="flex-1">
-                          <p className="text-[10px] font-mono uppercase tracking-widest text-brand-dim mb-2">
+                      {displaySnippets.length > 0 && (
+                        <div className="flex-1 flex flex-col gap-2 min-h-0">
+                          <p className="text-[10px] font-mono uppercase tracking-widest text-brand-dim mb-1">
                             Pronađeno u tekstu
+                            {displayMatchCount > 0
+                              ? ` · ${displayMatchCount} ${
+                                  displayMatchCount === 1
+                                    ? "pogodak"
+                                    : "pogotka"
+                                }`
+                              : ""}
                           </p>
-                          <div className="text-xs text-brand-dim leading-relaxed bg-white/[0.03] border border-white/5 rounded-lg p-4">
-                            {highlightText(
-                              previewResult.snippet ??
-                                previewResult.excerpt ??
-                                "",
-                              query,
-                            )}
+
+                          <div className="toc-scroll flex-1 overflow-y-auto max-h-[320px] pr-1.5 flex flex-col gap-2.5">
+                            {displaySnippets.map((snippetText, i) => (
+                              <div
+                                key={i}
+                                className="text-xs text-brand-dim leading-relaxed bg-white/[0.03] border border-white/5 rounded-lg p-3 hover:bg-white/[0.05] transition-colors"
+                              >
+                                {highlightText(snippetText, query)}
+                              </div>
+                            ))}
                           </div>
                         </div>
                       )}
 
-                      {/* Open button */}
                       <button
                         type="button"
-                        onClick={() => navigate(`/${previewResult.url}`)}
+                        onClick={() => navigate(previewResult.url)}
                         className="mt-auto w-full py-2.5 text-xs font-medium uppercase tracking-widest border border-white/10 text-brand-dim hover:border-brand-accent hover:text-brand-accent rounded-lg transition-colors"
                       >
                         Otvori članak →
@@ -323,7 +409,6 @@ export default function SearchPage() {
             </div>
           )}
 
-          {/* No results */}
           {!isLoading && hasQuery && articleResults.length === 0 && (
             <div className="text-center py-24 text-brand-dim">
               <Search className="w-8 h-8 mx-auto mb-4 opacity-30" />
@@ -334,6 +419,87 @@ export default function SearchPage() {
           )}
         </div>
       </main>
+
+      <AnimatePresence>
+        {mobilePreview && activeMobilePreview && (
+          <>
+            <motion.div
+              className="fixed inset-0 z-40 bg-black/60 md:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobilePreview(null)}
+            />
+
+            <motion.div
+              className="fixed inset-x-0 bottom-0 z-50 md:hidden rounded-t-2xl border border-white/10 bg-[#0b0b0c] p-5 max-h-[78vh] flex flex-col"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 28, stiffness: 260 }}
+            >
+              <div className="w-10 h-1 rounded-full bg-white/15 mx-auto mb-4" />
+
+              <div className="flex items-start justify-between gap-4 mb-4">
+                <div>
+                  <p className="text-[10px] font-mono uppercase tracking-widest text-brand-dim mb-2">
+                    Članak
+                  </p>
+                  <h2 className="text-base font-serif font-medium text-white leading-snug">
+                    {highlightText(activeMobilePreview.title, query)}
+                  </h2>
+                  <p className="text-[10px] font-mono uppercase tracking-widest text-brand-dim mt-2">
+                    {getCategoryLabel(activeMobilePreview.url)}
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setMobilePreview(null)}
+                  className="shrink-0 rounded-md border border-white/10 p-2 text-brand-dim hover:text-white hover:border-white/20 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {mobileDisplaySnippets.length > 0 && (
+                <div className="flex-1 min-h-0 flex flex-col">
+                  <p className="text-[10px] font-mono uppercase tracking-widest text-brand-dim mb-2">
+                    Pronađeno u tekstu
+                    {mobileDisplayMatchCount > 0
+                      ? ` · ${mobileDisplayMatchCount} ${
+                          mobileDisplayMatchCount === 1 ? "pogodak" : "pogotka"
+                        }`
+                      : ""}
+                  </p>
+
+                  <div className="toc-scroll overflow-y-auto pr-1 flex flex-col gap-2.5">
+                    {mobileDisplaySnippets.map((snippetText, i) => (
+                      <div
+                        key={i}
+                        className="text-xs text-brand-dim leading-relaxed bg-white/[0.03] border border-white/5 rounded-lg p-3"
+                      >
+                        {highlightText(snippetText, query)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={() => {
+                  navigate(activeMobilePreview.url);
+                  setMobilePreview(null);
+                }}
+                className="mt-4 w-full py-3 text-xs font-medium uppercase tracking-widest border border-white/10 text-brand-dim hover:border-brand-accent hover:text-brand-accent rounded-lg transition-colors"
+              >
+                Otvori članak →
+              </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       <Footer />
     </div>

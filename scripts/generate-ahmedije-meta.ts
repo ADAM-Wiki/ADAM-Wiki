@@ -37,10 +37,17 @@ function stripMetaBlock(source: string): string {
 }
 
 function stripMdx(source: string): string {
-  return source
+  // 1. Capture the 'reference' attribute value from JSX tags before they are stripped
+  const withReferences = source.replace(
+    /<[A-Za-z0-9]+\s+[^>]*\breference=(?:"([^"]+)"|'([^']+)'|{([^}]+)})[^>]*>/g,
+    (_, double, single, brace) => ` ${double || single || brace} `,
+  );
+
+  // 2. Run the rest of the clean-up pipeline on the processed source
+  return withReferences
     .replace(/^import\s.+$/gm, " ")
     .replace(/^export\s.+$/gm, " ")
-    .replace(/<[^>]*>/g, " ")
+    .replace(/<[^>]*>/g, " ") // Now this safely deletes the brackets without losing the reference text
     .replace(/\{[^}]*\}/g, " ")
     .replace(/!\[.*?\]\(.*?\)/g, " ")
     .replace(/\[([^\]]+)\]\((.*?)\)/g, "$1")

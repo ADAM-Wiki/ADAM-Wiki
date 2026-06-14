@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { FileText } from "lucide-react";
+import { FileText, FolderOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { hadisMeta } from "../lib/generated/hadisMeta";
 import { hriscanstvoMeta } from "../lib/generated/hriscanstvoMeta";

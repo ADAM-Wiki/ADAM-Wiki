@@ -1,7 +1,11 @@
 import { motion } from "motion/react";
 import { FileText, ArrowRight, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { SearchResult } from "../utils/searchUtils";
+import {
+  normalizeForSearch,
+  getQueryTokens,
+  type SearchResult,
+} from "../utils/searchShared";
 
 interface SearchResultsProps {
   results: SearchResult[];
@@ -18,110 +22,14 @@ function cleanSnippet(text: string): string {
     .trim();
 }
 
-function normalizeForSearch(str: string): string {
-  const refs: string[] = [];
-
-  const normalizedDashes = str
-    .replace(/[\u2010\u2011\u2012\u2013\u2014\u2212]/g, "-")
-    .replace(/[:]\s*(\d+)\s*-\s*(\d+)/g, ":$1-$2");
-
-  const protectedStr = normalizedDashes.replace(/\b\d+:\d+(?:-\d+)?\b/g, (match) => {
-    const key = `quranrefplaceholder${refs.length}`;
-    refs.push(match.toLowerCase());
-    return ` ${key} `;
-  });
-
-  let normalized = protectedStr
-    .toLowerCase()
-    .replace(/\[([^\]]*)\]/g, "$1")
-    .replace(/[-/_]/g, " ")
-    .replace(/dž/gi, "dz")
-    .replace(/đ/gi, "d")
-    .replace(/dj/gi, "d")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^\p{L}\p{N}\s:]/gu, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  refs.forEach((ref, index) => {
-    normalized = normalized.replace(`quranrefplaceholder${index}`, ref);
-  });
-
-  return normalized;
-}
-
 function compactNormalize(str: string): string {
   return normalizeForSearch(str).replace(/\s+/g, "");
 }
 
-function expandArabicStyleQuery(query: string): string {
-  return query
-    .replace(/^(al|el|ibn|bin|abu|abd)(?=[a-z])/g, "$1 ")
-    .replace(/([a-z])(al|el|ibn|bin|abu|abd)(?=[a-z])/g, "$1 $2 ");
-}
-
-function expandSurahAliases(tokens: string[]): string[] {
-  const aliasMap: Record<string, string[]> = {
-    zilzal: ["zilzal", "zalzal", "zalzalah", "zalzala"],
-    zalzalah: ["zilzal", "zalzal", "zalzalah", "zalzala"],
-    baqara: ["baqara", "baqarah"],
-    fatiha: ["fatiha", "fatihah"],
-    ikhlas: ["ikhlas", "ihlas"],
-    yasin: ["yasin", "yaseen"],
-  };
-
-  const extra: string[] = [];
-
-  for (const token of tokens) {
-    const compact = token.replace(/\s+/g, "");
-    const stripped = compact.replace(/^(al|el|ez|az)/, "");
-
-    for (const aliases of Object.values(aliasMap)) {
-      if (aliases.includes(compact) || aliases.includes(stripped)) {
-        extra.push(...aliases);
-      }
-    }
-  }
-
-  return [...new Set(extra)];
-}
-
-function getQueryTokens(query: string): string[] {
-  const normalized = normalizeForSearch(query);
-  const referenceTokens = normalized.match(/\b\d+:\d+(?:-\d+)?\b/g) ?? [];
-
-  const expanded = expandArabicStyleQuery(
-    normalized.replace(/\b\d+:\d+(?:-\d+)?\b/g, " ")
-  );
-
-  const baseTokens = expanded.split(/\s+/).filter(Boolean);
-  const extra: string[] = [];
-
-  for (const token of baseTokens) {
-    if (
-      (token.startsWith("al") ||
-        token.startsWith("el") ||
-        token.startsWith("ez") ||
-        token.startsWith("az")) &&
-      token.length > 2
-    ) {
-      extra.push(token.slice(2));
-    }
-    if (token.startsWith("ibn") && token.length > 3) extra.push(token.slice(3));
-    if (token.startsWith("bin") && token.length > 3) extra.push(token.slice(3));
-    if (token.startsWith("abu") && token.length > 3) extra.push(token.slice(3));
-    if (token.startsWith("abd") && token.length > 3) extra.push(token.slice(3));
-  }
-
-  const aliasTokens = expandSurahAliases([...baseTokens, ...extra]);
-
-  return [...new Set([...referenceTokens, ...baseTokens, ...extra, ...aliasTokens])].filter(
-    (token) => token.length >= 2
-  );
-}
-
-function findMatchRanges(text: string, query: string): Array<{ start: number; end: number }> {
+function findMatchRanges(
+  text: string,
+  query: string,
+): Array<{ start: number; end: number }> {
   const tokens = getQueryTokens(query);
   if (!tokens.length) return [];
 
@@ -187,7 +95,7 @@ function findMatchRanges(text: string, query: string): Array<{ start: number; en
   return merged;
 }
 
-const highlightText = (text: string, query: string): React.ReactElement => {
+function highlightText(text: string, query: string): React.ReactElement {
   if (!query.trim()) return <span>{text}</span>;
 
   const ranges = findMatchRanges(text, query);
@@ -201,17 +109,17 @@ const highlightText = (text: string, query: string): React.ReactElement => {
       parts.push(
         <span key={`text-${index}-${lastIndex}`}>
           {text.slice(lastIndex, range.start)}
-        </span>
+        </span>,
       );
     }
 
     parts.push(
-      <span
+      <mark
         key={`highlight-${index}-${range.start}`}
-        className="text-blue-400 font-semibold"
+        className="bg-brand-accent/25 text-brand-accent rounded px-0.5 not-italic font-medium"
       >
         {text.slice(range.start, range.end)}
-      </span>
+      </mark>,
     );
 
     lastIndex = range.end;
@@ -219,14 +127,12 @@ const highlightText = (text: string, query: string): React.ReactElement => {
 
   if (lastIndex < text.length) {
     parts.push(
-      <span key={`text-end-${lastIndex}`}>
-        {text.slice(lastIndex)}
-      </span>
+      <span key={`text-end-${lastIndex}`}>{text.slice(lastIndex)}</span>,
     );
   }
 
   return <>{parts}</>;
-};
+}
 
 export default function SearchResults({
   results,
@@ -266,7 +172,8 @@ export default function SearchResults({
     >
       <div className="p-4 border-b border-white/5">
         <p className="text-sm text-brand-dim">
-          {results.length} rezultat{results.length !== 1 ? "a" : ""} za "{query}"
+          {results.length} rezultat{results.length !== 1 ? "a" : ""} za "{query}
+          "
         </p>
       </div>
 
@@ -294,8 +201,8 @@ export default function SearchResults({
                       result.type === "article"
                         ? "bg-blue-500/20 text-blue-400"
                         : result.type === "category"
-                        ? "bg-green-500/20 text-green-400"
-                        : "bg-purple-500/20 text-purple-400"
+                          ? "bg-green-500/20 text-green-400"
+                          : "bg-purple-500/20 text-purple-400"
                     }`}
                   >
                     {result.type}
@@ -304,7 +211,10 @@ export default function SearchResults({
 
                 {(result.snippet || result.excerpt) && (
                   <p className="text-xs text-brand-dim leading-relaxed line-clamp-2">
-                    {highlightText(cleanSnippet(result.snippet || result.excerpt || ""), query)}
+                    {highlightText(
+                      cleanSnippet(result.snippet || result.excerpt || ""),
+                      query,
+                    )}
                   </p>
                 )}
               </div>

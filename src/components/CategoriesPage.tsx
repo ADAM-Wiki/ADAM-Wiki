@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { FileText } from "lucide-react";
+import { FileText, FolderOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -68,7 +68,7 @@ export default function CategoriesPage() {
                   }`}
                   onClick={() => handleTopicClick(topic)}
                 >
-                  <FileText className="w-5 h-5 text-brand-dim group-hover:text-brand-accent transition-colors" />
+                  <FolderOpen className="w-5 h-5 text-brand-dim group-hover:text-brand-accent transition-colors" />
                   <span className="text-xs font-medium tracking-widest transition-colors group-hover:text-white uppercase">
                     {topic}
                   </span>

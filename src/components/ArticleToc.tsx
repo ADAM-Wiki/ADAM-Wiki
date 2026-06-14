@@ -8,53 +8,6 @@ interface ArticleTocProps {
   onActiveChange: (id: string) => void;
 }
 
-let scrollAnimationFrame: number | null = null;
-
-function easeOutCubic(t: number) {
-  return 1 - Math.pow(1 - t, 3);
-}
-
-function animateScrollTo(targetY: number, duration = 550) {
-  if (scrollAnimationFrame !== null) {
-    cancelAnimationFrame(scrollAnimationFrame);
-  }
-
-  const prefersReducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)"
-  ).matches;
-
-  const maxScrollY = Math.max(
-    0,
-    document.documentElement.scrollHeight - window.innerHeight
-  );
-
-  const safeTargetY = Math.min(Math.max(0, targetY), maxScrollY);
-
-  if (prefersReducedMotion) {
-    window.scrollTo(0, safeTargetY);
-    return;
-  }
-
-  const startY = window.scrollY;
-  const distance = safeTargetY - startY;
-  const startTime = performance.now();
-
-  const step = (currentTime: number) => {
-    const progress = Math.min((currentTime - startTime) / duration, 1);
-    const eased = easeOutCubic(progress);
-
-    window.scrollTo(0, startY + distance * eased);
-
-    if (progress < 1) {
-      scrollAnimationFrame = requestAnimationFrame(step);
-    } else {
-      scrollAnimationFrame = null;
-    }
-  };
-
-  scrollAnimationFrame = requestAnimationFrame(step);
-}
-
 export default function ArticleToc({
   tocItems,
   activeHeading,
@@ -62,9 +15,12 @@ export default function ArticleToc({
 }: ArticleTocProps) {
   const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const navRef = useRef<HTMLElement | null>(null);
+  const isProgrammaticScrollRef = useRef(false);
+  const pendingHeadingRef = useRef<string | null>(null);
 
   const arabicNumber = useMemo(() => new Intl.NumberFormat("ar-u-nu-arab"), []);
 
+  // Auto-scroll TOC sidebar container to keep active items in view
   useEffect(() => {
     if (tocItems.length === 0) return;
 
@@ -85,14 +41,6 @@ export default function ArticleToc({
     });
   }, [activeHeading, tocItems]);
 
-  useEffect(() => {
-    return () => {
-      if (scrollAnimationFrame !== null) {
-        cancelAnimationFrame(scrollAnimationFrame);
-      }
-    };
-  }, []);
-
   if (tocItems.length === 0) return null;
 
   const truncateText = (text: string, maxLength = 32) => {
@@ -100,19 +48,22 @@ export default function ArticleToc({
     return `${text.slice(0, maxLength).trimEnd()}...`;
   };
 
-const handleClick = (id: string) => {
-  const el = document.getElementById(id);
-  if (!el) return;
+  const handleClick = (id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
 
-  onActiveChange(id);
-  window.history.replaceState(null, "", `#${id}`);
+    isProgrammaticScrollRef.current = true;
+    pendingHeadingRef.current = id;
 
-  // Calculate position with offset for sticky header (110px)
-  const elementPosition = el.getBoundingClientRect().top;
-  const offsetPosition = elementPosition + window.scrollY - 110;
+    onActiveChange(id);
+    window.history.replaceState(null, "", `#${id}`);
 
-  smoothScrollTo(offsetPosition, 550);
-};
+    // Pass the element and set the duration (e.g., 800ms)
+    smoothScrollTo(el, 110, 800, () => {
+      isProgrammaticScrollRef.current = false;
+      pendingHeadingRef.current = null;
+    });
+  };
 
   const shouldScroll = tocItems.length > 10;
 
@@ -123,7 +74,9 @@ const handleClick = (id: string) => {
           ref={navRef}
           aria-label="Table of contents"
           className={`toc-scroll space-y-1 pr-1 ${
-            shouldScroll ? "toc-fade max-h-[420px] overflow-y-auto pt-4 pb-3" : ""
+            shouldScroll
+              ? "toc-fade max-h-[420px] overflow-y-auto pt-4 pb-3"
+              : ""
           }`}
         >
           {tocItems.map((item, index) => {

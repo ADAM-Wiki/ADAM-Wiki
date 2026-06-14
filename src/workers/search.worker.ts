@@ -13,7 +13,6 @@ import { odgovoriMeta } from "../lib/generated/odgovoriMeta";
 import { opovrgavanjeMeta } from "../lib/generated/opovrgavanjeMeta";
 import {
   normalizeForSearch,
-  getHighlightVariants,
   getQueryTokens,
   type SearchResult,
 } from "../utils/searchShared";
@@ -39,8 +38,7 @@ interface SearchDocument {
   type: "category" | "article" | "page";
   url: string;
   excerpt: string;
-  content: string;
-  originalContent: string;
+  content: string; // Keeps only raw text to significantly save worker memory
   tags: string;
   chunkIndex: number;
 }
@@ -118,12 +116,11 @@ const searchDocuments: SearchDocument[] = [
     return {
       id: item.id,
       articleId: item.id,
-      title: normalizeForSearch(item.title),
+      title: item.title,
       type: item.type,
       url: item.url,
       excerpt: item.excerpt ?? "",
-      content: normalizeForSearch(item.excerpt ?? ""),
-      originalContent: item.excerpt ?? "",
+      content: item.excerpt ?? "",
       tags: "",
       chunkIndex: 0,
     };
@@ -133,12 +130,11 @@ const searchDocuments: SearchDocument[] = [
     return {
       id: item.id,
       articleId: item.id,
-      title: normalizeForSearch(item.title),
+      title: item.title,
       type: item.type,
       url: item.url,
       excerpt: item.excerpt ?? "",
-      content: normalizeForSearch(item.excerpt ?? ""),
-      originalContent: item.excerpt ?? "",
+      content: item.excerpt ?? "",
       tags: "",
       chunkIndex: 0,
     };
@@ -161,13 +157,12 @@ const searchDocuments: SearchDocument[] = [
       return article.searchChunks.map((part, index) => ({
         id: `${baseId}::${index}`,
         articleId: baseId,
-        title: normalizeForSearch(article.title),
+        title: article.title,
         type: "article" as const,
         url: `${basePath}/${article.slug}`,
         excerpt: article.description,
-        content: normalizeForSearch(part),
-        originalContent: part,
-        tags: normalizeForSearch(article.tags?.join(" ") ?? ""),
+        content: part,
+        tags: article.tags?.join(" ") ?? "",
         chunkIndex: index,
       }));
     }),
@@ -186,9 +181,10 @@ const miniSearch = new MiniSearch<SearchDocument>({
     "url",
     "excerpt",
     "content",
-    "originalContent",
     "chunkIndex",
   ],
+  // Tokenize and normalize dynamically on index lookup
+  tokenize: (text) => getQueryTokens(text),
 });
 
 miniSearch.addAll(searchDocuments);
@@ -250,8 +246,26 @@ function buildSnippet(
     return text.length > maxLen ? `${text.slice(0, maxLen).trim()}...` : text;
   }
 
-  const start = Math.max(0, matchIndex - 70);
-  const end = Math.min(text.length, matchIndex + matchLength + 130);
+  // Calculate safe boundaries
+  let start = Math.max(0, matchIndex - 70);
+  let end = Math.min(text.length, matchIndex + matchLength + 130);
+
+  // Prevent slicing words at the start of snippet
+  if (start > 0) {
+    const nextSpace = text.indexOf(" ", start);
+    if (nextSpace !== -1 && nextSpace < matchIndex) {
+      start = nextSpace + 1;
+    }
+  }
+
+  // Prevent slicing words at the end of snippet
+  if (end < text.length) {
+    const prevSpace = text.lastIndexOf(" ", end);
+    if (prevSpace !== -1 && prevSpace > matchIndex + matchLength) {
+      end = prevSpace;
+    }
+  }
+
   const snippet = text.slice(start, end).trim();
   return `${start > 0 ? "..." : ""}${snippet}${end < text.length ? "..." : ""}`;
 }
@@ -276,8 +290,14 @@ self.onmessage = (
   }
 
   const tokens = getQueryTokens(query).filter((t: string) => t.length >= 2);
-  const expandedQuery = [...new Set(getHighlightVariants(query))].join(" ");
-  const hits = miniSearch.search(expandedQuery, getMiniSearchOptions(query));
+  if (!tokens.length) {
+    self.postMessage({ type: "RESULTS", requestId, results: [] });
+    return;
+  }
+
+  // Unified list of fully normalized and expanded search terms
+  const searchString = tokens.join(" ");
+  const hits = miniSearch.search(searchString, getMiniSearchOptions(query));
   const minScore = getMinScore(query);
   const filteredHits = hits.filter((hit) => hit.score >= minScore);
 
@@ -298,12 +318,13 @@ self.onmessage = (
     const existing = grouped.get(base.id);
     const snippet =
       base.type === "article"
-        ? buildSnippet(doc.originalContent, tokens)
+        ? buildSnippet(doc.content, tokens) // doc.content is raw content
         : base.excerpt;
 
     const score = hit.score + (base.type === "article" ? 5 : 0);
 
-    if (!existing || score > existing.relevance) {
+    if (!existing) {
+      // First match for this article/page
       grouped.set(base.id, {
         id: base.id,
         title: base.title,
@@ -311,20 +332,38 @@ self.onmessage = (
         url: base.url,
         excerpt: base.excerpt,
         snippet,
+        snippets: [snippet],
         relevance: score,
       });
+    } else if (base.type === "article") {
+      // For articles, collect multiple snippets from different chunks
+      // but keep the highest relevance score
+      if (score > existing.relevance) {
+        existing.relevance = score;
+      }
+      if (
+        snippet &&
+        existing.snippets &&
+        !existing.snippets.includes(snippet) &&
+        existing.snippets.length < 3
+      ) {
+        existing.snippets.push(snippet);
+      }
+    } else if (score > existing.relevance) {
+      // For non-articles (categories, pages), keep highest relevance
+      existing.relevance = score;
     }
   }
 
   const articleResults = Array.from(grouped.values())
     .filter((r) => r.type === "article")
     .sort((a, b) => b.relevance - a.relevance)
-    .slice(0, limit - 3);
+    .slice(0, limit);
 
   const otherResults = Array.from(grouped.values())
     .filter((r) => r.type !== "article")
     .sort((a, b) => b.relevance - a.relevance)
-    .slice(0, 3);
+    .slice(0, Math.min(3, limit - articleResults.length));
 
   const results = [...articleResults, ...otherResults]
     .sort((a, b) => b.relevance - a.relevance)
