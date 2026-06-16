@@ -58,15 +58,9 @@ export default function MuhammedPage() {
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
       <Helmet>
         <title>Muhammed | {SITE_NAME}</title>
-        <meta
-          name="description"
-          content="Islamski muhammedi i njihova naučna objašnjenja. Istražite autentične muhammede Poslanika Muhammeda s.a.v.s."
-        />
+        <meta name="description" content="Poslanik Muhammed ﷺ" />
         <meta property="og:title" content={`Muhammed | ${SITE_NAME}`} />
-        <meta
-          property="og:description"
-          content="Islamski muhammedi i njihova naučna objašnjenja."
-        />
+        <meta property="og:description" content="Poslanik Muhammed ﷺ" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`${SITE_URL}/categories/muhammed`} />
         <meta
@@ -75,10 +69,7 @@ export default function MuhammedPage() {
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`Muhammed | ${SITE_NAME}`} />
-        <meta
-          name="twitter:description"
-          content="Islamski muhammedi i njihova naučna objašnjenja."
-        />
+        <meta name="twitter:description" content="Poslanik Muhammed ﷺ" />
       </Helmet>
 
       <Navbar onSearch={setSearchQuery} />
@@ -86,41 +77,15 @@ export default function MuhammedPage() {
       <main className="pt-20">
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="flex items-center gap-4 mb-12">
-              <span className="text-xs font-mono text-brand-dim">HADIS</span>
+            <div className="flex items-center gap-4 ">
+              <span className="text-xs font-mono text-brand-dim">MUHAMMED</span>
               <h1 className="text-3xl font-serif font-medium">
-                Kategorija: Muhammedi
+                Kategorija: Muhammed ﷺ
               </h1>
             </div>
 
             <div className="prose prose-invert max-w-none">
-              <div className="grid md:grid-cols-2 gap-8 mb-12">
-                <div className="p-6 border border-white/5 bg-white/[0.01] rounded-lg">
-                  <h3 className="text-xl font-medium mb-4 text-white">
-                    Šta je Muhammed?
-                  </h3>
-                  <p className="text-brand-dim leading-relaxed">
-                    Muhammed je izvještaj o riječima, postupcima ili odobrenjima
-                    Poslanika Muhammeda (s.a.v.s.). Svaki muhammed se sastoji od
-                    dva dijela: isnada (lanac prenosilaca) i matna (tekst
-                    muhammeda).
-                  </p>
-                </div>
-
-                <div className="p-6 border border-white/5 bg-white/[0.01] rounded-lg">
-                  <h3 className="text-xl font-medium mb-4 text-white">
-                    Vrste Muhammeda
-                  </h3>
-                  <ul className="text-brand-dim space-y-2">
-                    <li>• Sahih - Autentični muhammedi</li>
-                    <li>• Hasan - Dobri muhammedi</li>
-                    <li>• Da'if - Slabi muhammedi</li>
-                    <li>• Maudhu' - Izmišljeni muhammedi</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="border-t border-white/5 pt-12">
+              <div className="pt-12">
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 not-prose">
                   {paginatedArticles.map((article: GeneratedMuhammedMeta) => {
                     const hasWordCount =
@@ -138,10 +103,6 @@ export default function MuhammedPage() {
                         <h4 className="text-lg font-medium mb-3 text-white group-hover:text-brand-accent transition-colors leading-snug">
                           {article.title}
                         </h4>
-
-                        <p className="text-sm text-brand-dim leading-relaxed mb-5 line-clamp-3">
-                          {article.description}
-                        </p>
 
                         <div className="flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-widest text-brand-dim font-medium">
                           <span>{formatDate(article.date)}</span>

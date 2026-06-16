@@ -14,10 +14,7 @@ export default function ArticleLightbox({
       className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
       onClick={onClose}
     >
-      <div
-        className="max-w-5xl w-full"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="max-w-5xl w-full" onClick={(e) => e.stopPropagation()}>
         <img
           src={url}
           alt={caption}
@@ -25,9 +22,7 @@ export default function ArticleLightbox({
         />
 
         {caption && (
-          <p className="mt-4 text-center text-sm text-brand-dim">
-            {caption}
-          </p>
+          <p className="mt-4 text-center text-sm text-brand-dim">{caption}</p>
         )}
       </div>
 

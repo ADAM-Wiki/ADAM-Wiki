@@ -83,41 +83,15 @@ export default function HadisPage() {
       <main className="pt-20">
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="flex items-center gap-4 mb-12">
+            <div className="flex items-center gap-4 ">
               <span className="text-xs font-mono text-brand-dim">HADIS</span>
               <h1 className="text-3xl font-serif font-medium">
-                Kategorija: Hadisi
+                Kategorija: Hadis
               </h1>
             </div>
 
             <div className="prose prose-invert max-w-none">
-              <div className="grid md:grid-cols-2 gap-8 mb-12">
-                <div className="p-6 border border-white/5 bg-white/[0.01] rounded-lg">
-                  <h3 className="text-xl font-medium mb-4 text-white">
-                    Šta je Hadis?
-                  </h3>
-                  <p className="text-brand-dim leading-relaxed">
-                    Hadis je izvještaj o riječima, postupcima ili odobrenjima
-                    Poslanika Muhammeda (s.a.v.s.). Svaki hadis se sastoji od
-                    dva dijela: isnada (lanac prenosilaca) i matna (tekst
-                    hadisa).
-                  </p>
-                </div>
-
-                <div className="p-6 border border-white/5 bg-white/[0.01] rounded-lg">
-                  <h3 className="text-xl font-medium mb-4 text-white">
-                    Vrste Hadisa
-                  </h3>
-                  <ul className="text-brand-dim space-y-2">
-                    <li>• Sahih - Autentični hadisi</li>
-                    <li>• Hasan - Dobri hadisi</li>
-                    <li>• Da'if - Slabi hadisi</li>
-                    <li>• Maudhu' - Izmišljeni hadisi</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="border-t border-white/5 pt-12">
+              <div className="pt-12">
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 not-prose">
                   {paginatedArticles.map((article: GeneratedHadisMeta) => {
                     const hasWordCount =
@@ -135,10 +109,6 @@ export default function HadisPage() {
                         <h4 className="text-lg font-medium mb-3 text-white group-hover:text-brand-accent transition-colors leading-snug">
                           {article.title}
                         </h4>
-
-                        <p className="text-sm text-brand-dim leading-relaxed mb-5 line-clamp-3">
-                          {article.description}
-                        </p>
 
                         <div className="flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-widest text-brand-dim font-medium">
                           <span>{formatDate(article.date)}</span>

@@ -58,15 +58,9 @@ export default function OdgovoriPage() {
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
       <Helmet>
         <title>Odgovori | {SITE_NAME}</title>
-        <meta
-          name="description"
-          content="Islamski odgovorii i njihova naučna objašnjenja. Istražite autentične odgovorie Poslanika Muhammeda s.a.v.s."
-        />
+        <meta name="description" content="Odgovori" />
         <meta property="og:title" content={`Odgovori | ${SITE_NAME}`} />
-        <meta
-          property="og:description"
-          content="Islamski odgovorii i njihova naučna objašnjenja."
-        />
+        <meta property="og:description" content="Odgovori" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`${SITE_URL}/categories/odgovori`} />
         <meta
@@ -75,10 +69,7 @@ export default function OdgovoriPage() {
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`Odgovori | ${SITE_NAME}`} />
-        <meta
-          name="twitter:description"
-          content="Islamski odgovorii i njihova naučna objašnjenja."
-        />
+        <meta name="twitter:description" content="Odgovori" />
       </Helmet>
 
       <Navbar onSearch={setSearchQuery} />
@@ -86,41 +77,15 @@ export default function OdgovoriPage() {
       <main className="pt-20">
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="flex items-center gap-4 mb-12">
-              <span className="text-xs font-mono text-brand-dim">HADIS</span>
+            <div className="flex items-center gap-4 ">
+              <span className="text-xs font-mono text-brand-dim">ODGOVORI</span>
               <h1 className="text-3xl font-serif font-medium">
-                Kategorija: Odgovorii
+                Kategorija: Odgovori
               </h1>
             </div>
 
             <div className="prose prose-invert max-w-none">
-              <div className="grid md:grid-cols-2 gap-8 mb-12">
-                <div className="p-6 border border-white/5 bg-white/[0.01] rounded-lg">
-                  <h3 className="text-xl font-medium mb-4 text-white">
-                    Šta je Odgovori?
-                  </h3>
-                  <p className="text-brand-dim leading-relaxed">
-                    Odgovori je izvještaj o riječima, postupcima ili odobrenjima
-                    Poslanika Muhammeda (s.a.v.s.). Svaki odgovori se sastoji od
-                    dva dijela: isnada (lanac prenosilaca) i matna (tekst
-                    odgovoria).
-                  </p>
-                </div>
-
-                <div className="p-6 border border-white/5 bg-white/[0.01] rounded-lg">
-                  <h3 className="text-xl font-medium mb-4 text-white">
-                    Vrste Odgovoria
-                  </h3>
-                  <ul className="text-brand-dim space-y-2">
-                    <li>• Sahih - Autentični odgovorii</li>
-                    <li>• Hasan - Dobri odgovorii</li>
-                    <li>• Da'if - Slabi odgovorii</li>
-                    <li>• Maudhu' - Izmišljeni odgovorii</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="border-t border-white/5 pt-12">
+              <div className="pt-12">
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 not-prose">
                   {paginatedArticles.map((article: GeneratedOdgovoriMeta) => {
                     const hasWordCount =
@@ -138,10 +103,6 @@ export default function OdgovoriPage() {
                         <h4 className="text-lg font-medium mb-3 text-white group-hover:text-brand-accent transition-colors leading-snug">
                           {article.title}
                         </h4>
-
-                        <p className="text-sm text-brand-dim leading-relaxed mb-5 line-clamp-3">
-                          {article.description}
-                        </p>
 
                         <div className="flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-widest text-brand-dim font-medium">
                           <span>{formatDate(article.date)}</span>

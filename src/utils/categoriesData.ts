@@ -6,5 +6,4 @@ export const topics: string[] = [
   "HRIŠĆANSTVO",
   "ISLAM",
   "ISTORIJA",
-  "MUHAMMED",
 ];

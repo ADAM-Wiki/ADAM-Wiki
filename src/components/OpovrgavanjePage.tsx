@@ -57,16 +57,10 @@ export default function OpovrgavanjePage() {
   return (
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
       <Helmet>
-        <title>Opovrgavanje | {SITE_NAME}</title>
-        <meta
-          name="description"
-          content="Islamski opovrgavanjei i njihova naučna objašnjenja. Istražite autentične opovrgavanjee Poslanika Muhammeda s.a.v.s."
-        />
+        <title>Opovrgavanje Šija | {SITE_NAME}</title>
+        <meta name="description" content="Opovrgavanje Šija" />
         <meta property="og:title" content={`Opovrgavanje | ${SITE_NAME}`} />
-        <meta
-          property="og:description"
-          content="Islamski opovrgavanjei i njihova naučna objašnjenja."
-        />
+        <meta property="og:description" content="Opovrgavanje Šija" />
         <meta property="og:type" content="website" />
         <meta
           property="og:url"
@@ -78,10 +72,7 @@ export default function OpovrgavanjePage() {
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`Opovrgavanje | ${SITE_NAME}`} />
-        <meta
-          name="twitter:description"
-          content="Islamski opovrgavanjei i njihova naučna objašnjenja."
-        />
+        <meta name="twitter:description" content="Opovrgavanje Šija" />
       </Helmet>
 
       <Navbar onSearch={setSearchQuery} />
@@ -89,41 +80,17 @@ export default function OpovrgavanjePage() {
       <main className="pt-20">
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="flex items-center gap-4 mb-12">
-              <span className="text-xs font-mono text-brand-dim">HADIS</span>
+            <div className="flex items-center gap-4 ">
+              <span className="text-xs font-mono text-brand-dim">
+                OPOVRGAVANJE ŠIJA
+              </span>
               <h1 className="text-3xl font-serif font-medium">
-                Kategorija: Opovrgavanjei
+                Kategorija: Opovrgavanje Šija
               </h1>
             </div>
 
             <div className="prose prose-invert max-w-none">
-              <div className="grid md:grid-cols-2 gap-8 mb-12">
-                <div className="p-6 border border-white/5 bg-white/[0.01] rounded-lg">
-                  <h3 className="text-xl font-medium mb-4 text-white">
-                    Šta je Opovrgavanje?
-                  </h3>
-                  <p className="text-brand-dim leading-relaxed">
-                    Opovrgavanje je izvještaj o riječima, postupcima ili
-                    odobrenjima Poslanika Muhammeda (s.a.v.s.). Svaki
-                    opovrgavanje se sastoji od dva dijela: isnada (lanac
-                    prenosilaca) i matna (tekst opovrgavanjea).
-                  </p>
-                </div>
-
-                <div className="p-6 border border-white/5 bg-white/[0.01] rounded-lg">
-                  <h3 className="text-xl font-medium mb-4 text-white">
-                    Vrste Opovrgavanjea
-                  </h3>
-                  <ul className="text-brand-dim space-y-2">
-                    <li>• Sahih - Autentični opovrgavanjei</li>
-                    <li>• Hasan - Dobri opovrgavanjei</li>
-                    <li>• Da'if - Slabi opovrgavanjei</li>
-                    <li>• Maudhu' - Izmišljeni opovrgavanjei</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="border-t border-white/5 pt-12">
+              <div className="pt-12">
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 not-prose">
                   {paginatedArticles.map(
                     (article: GeneratedOpovrgavanjeMeta) => {
@@ -142,10 +109,6 @@ export default function OpovrgavanjePage() {
                           <h4 className="text-lg font-medium mb-3 text-white group-hover:text-brand-accent transition-colors leading-snug">
                             {article.title}
                           </h4>
-
-                          <p className="text-sm text-brand-dim leading-relaxed mb-5 line-clamp-3">
-                            {article.description}
-                          </p>
 
                           <div className="flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-widest text-brand-dim font-medium">
                             <span>{formatDate(article.date)}</span>

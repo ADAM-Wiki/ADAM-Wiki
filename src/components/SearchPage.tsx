@@ -158,6 +158,22 @@ export default function SearchPage() {
   }, []);
 
   useEffect(() => {
+    if (!mobilePreview) {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+      return;
+    }
+
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [mobilePreview]);
+
+  useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedQuery(query), 200);
     return () => window.clearTimeout(timer);
   }, [query]);
@@ -354,10 +370,7 @@ export default function SearchPage() {
                       className="flex flex-col gap-5 h-full"
                     >
                       <div>
-                        <p className="text-[10px] font-mono uppercase tracking-widest text-brand-dim mb-2">
-                          Članak
-                        </p>
-                        <h2 className="text-base font-serif font-medium text-white leading-snug">
+                        <h2 className="text-base font-bold text-brand-text leading-snug">
                           {highlightText(previewResult.title, query)}
                         </h2>
                       </div>
@@ -442,10 +455,7 @@ export default function SearchPage() {
 
               <div className="flex items-start justify-between gap-4 mb-4">
                 <div>
-                  <p className="text-[10px] font-mono uppercase tracking-widest text-brand-dim mb-2">
-                    Članak
-                  </p>
-                  <h2 className="text-base font-serif font-medium text-white leading-snug">
+                  <h2 className="text-base font-bold text-brand-texte leading-snug">
                     {highlightText(activeMobilePreview.title, query)}
                   </h2>
                   <p className="text-[10px] font-mono uppercase tracking-widest text-brand-dim mt-2">

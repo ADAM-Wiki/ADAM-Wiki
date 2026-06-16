@@ -55,15 +55,9 @@ export default function NaukaPage() {
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
       <Helmet>
         <title>Nauka | {SITE_NAME}</title>
-        <meta
-          name="description"
-          content="Islamski naukai i njihova naučna objašnjenja. Istražite autentične naukae Poslanika Muhammeda s.a.v.s."
-        />
+        <meta name="description" content="Nauka" />
         <meta property="og:title" content={`Nauka | ${SITE_NAME}`} />
-        <meta
-          property="og:description"
-          content="Islamski naukai i njihova naučna objašnjenja."
-        />
+        <meta property="og:description" content="Nauka" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`${SITE_URL}/categories/nauka`} />
         <meta
@@ -72,10 +66,7 @@ export default function NaukaPage() {
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`Nauka | ${SITE_NAME}`} />
-        <meta
-          name="twitter:description"
-          content="Islamski naukai i njihova naučna objašnjenja."
-        />
+        <meta name="twitter:description" content="Nauka" />
       </Helmet>
 
       <Navbar onSearch={setSearchQuery} />
@@ -83,41 +74,15 @@ export default function NaukaPage() {
       <main className="pt-20">
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="flex items-center gap-4 mb-12">
-              <span className="text-xs font-mono text-brand-dim">HADIS</span>
+            <div className="flex items-center gap-4 ">
+              <span className="text-xs font-mono text-brand-dim">NAUKA</span>
               <h1 className="text-3xl font-serif font-medium">
-                Kategorija: Naukai
+                Kategorija: Nauka
               </h1>
             </div>
 
             <div className="prose prose-invert max-w-none">
-              <div className="grid md:grid-cols-2 gap-8 mb-12">
-                <div className="p-6 border border-white/5 bg-white/[0.01] rounded-lg">
-                  <h3 className="text-xl font-medium mb-4 text-white">
-                    Šta je Nauka?
-                  </h3>
-                  <p className="text-brand-dim leading-relaxed">
-                    Nauka je izvještaj o riječima, postupcima ili odobrenjima
-                    Poslanika Muhammeda (s.a.v.s.). Svaki nauka se sastoji od
-                    dva dijela: isnada (lanac prenosilaca) i matna (tekst
-                    naukaa).
-                  </p>
-                </div>
-
-                <div className="p-6 border border-white/5 bg-white/[0.01] rounded-lg">
-                  <h3 className="text-xl font-medium mb-4 text-white">
-                    Vrste Naukaa
-                  </h3>
-                  <ul className="text-brand-dim space-y-2">
-                    <li>• Sahih - Autentični naukai</li>
-                    <li>• Hasan - Dobri naukai</li>
-                    <li>• Da'if - Slabi naukai</li>
-                    <li>• Maudhu' - Izmišljeni naukai</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="border-t border-white/5 pt-12">
+              <div className="pt-12">
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 not-prose">
                   {paginatedArticles.map((article: GeneratedNaukaMeta) => {
                     const hasWordCount =
@@ -135,10 +100,6 @@ export default function NaukaPage() {
                         <h4 className="text-lg font-medium mb-3 text-white group-hover:text-brand-accent transition-colors leading-snug">
                           {article.title}
                         </h4>
-
-                        <p className="text-sm text-brand-dim leading-relaxed mb-5 line-clamp-3">
-                          {article.description}
-                        </p>
 
                         <div className="flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-widest text-brand-dim font-medium">
                           <span>{formatDate(article.date)}</span>

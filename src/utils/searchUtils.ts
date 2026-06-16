@@ -486,7 +486,11 @@ export function searchContent(query: string, limit = 20): SearchResult[] {
   if (!tokens.length) return [];
 
   const searchString = tokens.join(" ");
-  const hits = miniSearch.search(searchString, getMiniSearchOptions(query));
+  const options = {
+    ...(getMiniSearchOptions(query) as any),
+    limit: Math.max(limit * 10, 100),
+  } as any;
+  const hits = miniSearch.search(searchString, options);
 
   const minScore = getMinScore(query);
   const filteredHits = hits.filter((hit) => hit.score >= minScore);
@@ -497,6 +501,7 @@ export function searchContent(query: string, limit = 20): SearchResult[] {
     {
       base: BaseSearchData;
       relevance: number;
+      hits: number;
     }
   >();
 
@@ -514,14 +519,18 @@ export function searchContent(query: string, limit = 20): SearchResult[] {
       groupedDocs.set(base.id, {
         base,
         relevance: score,
+        hits: 1,
       });
-    } else if (score > existing.relevance) {
-      existing.relevance = score;
+    } else {
+      existing.hits += 1;
+      if (score > existing.relevance) {
+        existing.relevance = score;
+      }
     }
   }
 
   const groupedResults: SearchResult[] = Array.from(groupedDocs.values()).map(
-    ({ base, relevance }) => {
+    ({ base, relevance, hits }) => {
       const mergedText =
         base.type === "article"
           ? (allChunksByArticle.get(base.id) ?? []).join(" ")
@@ -554,7 +563,7 @@ export function searchContent(query: string, limit = 20): SearchResult[] {
             ? [fallbackSnippet]
             : [];
 
-      const matchCount = snippets.length;
+      const matchCount = hits;
 
       return {
         id: base.id,
@@ -578,7 +587,7 @@ export function searchContent(query: string, limit = 20): SearchResult[] {
       }
       return b.relevance - a.relevance;
     })
-    .slice(0, limit - 3);
+    .slice(0, limit);
 
   const otherResults = groupedResults
     .filter((r) => r.type !== "article")

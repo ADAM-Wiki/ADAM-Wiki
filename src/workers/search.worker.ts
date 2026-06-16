@@ -297,7 +297,11 @@ self.onmessage = (
 
   // Unified list of fully normalized and expanded search terms
   const searchString = tokens.join(" ");
-  const hits = miniSearch.search(searchString, getMiniSearchOptions(query));
+  const options = {
+    ...(getMiniSearchOptions(query) as any),
+    limit: Math.max(limit * 10, 100),
+  } as any;
+  const hits = miniSearch.search(searchString, options);
   const minScore = getMinScore(query);
   const filteredHits = hits.filter((hit) => hit.score >= minScore);
 
@@ -332,26 +336,31 @@ self.onmessage = (
         url: base.url,
         excerpt: base.excerpt,
         snippet,
-        snippets: [snippet],
+        snippets: snippet ? [snippet] : [],
         relevance: score,
+        matchCount: 1,
       });
-    } else if (base.type === "article") {
-      // For articles, collect multiple snippets from different chunks
-      // but keep the highest relevance score
-      if (score > existing.relevance) {
+    } else {
+      existing.matchCount = (existing.matchCount ?? 0) + 1;
+
+      if (base.type === "article") {
+        // For articles, collect multiple snippets from different chunks
+        // but keep the highest relevance score
+        if (score > existing.relevance) {
+          existing.relevance = score;
+        }
+        if (
+          snippet &&
+          existing.snippets &&
+          !existing.snippets.includes(snippet) &&
+          existing.snippets.length < 10
+        ) {
+          existing.snippets.push(snippet);
+        }
+      } else if (score > existing.relevance) {
+        // For non-articles (categories, pages), keep highest relevance
         existing.relevance = score;
       }
-      if (
-        snippet &&
-        existing.snippets &&
-        !existing.snippets.includes(snippet) &&
-        existing.snippets.length < 3
-      ) {
-        existing.snippets.push(snippet);
-      }
-    } else if (score > existing.relevance) {
-      // For non-articles (categories, pages), keep highest relevance
-      existing.relevance = score;
     }
   }
 

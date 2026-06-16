@@ -13,7 +13,7 @@ export const topics = [
   "HRIŠĆANSTVO",
   "ISLAM",
   "ISTORIJA",
-  "MUHAMMED",
+  "MUHAMMED ﷺ",
   "NAUKA I ISLAM",
   "ODGOVORI NA SUMNJE",
   "OPOVRGAVANJE SIJA",
@@ -30,7 +30,7 @@ const CATEGORY_URLS: Record<string, string> = {
   "ODGOVORI NA SUMNJE": "/categories/odgovori",
   "OPOVRGAVANJE SIJA": "/categories/opovrgavanje",
   "NAUKA I ISLAM": "/categories/nauka",
-  MUHAMMED: "/categories/muhammed",
+  "MUHAMMED ﷺ": "/categories/muhammed",
 };
 
 export default function CategoriesPage() {

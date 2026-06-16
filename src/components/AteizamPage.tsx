@@ -7,7 +7,7 @@ import { SITE_NAME, SITE_URL } from "../utils/siteConfig";
 import BackToTop from "./BackToTop";
 import {
   ateizamMeta,
-  type GeneratedateizamMeta,
+  type GeneratedAteizamMeta,
 } from "../lib/generated/ateizamMeta";
 
 const formatDate = (dateString: string): string => {
@@ -20,11 +20,11 @@ const formatDate = (dateString: string): string => {
   return new Intl.DateTimeFormat("sr-Latn-RS", options).format(date);
 };
 
-export default function ateizamPage() {
+export default function AteizamPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const articles: GeneratedateizamMeta[] = ateizamMeta;
+  const articles: GeneratedAteizamMeta[] = ateizamMeta;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -57,16 +57,10 @@ export default function ateizamPage() {
   return (
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
       <Helmet>
-        <title>ateizam | {SITE_NAME}</title>
-        <meta
-          name="description"
-          content="Islamski ateizami i njihova naučna objašnjenja. Istražite autentične ateizame Poslanika Muhammeda s.a.v.s."
-        />
-        <meta property="og:title" content={`ateizam | ${SITE_NAME}`} />
-        <meta
-          property="og:description"
-          content="Islamski ateizami i njihova naučna objašnjenja."
-        />
+        <title>Ateizam | {SITE_NAME}</title>
+        <meta name="description" content="Odgovori ateistima" />
+        <meta property="og:title" content={`Ateizam | ${SITE_NAME}`} />
+        <meta property="og:description" content="Odgovori ateistima" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`${SITE_URL}/categories/ateizam`} />
         <meta
@@ -74,11 +68,8 @@ export default function ateizamPage() {
           content={`${SITE_URL}/images/og-default.jpg`}
         />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`ateizam | ${SITE_NAME}`} />
-        <meta
-          name="twitter:description"
-          content="Islamski ateizami i njihova naučna objašnjenja."
-        />
+        <meta name="twitter:title" content={`Ateizam | ${SITE_NAME}`} />
+        <meta name="twitter:description" content="Odgovori ateistima" />
       </Helmet>
 
       <Navbar onSearch={setSearchQuery} />
@@ -86,41 +77,15 @@ export default function ateizamPage() {
       <main className="pt-20">
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="flex items-center gap-4 mb-12">
-              <span className="text-xs font-mono text-brand-dim">ATEIZMA</span>
+            <div className="flex items-center gap-4 ">
+              <span className="text-xs font-mono text-brand-dim">ATEIZAM</span>
               <h1 className="text-3xl font-serif font-medium">
-                Kategorija: Ateizma
+                Kategorija: Ateizam
               </h1>
             </div>
 
             <div className="prose prose-invert max-w-none">
-              <div className="grid md:grid-cols-2 gap-8 mb-12">
-                <div className="p-6 border border-white/5 bg-white/[0.01] rounded-lg">
-                  <h3 className="text-xl font-medium mb-4 text-white">
-                    Šta je Ateizma?
-                  </h3>
-                  <p className="text-brand-dim leading-relaxed">
-                    Ateizma je odricanje postojanja boga ili bogova. U ovoj
-                    kategoriji istražujemo različite aspekte ateizma, argumente
-                    koji se koriste u raspravama, i odnos između ateizma i
-                    drugih gledišta.
-                  </p>
-                </div>
-
-                <div className="p-6 border border-white/5 bg-white/[0.01] rounded-lg">
-                  <h3 className="text-xl font-medium mb-4 text-white">
-                    Teme u Kategoriji
-                  </h3>
-                  <ul className="text-brand-dim space-y-2">
-                    <li>• Argumenti protiv ateizma</li>
-                    <li>• Verovatnoća postojanja boga</li>
-                    <li>• Kompatibilnost nauke i vere</li>
-                    <li>• Različite perspektive</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="border-t border-white/5 pt-12">
+              <div className="pt-12">
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 not-prose">
                   {paginatedArticles.map((article: GeneratedAteizamMeta) => {
                     const hasWordCount =
@@ -138,10 +103,6 @@ export default function ateizamPage() {
                         <h4 className="text-lg font-medium mb-3 text-white group-hover:text-brand-accent transition-colors leading-snug">
                           {article.title}
                         </h4>
-
-                        <p className="text-sm text-brand-dim leading-relaxed mb-5 line-clamp-3">
-                          {article.description}
-                        </p>
 
                         <div className="flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-widest text-brand-dim font-medium">
                           <span>{formatDate(article.date)}</span>
