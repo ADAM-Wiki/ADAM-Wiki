@@ -349,10 +349,6 @@ export default function HadisArticlePage() {
                           {rel.title}
                         </h3>
 
-                        <p className="text-xs text-brand-dim leading-relaxed line-clamp-2">
-                          {rel.description}
-                        </p>
-
                         {rel.tags && (
                           <div className="flex flex-wrap gap-1 mt-3">
                             {rel.tags.slice(0, 3).map((tag) => (
