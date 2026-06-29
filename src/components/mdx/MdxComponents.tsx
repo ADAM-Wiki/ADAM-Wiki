@@ -124,6 +124,33 @@ export function QuoteBox({ className = "", children, ...props }: DivProps) {
   );
 }
 
+export function MdxOL({
+  className = "",
+  children,
+  ...props
+}: HTMLAttributes<HTMLOListElement>) {
+  return (
+    <ol className={`mdx-ol space-y-2.5 pl-0 list-none ${className}`} {...props}>
+      {children}
+    </ol>
+  );
+}
+
+export function MdxLI({
+  className = "",
+  children,
+  ...props
+}: HTMLAttributes<HTMLLIElement>) {
+  return (
+    <li
+      className={`flex items-start gap-3 text-lg font-lexend text-brand-text leading-relaxed ${className}`}
+      {...props}
+    >
+      {children}
+    </li>
+  );
+}
+
 export function Warning({ className = "", children, ...props }: DivProps) {
   return (
     <div
@@ -250,6 +277,32 @@ export function Bible({
   );
 }
 
+export function Table({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="my-6 overflow-x-auto rounded-xl border border-brand-dim/40 bg-brand-muted/20 font-lexend">
+      <div className="h-px w-full bg-brand-dim/30" />
+      <table className="w-full border-collapse text-sm">{children}</table>
+      <div className="h-px w-full bg-brand-dim/30" />
+    </div>
+  );
+}
+
+export function Th({ children }: { children: React.ReactNode }) {
+  return (
+    <th className="border-b border-r border-brand-dim/30 px-5 py-3 text-left font-semibold text-brand-accent font-semibold text-sm tracking-wide">
+      {children}
+    </th>
+  );
+}
+
+export function Td({ children }: { children: React.ReactNode }) {
+  return (
+    <td className="border-b border-r border-brand-dim/20 px-5 py-3 text-brand-text">
+      {children}
+    </td>
+  );
+}
+
 interface ArticleLinkProps extends AnchorProps {
   href: string;
   children: ReactNode;
@@ -344,4 +397,9 @@ export const mdxComponents = {
   Bible,
   ArticleLink,
   ArticleImage,
+  ol: MdxOL,
+  li: MdxLI,
+  table: Table,
+  th: Th,
+  td: Td,
 };

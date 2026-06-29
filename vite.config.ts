@@ -1,8 +1,9 @@
 import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react";
 import mdx from "@mdx-js/rollup";
+import react from "@vitejs/plugin-react";
 import path from "path";
 import { defineConfig, loadEnv } from "vite";
+import remarkGfm from "remark-gfm";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, ".", "");
@@ -10,10 +11,11 @@ export default defineConfig(({ mode }) => {
   return {
     base: "/ADAM-Wiki/",
     plugins: [
-      react(),
       mdx({
         providerImportSource: "@mdx-js/react",
+        remarkPlugins: [remarkGfm], // ← add this
       }),
+      react(),
       tailwindcss(),
     ],
     define: {
