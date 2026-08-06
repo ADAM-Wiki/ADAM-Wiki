@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import type { SearchResult } from "../utils/searchShared";
 import { highlightText } from "../utils/highlight";
 import { Search, X, Loader2, FileText, FolderOpen } from "lucide-react";
@@ -30,8 +30,12 @@ function getCategoryLabel(url: string): string {
 }
 
 export default function SearchPage() {
-  const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  // Seeded from ?q= so the home page search box can hand off a query.
+  const [searchParams] = useSearchParams();
+  const initialQuery = searchParams.get("q") ?? "";
+
+  const [query, setQuery] = useState(initialQuery);
+  const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [mobilePreview, setMobilePreview] = useState<SearchResult | null>(null);
 

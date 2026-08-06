@@ -1,27 +1,13 @@
 import { motion } from "motion/react";
-import { FileText, ArrowRight, FolderOpen } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { getAllCategories, getCategoryByTitle } from "../utils/categoriesData";
+import { ArrowRight, FolderOpen } from "lucide-react";
+import { Link } from "react-router-dom";
+import { getCategoryStats } from "../utils/articleIndex";
 
-const topics = getAllCategories();
+// Categories with no published articles are kept off the home page; they are
+// still reachable from /categories.
+const categories = getCategoryStats().filter((category) => category.count > 0);
 
-export default function TopicsGrid({ query = "" }: { query?: string }) {
-  const navigate = useNavigate();
-  const normalizedQuery = query.trim().toLowerCase();
-  const filteredTopics = normalizedQuery
-    ? topics.filter((topic) => topic.toLowerCase().includes(normalizedQuery))
-    : topics;
-
-  const handleTopicClick = (topic: string) => {
-    const categoryData = getCategoryByTitle(topic);
-    if (categoryData) {
-      navigate(categoryData.url);
-    } else {
-      // Fallback for categories not in search data
-      navigate(`/category/${topic.toLowerCase()}`);
-    }
-  };
-
+export default function TopicsGrid() {
   return (
     <section className="py-20 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6">
@@ -32,39 +18,41 @@ export default function TopicsGrid({ query = "" }: { query?: string }) {
               Pregledaj kategorije
             </h2>
           </div>
-          <span
-            className="flex items-center gap-2 text-sm text-brand-dim hover:text-white transition-colors group italic cursor-pointer"
-            onClick={() => navigate("/categories")}
+          <Link
+            to="/categories"
+            className="flex items-center gap-2 text-sm text-brand-dim hover:text-white transition-colors group italic"
           >
             SVE KATEGORIJE{" "}
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </span>
+          </Link>
         </div>
 
-        {filteredTopics.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredTopics.map((topic, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-                className="group p-5 border border-white/5 hover:border-white/20 hover:bg-white/[0.02] transition-all cursor-pointer flex items-center gap-4"
-                onClick={() => handleTopicClick(topic)}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {categories.map((category, index) => (
+            <motion.div
+              key={category.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.05 }}
+            >
+              <Link
+                to={category.url}
+                className="group flex h-full items-center gap-4 rounded-lg border border-white/5 bg-[#111111] p-5 transition-colors hover:border-white/20 hover:bg-[#171717]"
               >
-                <FolderOpen className="w-4 h-4 shrink-0 mt-0.5 text-brand-dim group-hover:text-brand-accent transition-colors" />
-                <span className="text-xs font-medium tracking-widest transition-colors group-hover:text-white uppercase">
-                  {topic}
+                <FolderOpen className="w-4 h-4 shrink-0 text-brand-dim group-hover:text-brand-accent transition-colors" />
+
+                <span className="min-w-0 flex-1 text-xs font-medium uppercase tracking-widest transition-colors group-hover:text-white">
+                  {category.title}
                 </span>
-              </motion.div>
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-8 text-center text-sm text-brand-dim">
-            Nema rezultata za "{query}".
-          </div>
-        )}
+
+                <span className="shrink-0 font-mono text-xs text-brand-dim transition-colors group-hover:text-brand-accent">
+                  {category.count}
+                </span>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );

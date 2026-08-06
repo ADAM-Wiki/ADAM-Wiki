@@ -27,7 +27,7 @@
     "generate:sitemap": "tsx scripts/generate-sitemap.ts",
     "generate:og-image": "tsx scripts/generate-og-image.ts",
     "prerender": "tsx scripts/prerender.ts",
-    "build": "npm run generate:meta && npm run generate:sitemap && vite build && npm run prerender"
+    "build": "npm run generate:meta && npm run generate:og-image && npm run generate:sitemap && vite build && npm run prerender"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",

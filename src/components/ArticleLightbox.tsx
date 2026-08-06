@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { createPortal } from "react-dom";
+
 interface ArticleLightboxProps {
   url: string;
   caption: string;
@@ -9,16 +12,47 @@ export default function ArticleLightbox({
   caption,
   onClose,
 }: ArticleLightboxProps) {
-  return (
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+
+    // Stop the article scrolling behind the overlay.
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [onClose]);
+
+  if (typeof document === "undefined") return null;
+
+  // Rendered into <body> rather than in place. The lightbox is emitted inside
+  // the article, whose `space-y-8` spacing puts a 32px bottom margin on every
+  // child - and on a position:fixed element with top:0 and bottom:0 that margin
+  // is subtracted from the resolved height, leaving a strip of the page visible
+  // along the bottom. A portal also keeps the overlay immune to any ancestor
+  // transform or overflow, both of which would otherwise break `fixed`.
+  return createPortal(
     <div
-      className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] m-0 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={caption || "Slika"}
     >
-      <div className="max-w-5xl w-full" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="flex max-h-full w-full max-w-5xl flex-col items-center"
+        onClick={(e) => e.stopPropagation()}
+      >
         <img
           src={url}
           alt={caption}
-          className="w-full max-h-[85vh] object-contain rounded-xl"
+          className="max-h-[85vh] w-auto max-w-full rounded-xl object-contain"
         />
 
         {caption && (
@@ -29,11 +63,12 @@ export default function ArticleLightbox({
       <button
         type="button"
         onClick={onClose}
-        className="absolute top-4 right-4 text-white/80 hover:text-white text-2xl"
+        className="absolute right-4 top-4 text-2xl text-white/80 transition-colors hover:text-white"
         aria-label="Zatvori sliku"
       >
         ×
       </button>
-    </div>
+    </div>,
+    document.body,
   );
 }

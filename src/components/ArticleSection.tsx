@@ -1,163 +1,102 @@
 import { motion } from "motion/react";
-import { FileText, FolderOpen } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { hadisMeta } from "../lib/generated/hadisMeta";
-import { hriscanstvoMeta } from "../lib/generated/hriscanstvoMeta";
-import { ahmedijeMeta } from "../lib/generated/ahmedijeMeta";
-import { ateizamMeta } from "../lib/generated/ateizamMeta";
-import { hinduizamMeta } from "../lib/generated/hinduizamMeta";
-import { islamMeta } from "../lib/generated/islamMeta";
-import { istorijaMeta } from "../lib/generated/istorijaMeta";
-import { muhammedMeta } from "../lib/generated/muhammedMeta";
-import { naukaMeta } from "../lib/generated/naukaMeta";
-import { odgovoriMeta } from "../lib/generated/odgovoriMeta";
-import { opovrgavanjeMeta } from "../lib/generated/opovrgavanjeMeta";
+import { FileText, ArrowRight, Clock } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  getLatestArticles,
+  formatArticleDate,
+  type ArticleCardData,
+} from "../utils/articleIndex";
 
-interface LatestArticleCardData {
-  slug: string;
-  title: string;
-  category: string;
-  url: string;
-}
+// Newest articles across every category, rather than one per category - which
+// previously surfaced the "Test članak" scaffolding from empty categories.
+const latestArticles = getLatestArticles(6, 1);
 
-function getLatestArticle<
-  T extends { slug: string; title: string; date: string },
->(articles: T[]): T | undefined {
-  return [...articles].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  )[0];
-}
-
-const ARTICLE_SOURCES = [
-  {
-    articles: hadisMeta,
-    category: "Hadis",
-    basePath: "/categories/hadis/article",
-  },
-  {
-    articles: hriscanstvoMeta,
-    category: "Hrišćanstvo",
-    basePath: "/categories/hriscanstvo/article",
-  },
-  {
-    articles: ateizamMeta,
-    category: "Ateizam",
-    basePath: "/categories/ateizam/article",
-  },
-  {
-    articles: ahmedijeMeta,
-    category: "Ahmedije",
-    basePath: "/categories/ahmedije/article",
-  },
-  {
-    articles: hinduizamMeta,
-    category: "Hinduizam",
-    basePath: "/categories/hinduizam/article",
-  },
-  {
-    articles: islamMeta,
-    category: "Islam",
-    basePath: "/categories/islam/article",
-  },
-  {
-    articles: istorijaMeta,
-    category: "Istorija",
-    basePath: "/categories/istorija/article",
-  },
-  {
-    articles: muhammedMeta,
-    category: "Muhammed",
-    basePath: "/categories/muhammed/article",
-  },
-  {
-    articles: naukaMeta,
-    category: "Nauka i islam",
-    basePath: "/categories/nauka/article",
-  },
-  {
-    articles: odgovoriMeta,
-    category: "Odgovori na sumnje",
-    basePath: "/categories/odgovori/article",
-  },
-  {
-    articles: opovrgavanjeMeta,
-    category: "Opovrgavanje šija",
-    basePath: "/categories/opovrgavanje/article",
-  },
-] as const;
-
-function getLatestArticles(): LatestArticleCardData[] {
-  return ARTICLE_SOURCES.map(({ articles, category, basePath }) => {
-    const latest = getLatestArticle(articles);
-    if (!latest) return null;
-
-    return {
-      slug: latest.slug,
-      title: latest.title,
-      category,
-      url: `${basePath}/${latest.slug}`,
-    };
-  }).filter(Boolean) as LatestArticleCardData[];
-}
-
+/**
+ * Card surfaces use explicit opaque sRGB rather than a white/1% overlay:
+ * Tailwind v4 composites alpha in oklab, and a near-black grey only a few
+ * levels above the page background picks up a colour cast on wide-gamut and
+ * OLED displays.
+ */
 function LastArticleCard({
-  title,
-  category,
-  onClick,
+  article,
+  index,
 }: {
-  title: string;
-  category: string;
-  onClick: () => void;
+  article: ArticleCardData;
+  index: number;
 }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="group cursor-pointer p-8 border border-white/5 bg-white/[0.01] hover:bg-white/[0.02] transition-all"
-      onClick={onClick}
+      transition={{ delay: index * 0.05 }}
     >
-      <div className="flex items-start gap-4">
-        <FileText className="w-6 h-6 text-brand-dim group-hover:text-brand-accent transition-colors mt-1 flex-shrink-0" />
-        <div className="flex-1">
-          <span className="text-xs font-mono text-brand-dim uppercase tracking-widest mb-2 block">
-            {category}
-          </span>
-          <h3 className="text-xl font-medium group-hover:text-brand-accent transition-colors leading-tight">
-            {title}
-          </h3>
+      <Link
+        to={article.url}
+        className="group block h-full rounded-lg border border-white/5 bg-[#111111] p-8 transition-colors hover:border-white/20 hover:bg-[#171717]"
+      >
+        <div className="flex items-start gap-4">
+          <FileText className="mt-1 h-6 w-6 flex-shrink-0 text-brand-dim transition-colors group-hover:text-brand-accent" />
+
+          <div className="min-w-0 flex-1">
+            <span className="mb-2 block font-mono text-xs uppercase tracking-widest text-brand-dim">
+              {article.categoryTitle}
+            </span>
+
+            <h3 className="text-xl font-medium leading-tight transition-colors group-hover:text-brand-accent">
+              {article.title}
+            </h3>
+
+            {article.description && (
+              <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-brand-dim">
+                {article.description}
+              </p>
+            )}
+
+            <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] uppercase tracking-widest text-brand-dim transition-colors group-hover:text-brand-accent">
+              <span>{formatArticleDate(article.date)}</span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="h-3 w-3" />
+                {article.readingTimeMinutes} min
+              </span>
+              <span>{article.wordCount} reči</span>
+            </div>
+          </div>
         </div>
-      </div>
+      </Link>
     </motion.div>
   );
 }
 
 export default function ArticleSection() {
-  const navigate = useNavigate();
-  const latestArticles = getLatestArticles();
-
   if (latestArticles.length === 0) return null;
 
   return (
     <section className="py-20 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center gap-4 mb-12">
-          <span className="text-xs font-mono text-brand-dim">02</span>
-          <h2 className="text-lg uppercase tracking-widest font-medium">
-            Poslednje dodano
-          </h2>
+        <div className="mb-12 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <span className="text-xs font-mono text-brand-dim">02</span>
+            <h2 className="text-lg uppercase tracking-widest font-medium">
+              Poslednje dodano
+            </h2>
+          </div>
+
+          <Link
+            to="/categories"
+            className="group flex items-center gap-2 text-sm italic text-brand-dim transition-colors hover:text-white"
+          >
+            SVI ČLANCI{" "}
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-1">
-          {latestArticles.map((article) => (
+        <div className="grid gap-4 lg:grid-cols-2">
+          {latestArticles.map((article, index) => (
             <LastArticleCard
-              key={`${article.category}-${article.slug}`}
-              title={article.title}
-              category={article.category}
-              onClick={() => {
-                navigate(article.url);
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
+              key={`${article.categoryId}-${article.slug}`}
+              article={article}
+              index={index}
             />
           ))}
         </div>

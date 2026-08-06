@@ -9,6 +9,7 @@ import Footer from "./Footer";
 import BackToTop from "./BackToTop";
 import NotFoundPage from "./NotFoundPage";
 import { SITE_NAME, SITE_URL } from "../utils/siteConfig";
+import { getOgImage } from "../utils/ogImage";
 import {
   getAteizamArticleBySlug,
   getAllAteizamArticles,
@@ -193,11 +194,18 @@ export default function AteizamArticlePage() {
         <meta property="og:url" content={articleUrl} />
         <meta
           property="og:image"
-          content={`${SITE_URL}/images/og-default.png`}
+          content={getOgImage("ateizam", articleSlug)}
         />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={title} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={metaDescription} />
+        <meta
+          name="twitter:image"
+          content={getOgImage("ateizam", articleSlug)}
+        />
       </Helmet>
 
       <Navbar />
