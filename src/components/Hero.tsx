@@ -25,8 +25,8 @@ export default function Hero() {
 
           <p className="mt-12 text-lg text-brand-dim leading-relaxed max-w-xl font-light">
             Naučna baza znanja posvećena odbrani islama kroz rukopisne dokaze,
-            lingvističke dokaze i autentifikaciju hadisa, izgrađena za tragaoce za
-            istinom u doba organizovane sumnje.
+            lingvističke dokaze i autentifikaciju hadisa, izgrađena za tragaoce
+            za istinom u doba organizovane sumnje.
           </p>
         </motion.div>
       </div>
