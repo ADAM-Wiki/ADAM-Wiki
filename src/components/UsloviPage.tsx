@@ -8,9 +8,9 @@ export default function UsloviPage() {
   return (
     <div className="min-h-screen bg-brand-bg">
       <Helmet>
-        <title>Uslovi korišćenja | {SITE_NAME}</title>
+        <title>{`Uslovi korišćenja | ${SITE_NAME}`}</title>
       </Helmet>
-      <Navbar onSearch={() => {}} />
+      <Navbar />
       <main className="pt-20">
         <section className="py-20">
           <div className="max-w-3xl mx-auto px-6">

@@ -22,8 +22,12 @@
     "generate:opovrgavanje-meta": "tsx scripts/generate-opovrgavanje-meta.ts",
     "generate:nauka-meta": "tsx scripts/generate-nauka-meta.ts",
     "generate:muhammed-meta": "tsx scripts/generate-muhammed-meta.ts",
-    "generate:meta": "npm run generate:hadis-meta && npm run generate:ateizam-meta && npm run generate:hriscanstvo-meta && npm run generate:hinduizam-meta && npm run generate:islam-meta && npm run generate:istorija-meta && npm run generate:ahmedije-meta && npm run generate:odgovori-meta && npm run generate:opovrgavanje-meta && npm run generate:nauka-meta && npm run generate:muhammed-meta",
-    "build": "npm run generate:meta && vite build"
+    "generate:meta": "tsx scripts/generate-meta.ts",
+    "check:search": "tsx scripts/check-search.ts",
+    "generate:sitemap": "tsx scripts/generate-sitemap.ts",
+    "generate:og-image": "tsx scripts/generate-og-image.ts",
+    "prerender": "tsx scripts/prerender.ts",
+    "build": "npm run generate:meta && npm run generate:sitemap && vite build && npm run prerender"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",
@@ -52,6 +56,7 @@
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.21",
     "gh-pages": "^6.3.0",
+    "puppeteer": "^25.5.0",
     "tailwindcss": "^4.1.14",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",

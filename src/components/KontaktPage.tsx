@@ -32,9 +32,9 @@ export default function KontaktPage() {
   return (
     <div className="min-h-screen bg-brand-bg">
       <Helmet>
-        <title>Kontakt | {SITE_NAME}</title>
+        <title>{`Kontakt | ${SITE_NAME}`}</title>
       </Helmet>
-      <Navbar onSearch={() => {}} />
+      <Navbar />
       <main className="pt-20">
         <section className="py-20">
           <div className="max-w-xl mx-auto px-6">

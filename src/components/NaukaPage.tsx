@@ -18,7 +18,6 @@ const formatDate = (dateString: string): string => {
 };
 
 export default function NaukaPage() {
-  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   const articles: GeneratedNaukaMeta[] = naukaMeta;
@@ -54,7 +53,7 @@ export default function NaukaPage() {
   return (
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
       <Helmet>
-        <title>Nauka | {SITE_NAME}</title>
+        <title>{`Nauka | ${SITE_NAME}`}</title>
         <meta name="description" content="Nauka" />
         <meta property="og:title" content={`Nauka | ${SITE_NAME}`} />
         <meta property="og:description" content="Nauka" />
@@ -62,14 +61,14 @@ export default function NaukaPage() {
         <meta property="og:url" content={`${SITE_URL}/categories/nauka`} />
         <meta
           property="og:image"
-          content={`${SITE_URL}/images/og-default.jpg`}
+          content={`${SITE_URL}/images/og-default.png`}
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`Nauka | ${SITE_NAME}`} />
         <meta name="twitter:description" content="Nauka" />
       </Helmet>
 
-      <Navbar onSearch={setSearchQuery} />
+      <Navbar />
 
       <main className="pt-20">
         <section className="py-20">

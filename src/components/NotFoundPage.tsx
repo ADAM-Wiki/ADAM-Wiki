@@ -10,11 +10,11 @@ export default function NotFoundPage() {
   return (
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
       <Helmet>
-        <title>404 — Stranica nije pronađena | {SITE_NAME}</title>
+        <title>{`404 — Stranica nije pronađena | ${SITE_NAME}`}</title>
         <meta name="description" content="Tražena stranica ne postoji." />
       </Helmet>
 
-      <Navbar onSearch={() => {}} />
+      <Navbar />
 
       <main className="pt-20">
         <section className="py-32">

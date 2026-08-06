@@ -70,11 +70,11 @@ export default function TagsPage() {
   return (
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
       <Helmet>
-        <title>Tagovi | {SITE_NAME}</title>
+        <title>{`Tagovi | ${SITE_NAME}`}</title>
         <meta name="description" content="Pretražite članke po tagovima." />
       </Helmet>
 
-      <Navbar onSearch={() => {}} />
+      <Navbar />
 
       <main className="pt-20">
         <section className="py-20">

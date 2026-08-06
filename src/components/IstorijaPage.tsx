@@ -21,7 +21,6 @@ const formatDate = (dateString: string): string => {
 };
 
 export default function IstorijaPage() {
-  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   const articles: GeneratedIstorijaMeta[] = istorijaMeta;
@@ -57,7 +56,7 @@ export default function IstorijaPage() {
   return (
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
       <Helmet>
-        <title>Istorija | {SITE_NAME}</title>
+        <title>{`Istorija | ${SITE_NAME}`}</title>
         <meta name="description" content="Istorija vere" />
         <meta property="og:title" content={`Istorija | ${SITE_NAME}`} />
         <meta property="og:description" content="Istorija vere" />
@@ -65,14 +64,14 @@ export default function IstorijaPage() {
         <meta property="og:url" content={`${SITE_URL}/categories/istorija`} />
         <meta
           property="og:image"
-          content={`${SITE_URL}/images/og-default.jpg`}
+          content={`${SITE_URL}/images/og-default.png`}
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`Istorija | ${SITE_NAME}`} />
         <meta name="twitter:description" content="Istorija vere" />
       </Helmet>
 
-      <Navbar onSearch={setSearchQuery} />
+      <Navbar />
 
       <main className="pt-20">
         <section className="py-20">

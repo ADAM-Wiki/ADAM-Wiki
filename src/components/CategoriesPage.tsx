@@ -43,7 +43,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
-      <Navbar onSearch={() => {}} />
+      <Navbar />
 
       <main className="pt-20">
         <section className="py-20">

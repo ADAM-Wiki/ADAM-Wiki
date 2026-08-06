@@ -21,7 +21,6 @@ const formatDate = (dateString: string): string => {
 };
 
 export default function ahmedijePage() {
-  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   const articles: GeneratedAhmedijeMeta[] = ahmedijeMeta;
@@ -57,7 +56,7 @@ export default function ahmedijePage() {
   return (
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
       <Helmet>
-        <title>ahmedije | {SITE_NAME}</title>
+        <title>{`ahmedije | ${SITE_NAME}`}</title>
         <meta name="description" content="Opvrgavanje Ahmedija" />
         <meta property="og:title" content={`ahmedije | ${SITE_NAME}`} />
         <meta property="og:description" content="Opvrgavanje Ahmedija" />
@@ -65,14 +64,14 @@ export default function ahmedijePage() {
         <meta property="og:url" content={`${SITE_URL}/categories/ahmedije`} />
         <meta
           property="og:image"
-          content={`${SITE_URL}/images/og-default.jpg`}
+          content={`${SITE_URL}/images/og-default.png`}
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`ahmedije | ${SITE_NAME}`} />
         <meta name="twitter:description" content="Opvrgavanje Ahmedija" />
       </Helmet>
 
-      <Navbar onSearch={setSearchQuery} />
+      <Navbar />
 
       <main className="pt-20">
         <section className="py-20">

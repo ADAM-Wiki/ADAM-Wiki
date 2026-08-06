@@ -9,6 +9,7 @@ export interface SearchResult {
   matchCount?: number;
   relevance: number;
 }
+
 export function normalizeForSearch(str: string): string {
   const refs: string[] = [];
 
@@ -45,60 +46,131 @@ export function normalizeForSearch(str: string): string {
   return normalized;
 }
 
-function expandArabicStyleQuery(query: string): string {
-  return query
-    .replace(/^(al|el|ibn|bin|abu|abd)(?=[a-z])/g, "$1 ")
-    .replace(/([a-z])(al|el|ibn|bin|abu|abd)(?=[a-z])/g, "$1 $2 ");
+/**
+ * Article prefix particles ("al-Buhari", "ez-Zuhri"). As standalone tokens they
+ * carry no signal and match almost every document, so they are dropped from
+ * queries when something more specific is present.
+ */
+const ARABIC_PARTICLES = new Set(["al", "el", "ez", "az"]);
+
+/** Prefixes worth stripping when a user types a name as one word ("albuhari"). */
+const ATTACHED_PREFIXES = ["al", "el", "ez", "az"];
+const NAME_PREFIXES = ["ibn", "bin", "abu", "abd"];
+
+/**
+ * A stripped remainder must be at least this long to be treated as a name.
+ * Without this guard ordinary Bosnian vocabulary gets mangled:
+ * "alat" -> "at", "album" -> "bum", "azil" -> "il", "elektron" -> "ektron".
+ */
+const MIN_STEM_LENGTH = 4;
+
+const QURAN_REF = /\b\d+:\d+(?:-\d+)?\b/g;
+
+/**
+ * Tokenizer used when building the index.
+ *
+ * Deliberately conservative: it only normalizes and splits. Query-side
+ * expansion (see getQueryTokens) is what bridges "albuhari" to "al buhari", so
+ * doing it here too would bloat the index and create false matches.
+ */
+export function getIndexTokens(text: string): string[] {
+  return normalizeForSearch(text)
+    .split(/\s+/)
+    .filter((token) => token.length >= 2);
+}
+
+/**
+ * Adds the bare stem for a name typed as one word ("albuhari" -> "buhari",
+ * "ibnalqayyim" -> "alqayyim" -> "qayyim"). The original token is always kept,
+ * so this only ever widens a query.
+ *
+ * Stripping is refused when the remainder is short, which is what stops
+ * ordinary vocabulary from being mangled: "alat" -> "at", "album" -> "bum".
+ */
+function stripPrefixes(token: string): string[] {
+  const stems: string[] = [];
+  let current = token;
+
+  // Two passes cover the nested case ("ibn" + "al" + name).
+  for (let pass = 0; pass < 2; pass++) {
+    const stem = stripOnePrefix(current);
+    if (!stem) break;
+    stems.push(stem);
+    current = stem;
+  }
+
+  return stems;
+}
+
+function stripOnePrefix(token: string): string | undefined {
+  for (const prefix of [...NAME_PREFIXES, ...ATTACHED_PREFIXES]) {
+    if (token.startsWith(prefix)) {
+      const stem = token.slice(prefix.length);
+      if (stem.length >= MIN_STEM_LENGTH) return stem;
+    }
+  }
+  return undefined;
+}
+
+const SURAH_ALIAS_GROUPS: string[][] = [
+  ["zilzal", "zalzal", "zalzalah", "zalzala"],
+  ["baqara", "baqarah"],
+  ["fatiha", "fatihah"],
+  ["ikhlas", "ihlas"],
+  ["yasin", "yaseen"],
+  ["nisa", "nisaa"],
+  ["maida", "maidah"],
+  ["kahf", "kehf"],
+  ["mulk", "mulq"],
+];
+
+/**
+ * Query-time only: maps a surah name onto its common transliteration variants
+ * so that "zilzal" also finds articles spelling it "zalzalah".
+ */
+function expandSurahAliases(tokens: string[]): string[] {
+  const extra: string[] = [];
+
+  for (const token of tokens) {
+    const stripped = token.replace(/^(al|el|ez|az)/, "");
+
+    for (const group of SURAH_ALIAS_GROUPS) {
+      if (group.includes(token) || group.includes(stripped)) {
+        extra.push(...group);
+      }
+    }
+  }
+
+  return [...new Set(extra)];
 }
 
 function tokenizeForSearch(query: string): string[] {
   const normalized = normalizeForSearch(query);
-  const referenceTokens = normalized.match(/\b\d+:\d+(?:-\d+)?\b/g) ?? [];
+  const referenceTokens = normalized.match(QURAN_REF) ?? [];
 
-  const expanded = expandArabicStyleQuery(
-    normalized.replace(/\b\d+:\d+(?:-\d+)?\b/g, " "),
-  );
+  const base = normalized
+    .replace(QURAN_REF, " ")
+    .split(/\s+/)
+    .filter(Boolean);
 
-  const base = expanded.split(/\s+/).filter(Boolean);
   const extra: string[] = [];
-
   for (const token of base) {
-    if (
-      (token.startsWith("al") ||
-        token.startsWith("el") ||
-        token.startsWith("ez") ||
-        token.startsWith("az")) &&
-      token.length > 2
-    ) {
-      extra.push(token.slice(2));
-    }
-    if (token.startsWith("ibn") && token.length > 3) extra.push(token.slice(3));
-    if (token.startsWith("bin") && token.length > 3) extra.push(token.slice(3));
-    if (token.startsWith("abu") && token.length > 3) extra.push(token.slice(3));
-    if (token.startsWith("abd") && token.length > 3) extra.push(token.slice(3));
+    extra.push(...stripPrefixes(token));
   }
 
-  return [...new Set([...referenceTokens, ...base, ...extra])].filter(
-    (token) => token.length >= 2,
-  );
+  const aliasTokens = expandSurahAliases([...base, ...extra]);
+
+  const all = [
+    ...new Set([...referenceTokens, ...base, ...extra, ...aliasTokens]),
+  ].filter((token) => token.length >= 2);
+
+  // Drop bare particles, but never return an empty list for a query that is
+  // literally just "al".
+  const meaningful = all.filter((token) => !ARABIC_PARTICLES.has(token));
+  return meaningful.length ? meaningful : all;
 }
 
 export function getQueryTokens(query: string): string[] {
   return tokenizeForSearch(query);
 }
 
-export function getHighlightVariants(query: string): string[] {
-  const tokens = tokenizeForSearch(query);
-  const normalized = normalizeForSearch(query);
-  const joinedTokens = tokens.join("");
-  const spacedTokens = tokens.join(" ");
-  const rawNoSpaces = normalized.replace(/\s+/g, "");
-
-  return [
-    ...new Set(
-      [normalized, rawNoSpaces, joinedTokens, spacedTokens, ...tokens].filter(
-        Boolean,
-      ),
-    ),
-  ];
-}

@@ -11,7 +11,7 @@ export default function PrivatnostPage() {
   return (
     <div className="min-h-screen bg-brand-bg">
       <Helmet>
-        <title>Privatnost | {SITE_NAME}</title>
+        <title>{`Privatnost | ${SITE_NAME}`}</title>
       </Helmet>
       <StaticNavbar />
       <main className="pt-20">

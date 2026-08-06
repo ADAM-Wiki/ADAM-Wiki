@@ -5,22 +5,37 @@ type WorkerMessage =
   | { type: "READY" }
   | { type: "RESULTS"; requestId: number; results: SearchResult[] };
 
-export function useSearch() {
-  const workerRef = useRef<Worker | null>(null);
-  const latestRequestIdRef = useRef(0);
+/**
+ * The search index is expensive to build, so a single worker is shared by every
+ * consumer and kept alive across route changes rather than being spun up and
+ * torn down per component mount.
+ */
+let sharedWorker: Worker | null = null;
+let workerReady = false;
 
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [isReady, setIsReady] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
-
-  useEffect(() => {
-    const worker = new Worker(
+function getSharedWorker(): Worker {
+  if (!sharedWorker) {
+    sharedWorker = new Worker(
       new URL("../workers/search.worker.ts", import.meta.url),
       { type: "module" },
     );
+  }
+  return sharedWorker;
+}
 
-    worker.onmessage = (e: MessageEvent<WorkerMessage>) => {
+export function useSearch() {
+  const latestRequestIdRef = useRef(0);
+
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [isReady, setIsReady] = useState(workerReady);
+  const [isSearching, setIsSearching] = useState(false);
+
+  useEffect(() => {
+    const worker = getSharedWorker();
+
+    const handleMessage = (e: MessageEvent<WorkerMessage>) => {
       if (e.data.type === "READY") {
+        workerReady = true;
         setIsReady(true);
         return;
       }
@@ -32,18 +47,21 @@ export function useSearch() {
       }
     };
 
-    workerRef.current = worker;
+    worker.addEventListener("message", handleMessage);
+
+    // The READY broadcast may have already fired before this consumer mounted.
+    if (workerReady) setIsReady(true);
 
     return () => {
-      worker.terminate();
-      workerRef.current = null;
+      worker.removeEventListener("message", handleMessage);
     };
   }, []);
 
   const search = useCallback((query: string) => {
     const trimmed = query.trim();
 
-    if (!workerRef.current || !trimmed) {
+    if (!trimmed) {
+      latestRequestIdRef.current += 1;
       setResults([]);
       setIsSearching(false);
       return;
@@ -53,7 +71,7 @@ export function useSearch() {
     latestRequestIdRef.current = requestId;
     setIsSearching(true);
 
-    workerRef.current.postMessage({
+    getSharedWorker().postMessage({
       type: "SEARCH",
       query: trimmed,
       limit: 20,

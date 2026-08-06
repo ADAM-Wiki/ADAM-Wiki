@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { normalizeForSearch, getQueryTokens } from "../utils/searchShared";
+import type { SearchResult } from "../utils/searchShared";
+import { highlightText } from "../utils/highlight";
 import { Search, X, Loader2, FileText, FolderOpen } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "motion/react";
@@ -8,7 +9,6 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { SITE_NAME } from "../utils/siteConfig";
 import { useSearch } from "../hooks/useSearch";
-import type { SearchResult } from "../utils/searchUtils";
 
 const CATEGORY_LABELS: Record<string, string> = {
   hadis: "Hadis",
@@ -29,125 +29,14 @@ function getCategoryLabel(url: string): string {
   return CATEGORY_LABELS[segment] ?? segment;
 }
 
-function compactNormalize(str: string): string {
-  return normalizeForSearch(str).replace(/\s+/g, "");
-}
-
-function findMatchRanges(
-  text: string,
-  query: string,
-): Array<{ start: number; end: number }> {
-  const tokens = getQueryTokens(query);
-  if (!tokens.length) return [];
-
-  const ranges: Array<{ start: number; end: number }> = [];
-  const words = [...text.matchAll(/\S+/g)];
-
-  for (const match of words) {
-    const word = match[0];
-    const wordStart = match.index ?? 0;
-    const normalizedWord = normalizeForSearch(word);
-    const compactWord = compactNormalize(word);
-
-    for (const token of tokens) {
-      const compactToken = compactNormalize(token);
-      let compactIndex = -1;
-
-      if (normalizedWord.includes(token)) {
-        compactIndex = compactNormalize(normalizedWord).indexOf(compactToken);
-      } else if (compactWord.includes(compactToken)) {
-        compactIndex = compactWord.indexOf(compactToken);
-      }
-
-      if (compactIndex === -1) continue;
-
-      let seen = 0;
-      let visualStart = -1;
-      let visualEnd = -1;
-
-      for (let i = 0; i < word.length; i++) {
-        const charCompact = compactNormalize(word[i]);
-        if (!charCompact) continue;
-
-        if (seen === compactIndex && visualStart === -1) {
-          visualStart = wordStart + i;
-        }
-
-        seen += charCompact.length;
-
-        if (seen >= compactIndex + compactToken.length) {
-          visualEnd = wordStart + i + 1;
-          break;
-        }
-      }
-
-      if (visualStart !== -1 && visualEnd !== -1) {
-        ranges.push({ start: visualStart, end: visualEnd });
-      }
-    }
-  }
-
-  ranges.sort((a, b) => a.start - b.start);
-
-  const merged: Array<{ start: number; end: number }> = [];
-  for (const range of ranges) {
-    const last = merged[merged.length - 1];
-    if (last && range.start <= last.end) {
-      last.end = Math.max(last.end, range.end);
-    } else {
-      merged.push({ ...range });
-    }
-  }
-
-  return merged;
-}
-
-function highlightText(text: string, query: string): React.ReactElement {
-  if (!query.trim()) return <span>{text}</span>;
-
-  const ranges = findMatchRanges(text, query);
-  if (!ranges.length) return <span>{text}</span>;
-
-  const parts: React.ReactNode[] = [];
-  let lastIndex = 0;
-
-  ranges.forEach((range, index) => {
-    if (range.start > lastIndex) {
-      parts.push(
-        <span key={`text-${index}-${lastIndex}`}>
-          {text.slice(lastIndex, range.start)}
-        </span>,
-      );
-    }
-
-    parts.push(
-      <mark
-        key={`highlight-${index}-${range.start}`}
-        className="bg-brand-accent/25 text-brand-accent rounded px-0.5 not-italic font-medium"
-      >
-        {text.slice(range.start, range.end)}
-      </mark>,
-    );
-
-    lastIndex = range.end;
-  });
-
-  if (lastIndex < text.length) {
-    parts.push(
-      <span key={`text-end-${lastIndex}`}>{text.slice(lastIndex)}</span>,
-    );
-  }
-
-  return <>{parts}</>;
-}
-
 export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [hoveredResult, setHoveredResult] = useState<SearchResult | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [mobilePreview, setMobilePreview] = useState<SearchResult | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   const { results, search, clear, isReady, isSearching } = useSearch();
@@ -183,7 +72,6 @@ export default function SearchPage() {
 
     if (!trimmed) {
       clear();
-      setHoveredResult(null);
       setMobilePreview(null);
       return;
     }
@@ -191,20 +79,74 @@ export default function SearchPage() {
     search(trimmed);
   }, [debouncedQuery, search, clear]);
 
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     setQuery("");
     setDebouncedQuery("");
     clear();
-    setHoveredResult(null);
     setMobilePreview(null);
-  };
+    inputRef.current?.focus();
+  }, [clear]);
 
-  const articleResults = results.filter((r) => r.type === "article");
+  const articleResults = useMemo(
+    () => results.filter((r) => r.type === "article"),
+    [results],
+  );
+  const categoryResults = useMemo(
+    () => results.filter((r) => r.type !== "article"),
+    [results],
+  );
+
   const isLoading = query.trim().length > 0 && (!isReady || isSearching);
   const hasQuery = query.trim().length > 0;
 
-  const previewResult = hoveredResult ?? articleResults[0] ?? null;
+  // A new result set invalidates the old selection.
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [results]);
+
+  const previewResult = articleResults[selectedIndex] ?? articleResults[0] ?? null;
   const activeMobilePreview = mobilePreview;
+
+  const openResult = useCallback(
+    (result: SearchResult) => {
+      navigate(result.url);
+    },
+    [navigate],
+  );
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === "Escape") {
+        handleClear();
+        return;
+      }
+
+      if (!articleResults.length) return;
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setSelectedIndex((prev) => (prev + 1) % articleResults.length);
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setSelectedIndex(
+          (prev) => (prev - 1 + articleResults.length) % articleResults.length,
+        );
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        const target = articleResults[selectedIndex];
+        if (target) openResult(target);
+      }
+    },
+    [articleResults, selectedIndex, openResult, handleClear],
+  );
+
+  // Keep the keyboard selection inside the scrollable result list.
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const active = list.querySelector<HTMLElement>('[data-selected="true"]');
+    active?.scrollIntoView({ block: "nearest" });
+  }, [selectedIndex]);
 
   const displaySnippets =
     previewResult?.snippets && previewResult.snippets.length > 0
@@ -220,6 +162,18 @@ export default function SearchPage() {
       ? previewResult.matchCount
       : displaySnippets.length;
 
+  // Highlighting walks every snippet character, so it is memoised rather than
+  // recomputed on each render (selection changes re-render this component).
+  const highlightedTitle = useMemo(
+    () => (previewResult ? highlightText(previewResult.title, query) : null),
+    [previewResult, query],
+  );
+
+  const highlightedSnippets = useMemo(
+    () => displaySnippets.map((snippet) => highlightText(snippet, query)),
+    [displaySnippets, query],
+  );
+
   const mobileDisplaySnippets =
     activeMobilePreview?.snippets && activeMobilePreview.snippets.length > 0
       ? activeMobilePreview.snippets
@@ -234,14 +188,19 @@ export default function SearchPage() {
       ? activeMobilePreview.matchCount
       : mobileDisplaySnippets.length;
 
+  const mobileHighlightedSnippets = useMemo(
+    () => mobileDisplaySnippets.map((snippet) => highlightText(snippet, query)),
+    [mobileDisplaySnippets, query],
+  );
+
   return (
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
       <Helmet>
-        <title>Pretraga | {SITE_NAME}</title>
+        <title>{`Pretraga | ${SITE_NAME}`}</title>
         <meta name="description" content="Pretražite sve članke." />
       </Helmet>
 
-      <Navbar onSearch={() => {}} />
+      <Navbar />
 
       <main className="pt-24 pb-20">
         <div className="max-w-6xl mx-auto px-6">
@@ -264,7 +223,9 @@ export default function SearchPage() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="Unesite pojam za pretragu..."
+              aria-label="Pretraga sadržaja"
               className="w-full bg-white/[0.03] border border-white/10 rounded-lg pl-11 pr-10 py-3 text-sm text-white placeholder:text-brand-dim focus:outline-none focus:border-brand-accent transition-colors"
             />
             {isLoading ? (
@@ -280,10 +241,36 @@ export default function SearchPage() {
           </div>
 
           {hasQuery && !isLoading && (
-            <p className="text-xs text-brand-dim font-mono mb-4 uppercase tracking-widest">
-              {articleResults.length}{" "}
-              {articleResults.length === 1 ? "rezultat" : "rezultata"}
-            </p>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4">
+              <p className="text-xs text-brand-dim font-mono uppercase tracking-widest">
+                {articleResults.length}{" "}
+                {articleResults.length === 1 ? "rezultat" : "rezultata"}
+              </p>
+              {articleResults.length > 0 && (
+                <p className="hidden md:block text-[10px] text-brand-dim/70 font-mono uppercase tracking-widest">
+                  ↑↓ kretanje · ↵ otvori · esc poništi
+                </p>
+              )}
+            </div>
+          )}
+
+          {hasQuery && !isLoading && categoryResults.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 mb-6">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-brand-dim">
+                Kategorije
+              </span>
+              {categoryResults.map((result) => (
+                <button
+                  key={result.id}
+                  type="button"
+                  onClick={() => navigate(result.url)}
+                  className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-brand-dim hover:border-brand-accent hover:text-brand-accent transition-colors"
+                >
+                  <FolderOpen className="w-3 h-3 shrink-0" />
+                  {result.title}
+                </button>
+              ))}
+            </div>
           )}
 
           {!hasQuery && (
@@ -306,23 +293,27 @@ export default function SearchPage() {
 
           {!isLoading && hasQuery && articleResults.length > 0 && (
             <div className="grid md:grid-cols-[1fr_400px] gap-0 border border-white/10 rounded-xl overflow-hidden">
-              <div className="toc-scroll divide-y divide-white/5 overflow-y-auto max-h-[600px]">
+              <div
+                ref={listRef}
+                className="toc-scroll divide-y divide-white/5 overflow-y-auto max-h-[600px]"
+              >
                 <AnimatePresence>
                   {articleResults.map((result, index) => {
-                    const isActive = previewResult?.id === result.id;
+                    const isActive = index === selectedIndex;
 
                     return (
                       <motion.div
                         key={result.id}
+                        data-selected={isActive}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.02 }}
-                        onMouseEnter={() => setHoveredResult(result)}
+                        onMouseEnter={() => setSelectedIndex(index)}
                         onClick={() => {
                           if (window.innerWidth < 768) {
                             setMobilePreview(result);
                           } else {
-                            navigate(result.url);
+                            openResult(result);
                           }
                         }}
                         className={`px-5 py-4 cursor-pointer transition-colors group ${
@@ -371,7 +362,7 @@ export default function SearchPage() {
                     >
                       <div>
                         <h2 className="text-base font-bold text-brand-text leading-snug">
-                          {highlightText(previewResult.title, query)}
+                          {highlightedTitle}
                         </h2>
                       </div>
 
@@ -396,12 +387,12 @@ export default function SearchPage() {
                           </p>
 
                           <div className="toc-scroll flex-1 overflow-y-auto max-h-[320px] pr-1.5 flex flex-col gap-2.5">
-                            {displaySnippets.map((snippetText, i) => (
+                            {highlightedSnippets.map((snippet, i) => (
                               <div
                                 key={i}
                                 className="text-xs text-brand-dim leading-relaxed bg-white/[0.03] border border-white/5 rounded-lg p-3 hover:bg-white/[0.05] transition-colors"
                               >
-                                {highlightText(snippetText, query)}
+                                {snippet}
                               </div>
                             ))}
                           </div>
@@ -455,7 +446,7 @@ export default function SearchPage() {
 
               <div className="flex items-start justify-between gap-4 mb-4">
                 <div>
-                  <h2 className="text-base font-bold text-brand-texte leading-snug">
+                  <h2 className="text-base font-bold text-brand-text leading-snug">
                     {highlightText(activeMobilePreview.title, query)}
                   </h2>
                   <p className="text-[10px] font-mono uppercase tracking-widest text-brand-dim mt-2">
@@ -484,12 +475,12 @@ export default function SearchPage() {
                   </p>
 
                   <div className="toc-scroll overflow-y-auto pr-1 flex flex-col gap-2.5">
-                    {mobileDisplaySnippets.map((snippetText, i) => (
+                    {mobileHighlightedSnippets.map((snippet, i) => (
                       <div
                         key={i}
                         className="text-xs text-brand-dim leading-relaxed bg-white/[0.03] border border-white/5 rounded-lg p-3"
                       >
-                        {highlightText(snippetText, query)}
+                        {snippet}
                       </div>
                     ))}
                   </div>

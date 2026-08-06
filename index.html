@@ -3,8 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ADAM</title>
+    <title data-default>Adam-Wiki</title>
     <link rel="icon" type="image/png" href="/ADAM-Wiki/Icon-32x32.png" />
+
+    <!--
+      Fallback metadata for any route that is not prerendered. Every tag below
+      carries data-default: the prerenderer drops it whenever the page's own
+      Helmet tags supply the same key, so crawlers never see a duplicate.
+
+      These matter because social crawlers do not execute JavaScript - without
+      them a shared link previews with no title, description or image.
+    -->
+    <meta
+      data-default
+      name="description"
+      content="Adam-Wiki — članci i odgovori o islamu, hadisu, hrišćanstvu, ateizmu i istoriji."
+    />
+    <meta name="robots" content="index, follow" />
+
+    <meta property="og:site_name" content="Adam-Wiki" />
+    <meta property="og:locale" content="sr_RS" />
+    <meta data-default property="og:type" content="website" />
+    <meta data-default property="og:title" content="Adam-Wiki" />
+    <meta
+      data-default
+      property="og:description"
+      content="Adam-Wiki — članci i odgovori o islamu, hadisu, hrišćanstvu, ateizmu i istoriji."
+    />
+    <meta
+      data-default
+      property="og:url"
+      content="https://adam-wiki.github.io/ADAM-Wiki/"
+    />
+    <meta
+      data-default
+      property="og:image"
+      content="https://adam-wiki.github.io/ADAM-Wiki/images/og-default.png"
+    />
+
+    <meta data-default name="twitter:card" content="summary_large_image" />
+    <meta data-default name="twitter:title" content="Adam-Wiki" />
+    <meta
+      data-default
+      name="twitter:description"
+      content="Adam-Wiki — članci i odgovori o islamu, hadisu, hrišćanstvu, ateizmu i istoriji."
+    />
+    <meta
+      data-default
+      name="twitter:image"
+      content="https://adam-wiki.github.io/ADAM-Wiki/images/og-default.png"
+    />
 
     <!-- GitHub Pages SPA redirect restore -->
     <script>

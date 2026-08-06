@@ -21,7 +21,6 @@ const formatDate = (dateString: string): string => {
 };
 
 export default function OdgovoriPage() {
-  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   const articles: GeneratedOdgovoriMeta[] = odgovoriMeta;
@@ -57,7 +56,7 @@ export default function OdgovoriPage() {
   return (
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
       <Helmet>
-        <title>Odgovori | {SITE_NAME}</title>
+        <title>{`Odgovori | ${SITE_NAME}`}</title>
         <meta name="description" content="Odgovori" />
         <meta property="og:title" content={`Odgovori | ${SITE_NAME}`} />
         <meta property="og:description" content="Odgovori" />
@@ -65,14 +64,14 @@ export default function OdgovoriPage() {
         <meta property="og:url" content={`${SITE_URL}/categories/odgovori`} />
         <meta
           property="og:image"
-          content={`${SITE_URL}/images/og-default.jpg`}
+          content={`${SITE_URL}/images/og-default.png`}
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`Odgovori | ${SITE_NAME}`} />
         <meta name="twitter:description" content="Odgovori" />
       </Helmet>
 
-      <Navbar onSearch={setSearchQuery} />
+      <Navbar />
 
       <main className="pt-20">
         <section className="py-20">

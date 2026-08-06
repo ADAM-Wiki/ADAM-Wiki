@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { FileText, ArrowRight, FolderOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { getAllCategories, getCategoryByTitle } from "../utils/searchUtils";
+import { getAllCategories, getCategoryByTitle } from "../utils/categoriesData";
 
 const topics = getAllCategories();
 
