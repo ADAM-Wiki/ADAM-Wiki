@@ -23,7 +23,7 @@ export default function AboutPage() {
             </div>
             <div className="space-y-6 text-brand-dim leading-relaxed">
               <p>
-                <strong className="text-white">Adam Research Database</strong>{" "}
+                <strong className="text-brand-heading">Adam Research Database</strong>{" "}
                 je projekat posvećen istraživanju i dokumentovanju naučnih,
                 istorijskih i teoloških tema sa fokusom na islamsku tradiciju i
                 komparativnu religiju.
@@ -40,8 +40,8 @@ export default function AboutPage() {
               </p>
 
               {/* YouTube section */}
-              <div className="border border-white/5 rounded-lg p-6 bg-white/[0.01] mt-10">
-                <h2 className="text-white font-medium mb-3">YouTube Kanal</h2>
+              <div className="border border-brand-border rounded-lg p-6 bg-brand-surface mt-10">
+                <h2 className="text-brand-heading font-medium mb-3">YouTube Kanal</h2>
                 <p className="text-sm mb-4">
                   Pored pisanog sadržaja, pratite nas i na YouTube kanalu gde
                   objavljujemo video materijale o islamskoj teologiji, istoriji
@@ -51,19 +51,19 @@ export default function AboutPage() {
                   href="https://www.youtube.com/@asocijacija-adam"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2 text-sm border border-white/10 rounded-lg hover:border-red-500 hover:text-red-400 transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2 text-sm border border-brand-border rounded-lg hover:border-red-500 hover:text-red-400 transition-colors"
                 >
                   ▶ Posetite naš YouTube kanal
                 </a>
               </div>
-              <div className="border border-white/5 rounded-lg p-6 bg-white/[0.01] mt-10">
-                <h2 className="text-white font-medium mb-3">
+              <div className="border border-brand-border rounded-lg p-6 bg-brand-surface mt-10">
+                <h2 className="text-brand-heading font-medium mb-3">
                   Kontaktirajte nas
                 </h2>
                 <p className="text-sm">Za pitanja, predloge ili saradnju:</p>
                 <button
                   onClick={() => navigate("/kontakt")}
-                  className="mt-4 px-5 py-2 text-sm border border-white/10 rounded-lg hover:border-white/30 hover:text-white transition-colors"
+                  className="mt-4 px-5 py-2 text-sm border border-brand-border rounded-lg hover:border-brand-border-strong hover:text-brand-heading transition-colors"
                 >
                   Kontakt forma →
                 </button>

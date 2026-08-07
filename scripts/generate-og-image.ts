@@ -27,7 +27,7 @@ const BRAND = {
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
-  hadis: "Hadis",
+  hadis: "Hadiske nauke",
   ateizam: "Ateizam",
   hriscanstvo: "Hrišćanstvo",
   hinduizam: "Hinduizam",

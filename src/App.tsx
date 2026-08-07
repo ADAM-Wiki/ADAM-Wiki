@@ -75,7 +75,7 @@ function RouteFallback() {
 
 function HomePage() {
   return (
-    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
+    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
       <Navbar />
 
       <main>

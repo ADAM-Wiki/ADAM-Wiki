@@ -2,13 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-08-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/categories</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-08-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -20,7 +20,7 @@
   </url>
   <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam</loc>
-    <lastmod>2026-07-04</lastmod>
+    <lastmod>2026-08-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -129,6 +129,204 @@
   <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/zasto-sunnet-nije-sacuvan-kao-sto-je-sacuvan-kuran</loc>
     <lastmod>2026-06-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/argument-iz-bajesovske-verovatnoce</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/argument-iz-fitre</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/argument-iz-kretanja</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/argument-iz-lepote</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/da-li-je-Allah-bog-meseca</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/da-li-su-se-Ademova-deca-medjusobno-zenila</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/evolucija-i-istrebljenje-nizih-rasa</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/fuzija-drugog-hromozoma</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/genetska-slicnost-coveka-i-majmuna</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/islamski-bastinski-tekstovi-i-sekularisticka-izvrtanja</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/islamski-terorizam-izmedju-cinjenica-i-obmana</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/kapitalizam</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/kosmoloski-argument-iz-kontingencije</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/majnongovski-argument</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/modalni-ontoloski-argument</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/moral-i-verska-utemeljenost</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/moze-li-zivot-nastati-slucajno</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/napadi-na-muslimane-u-evropi-i-americi</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/ne-postoji-apsolutna-sloboda</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/nedostojna-svojstva-Boga-u-Starom-zavetu</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/nista-je-nista</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/pitanje-abortusa</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/povratni-grkljanski-zivac</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/riba-koljuska</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/sekularizam-i-kolonijalizam</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/sekularizam-i-pravo-na-zaposedanje-zemalja</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/sekularizam-je-religija</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/sekularizam-ne-moze-postovati-druga-misljenja</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/tardigrad-i-kriza-evolucije</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/teleoloski-argument</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/teorija-evolucije-i-poperov-kriterijum</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/vremenski-paradoks-u-poreklu-ptica</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/znacaj-fosila-za-evoluciju</loc>
+    <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

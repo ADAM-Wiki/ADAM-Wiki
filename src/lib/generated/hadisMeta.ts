@@ -20,7 +20,7 @@ export const hadisMeta: GeneratedHadisMeta[] = [
       "hadis",
       "islam"
     ],
-    "description": "Kratak opis članka.",
+    "description": "Značenje sunneta i hadisa, kur'anski dokazi o obavezi pokoravanja Poslaniku, najvažnije hadiske knjige i upozorenje na tumačenje hadisa bez znanja.",
     "wordCount": 1329,
     "readingTimeMinutes": 7
   },
@@ -31,9 +31,11 @@ export const hadisMeta: GeneratedHadisMeta[] = [
     "category": "hadis",
     "tags": [
       "hadis",
-      "islam"
+      "buhari",
+      "rukopisi",
+      "isnad"
     ],
-    "description": "Kratak opis članka.",
+    "description": "Sahih al-Buhari sadrži 2.620 hadisa izabranih iz šest stotina hiljada predaja kroz šesnaest godina rada, uz rukopisnu tradiciju od preko 2.000 primeraka.",
     "wordCount": 8551,
     "readingTimeMinutes": 43
   },
@@ -44,9 +46,11 @@ export const hadisMeta: GeneratedHadisMeta[] = [
     "category": "hadis",
     "tags": [
       "hadis",
-      "islam"
+      "sunnet",
+      "zapisivanje",
+      "orijentalisti"
     ],
-    "description": "Kratak opis članka.",
+    "description": "Odgovor na tvrdnju da hadis dvesta godina nije bio zapisivan, uz usklađivanje predaja o dozvoli i o zabrani pisanja hadisa iz vremena Poslanika.",
     "wordCount": 5037,
     "readingTimeMinutes": 26
   },
@@ -57,9 +61,11 @@ export const hadisMeta: GeneratedHadisMeta[] = [
     "category": "hadis",
     "tags": [
       "hadis",
+      "sunnet",
+      "orijentalisti",
       "islam"
     ],
-    "description": "Kratak opis članka.",
+    "description": "Napadi na sunnet nisu jenjali, nego su se umnožili. Orijentalisti su prepoznali Kur'an, sunnet i ličnost Poslanika kao izvore snage i usmerili napade upravo na njih.",
     "wordCount": 852,
     "readingTimeMinutes": 5
   },
@@ -70,9 +76,11 @@ export const hadisMeta: GeneratedHadisMeta[] = [
     "category": "hadis",
     "tags": [
       "hadis",
+      "sunnet",
+      "orijentalisti",
       "islam"
     ],
-    "description": "Kratak opis članka.",
+    "description": "Goldciher je tvrdio da je reč sunnet preuzeta iz hebrejske Mišne, odnosno da je paganskog porekla. Odgovor pokazuje da su i sunnet i hadis izvorno arapski termini.",
     "wordCount": 1363,
     "readingTimeMinutes": 7
   },
@@ -83,10 +91,11 @@ export const hadisMeta: GeneratedHadisMeta[] = [
     "category": "hadis",
     "tags": [
       "hadis",
-      "islam",
+      "sunnet",
+      "orijentalisti",
       "goldciher"
     ],
-    "description": "Kratak opis članka.",
+    "description": "Goldciher i njegovi sledbenici tvrdili su da je islamski pojam sunneta preuzet iz predislamskog arapskog nasleđa. Odgovor na tu klevetu u nekoliko aspekata.",
     "wordCount": 3048,
     "readingTimeMinutes": 16
   },
@@ -97,10 +106,11 @@ export const hadisMeta: GeneratedHadisMeta[] = [
     "category": "hadis",
     "tags": [
       "hadis",
-      "islam",
-      "kuranije"
+      "sunnet",
+      "kuranije",
+      "islam"
     ],
-    "description": "Kratak opis članka.",
+    "description": "Niz pitanja upućenih onima koji odbacuju hadis: kako se iz samog Kur'ana zna kako se klanja, koliki je zekat i kako se sprečava pogrešno tumačenje ajeta.",
     "wordCount": 1554,
     "readingTimeMinutes": 8
   },
@@ -111,9 +121,11 @@ export const hadisMeta: GeneratedHadisMeta[] = [
     "category": "hadis",
     "tags": [
       "hadis",
+      "isnad",
+      "orijentalisti",
       "islam"
     ],
-    "description": "Kratak opis članka.",
+    "description": "Od jevrejskih istoričara do nemačkih orijentalista i britanskih učenjaka, svedočanstva onih koji su proučavali nauku o isnadu potvrđuju njenu jedinstvenost.",
     "wordCount": 3046,
     "readingTimeMinutes": 16
   },
@@ -124,9 +136,11 @@ export const hadisMeta: GeneratedHadisMeta[] = [
     "category": "hadis",
     "tags": [
       "hadis",
-      "islam"
+      "sunnet",
+      "ocuvanje",
+      "orijentalisti"
     ],
-    "description": "Kratak opis članka.",
+    "description": "Poslanik je u potpunosti dostavio veru, a ashabi sunnet nisu zapostavili. Odgovor na orijentalističku tvrdnju da sunnet nije sačuvan kao što je sačuvan Kur'an.",
     "wordCount": 1460,
     "readingTimeMinutes": 8
   }

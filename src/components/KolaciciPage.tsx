@@ -20,18 +20,18 @@ export default function KolaciciPage() {
             </div>
             <div className="space-y-8 text-brand-dim leading-relaxed">
               <div>
-                <h2 className="text-white font-medium mb-3">Šta su kolačići?</h2>
+                <h2 className="text-brand-heading font-medium mb-3">Šta su kolačići?</h2>
                 <p>Kolačići su male tekstualne datoteke koje web stranice pohranjuju na vašem uređaju kako bi zapamtile određene informacije o vašoj poseti.</p>
               </div>
               <div>
-                <h2 className="text-white font-medium mb-3">Koje kolačiće koristimo?</h2>
+                <h2 className="text-brand-heading font-medium mb-3">Koje kolačiće koristimo?</h2>
                 <p>Koristimo isključivo funkcionalne kolačiće koji su neophodni za ispravno prikazivanje stranice.</p>
               </div>
               <div>
-                <h2 className="text-white font-medium mb-3">Upravljanje kolačićima</h2>
+                <h2 className="text-brand-heading font-medium mb-3">Upravljanje kolačićima</h2>
                 <p>Možete onemogućiti kolačiće u postavkama vašeg pretraživača. Napominjemo da onemogućavanje kolačića može uticati na funkcionalnost stranice.</p>
               </div>
-              <p className="text-xs text-white/20 pt-4 border-t border-white/5">
+              <p className="text-xs text-brand-border-strong pt-4 border-t border-brand-border">
                 Posljednje ažuriranje: {new Date().getFullYear()}
               </p>
             </div>

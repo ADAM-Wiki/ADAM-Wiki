@@ -71,7 +71,7 @@ export default function Hero() {
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Da li je Isus Bog?"
                   aria-label="Pretraga sadržaja"
-                  className="w-full rounded-lg border border-white/10 bg-black/30 py-4 pl-12 pr-5 text-sm text-white transition-colors placeholder:text-brand-dim focus:border-brand-accent focus:outline-none sm:pr-56"
+                  className="w-full rounded-lg border border-brand-border bg-brand-field py-4 pl-12 pr-5 text-sm text-brand-heading transition-colors placeholder:text-brand-dim focus:border-brand-accent focus:outline-none sm:pr-56"
                 />
               </div>
 
@@ -80,7 +80,7 @@ export default function Hero() {
                   the input. */}
               <button
                 type="submit"
-                className="mt-3 w-full rounded-lg bg-brand-accent px-6 py-3.5 text-xs font-medium uppercase tracking-widest text-white transition-opacity hover:opacity-90 sm:absolute sm:right-2 sm:top-1/2 sm:mt-0 sm:w-auto sm:-translate-y-1/2 sm:rounded-md sm:py-2.5"
+                className="mt-3 w-full rounded-lg bg-brand-accent px-6 py-3.5 text-xs font-medium uppercase tracking-widest text-brand-on-accent transition-opacity hover:opacity-90 sm:absolute sm:right-2 sm:top-1/2 sm:mt-0 sm:w-auto sm:-translate-y-1/2 sm:rounded-md sm:py-2.5"
               >
                 Pronađi odgovor
               </button>
@@ -89,7 +89,7 @@ export default function Hero() {
 
           <div className="mt-14 flex items-center justify-center gap-10 sm:gap-16">
             <Stat value={totalArticles} label="Članaka" />
-            <div className="h-12 w-px bg-white/10" />
+            <div className="h-12 w-px bg-brand-surface" />
             <Stat value={totalCategories} label="Kategorija" />
           </div>
         </motion.div>

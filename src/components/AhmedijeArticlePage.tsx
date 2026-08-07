@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useScrollToHash } from "../hooks/useScrollToHash";
 import { Helmet } from "react-helmet-async";
 import { Link as LinkIcon } from "lucide-react";
 import { MDXProvider } from "@mdx-js/react";
@@ -64,9 +65,14 @@ export default function AhmedijeArticlePage() {
 
   const articleRef = useRef<HTMLElement | null>(null);
 
+  // Jumps to the heading a search result pointed at, once ids are assigned.
+  useScrollToHash(tocItems.length > 0);
+
   const article = slug ? getAhmedijeArticleBySlug(slug) : null;
 
   useEffect(() => {
+    // A hash targets a specific heading; useScrollToHash takes over there.
+    if (window.location.hash) return;
     window.scrollTo(0, 0);
   }, [slug]);
 
@@ -184,7 +190,7 @@ export default function AhmedijeArticlePage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
+    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
       <Helmet>
         <title>{`${title} | ${SITE_NAME}`}</title>
         <meta name="description" content={metaDescription} />
@@ -220,13 +226,13 @@ export default function AhmedijeArticlePage() {
                 onActiveChange={setActiveHeading}
               />
 
-              <div className="min-w-0 lg:col-start-2">
+              <div className="min-w-0 lg:col-start-2 max-w-prose">
                 <header className="mb-12">
                   <div className="flex items-center gap-4 mb-6">
                     <span className="text-xs font-mono text-brand-dim">
-                      HADIS
+                      AHMEDIJE
                     </span>
-                    <h1 className="text-3xl font-serif font-medium text-white">
+                    <h1 className="text-3xl font-serif font-bold text-brand-heading">
                       {title}
                     </h1>
                   </div>
@@ -236,9 +242,9 @@ export default function AhmedijeArticlePage() {
                       {formatDate(date)}
                     </span>
 
-                    <span className="text-white/10">·</span>
+                    <span className="text-brand-border">·</span>
 
-                    <span className="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-medium text-white">
+                    <span className="flex items-center gap-1.5 px-3 py-1 bg-brand-surface border border-brand-border rounded-full text-xs font-medium text-brand-heading">
                       <svg
                         className="w-3.5 h-3.5 opacity-60"
                         viewBox="0 0 24 24"
@@ -252,7 +258,7 @@ export default function AhmedijeArticlePage() {
                       {calculateReadingTime(wordCount)}
                     </span>
 
-                    <span className="text-white/10">·</span>
+                    <span className="text-brand-border">·</span>
 
                     <span className="text-[11px] uppercase tracking-widest text-brand-dim font-medium">
                       {wordCount} REČI
@@ -266,7 +272,7 @@ export default function AhmedijeArticlePage() {
                           key={tag}
                           type="button"
                           onClick={() => navigate(`/tags#${tag}`)}
-                          className="text-xs text-brand-dim border border-white/5 px-3 py-1 rounded-full hover:border-white/20 hover:text-white transition-colors cursor-pointer"
+                          className="text-xs text-brand-dim border border-brand-border px-3 py-1 rounded-full hover:border-brand-border-strong hover:text-brand-heading transition-colors cursor-pointer"
                         >
                           #{tag}
                         </button>
@@ -281,7 +287,7 @@ export default function AhmedijeArticlePage() {
                   </MDXProvider>
                 </article>
 
-                <div className="mt-16 pt-8 border-t border-white/5 flex flex-wrap items-center gap-4">
+                <div className="mt-16 pt-8 border-t border-brand-border flex flex-wrap items-center gap-4">
                   <span className="text-xs font-mono text-brand-dim uppercase tracking-widest">
                     Podeli
                   </span>
@@ -289,7 +295,7 @@ export default function AhmedijeArticlePage() {
                   <button
                     type="button"
                     onClick={handleCopyLink}
-                    className="flex items-center gap-2 px-4 py-2 text-sm border border-white/10 text-brand-dim hover:text-white hover:border-white/30 rounded-lg transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 text-sm border border-brand-border text-brand-dim hover:text-brand-heading hover:border-brand-border-strong rounded-lg transition-colors"
                   >
                     {copied ? (
                       <>
@@ -307,7 +313,7 @@ export default function AhmedijeArticlePage() {
                   <button
                     type="button"
                     onClick={handleWhatsApp}
-                    className="flex items-center gap-2 px-4 py-2 text-sm border border-white/10 text-brand-dim hover:text-white hover:border-white/30 rounded-lg transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 text-sm border border-brand-border text-brand-dim hover:text-brand-heading hover:border-brand-border-strong rounded-lg transition-colors"
                   >
                     <svg
                       className="w-4 h-4"
@@ -326,7 +332,7 @@ export default function AhmedijeArticlePage() {
         </section>
 
         {relatedArticles.length > 0 && (
-          <section className="py-12 border-t border-white/5">
+          <section className="py-12 border-t border-brand-border">
             <div className="max-w-7xl mx-auto px-6">
               <div className="grid lg:grid-cols-[240px_minmax(0,1fr)] gap-12">
                 <div className="hidden lg:block" />
@@ -336,7 +342,7 @@ export default function AhmedijeArticlePage() {
                     <span className="text-xs font-mono text-brand-dim">
                       SLIČNO
                     </span>
-                    <h2 className="text-lg font-serif font-medium text-white">
+                    <h2 className="text-lg font-serif font-medium text-brand-heading">
                       Povezani članci
                     </h2>
                   </div>
@@ -349,9 +355,9 @@ export default function AhmedijeArticlePage() {
                           navigate(`/categories/ahmedije/article/${rel.slug}`);
                           window.scrollTo({ top: 0, behavior: "smooth" });
                         }}
-                        className="p-5 border border-white/5 bg-white/[0.01] rounded-lg hover:border-white/20 transition-all cursor-pointer group"
+                        className="p-5 border border-brand-border bg-brand-surface rounded-lg hover:border-brand-border-strong transition-all cursor-pointer group"
                       >
-                        <h3 className="text-sm font-medium text-white group-hover:text-brand-accent transition-colors leading-snug mb-2">
+                        <h3 className="text-sm font-medium text-brand-heading group-hover:text-brand-accent transition-colors leading-snug mb-2">
                           {rel.title}
                         </h3>
 
@@ -360,7 +366,7 @@ export default function AhmedijeArticlePage() {
                             {rel.tags.slice(0, 3).map((tag) => (
                               <span
                                 key={tag}
-                                className="text-[10px] text-brand-dim border border-white/5 px-2 py-0.5 rounded-full"
+                                className="text-[10px] text-brand-dim border border-brand-border px-2 py-0.5 rounded-full"
                               >
                                 #{tag}
                               </span>

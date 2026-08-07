@@ -25,7 +25,7 @@ export default function PrivatnostPage() {
 
             <div className="space-y-8 text-brand-dim leading-relaxed">
               <div>
-                <h2 className="text-white font-medium mb-3">Prikupljanje podataka</h2>
+                <h2 className="text-brand-heading font-medium mb-3">Prikupljanje podataka</h2>
                 <p>
                   Ova stranica ne prikuplja lične podatke posetilaca.
                   Ne koristimo forme za registraciju niti čuvamo korisničke podatke.
@@ -33,7 +33,7 @@ export default function PrivatnostPage() {
               </div>
 
               <div>
-                <h2 className="text-white font-medium mb-3">Kolačići</h2>
+                <h2 className="text-brand-heading font-medium mb-3">Kolačići</h2>
                 <p>
                   Koristimo isključivo tehničke kolačiće potrebne za funkcionisanje sajta.
                   Ne koristimo kolačiće za praćenje.
@@ -41,7 +41,7 @@ export default function PrivatnostPage() {
               </div>
 
               <div>
-                <h2 className="text-white font-medium mb-3">Analitika</h2>
+                <h2 className="text-brand-heading font-medium mb-3">Analitika</h2>
                 <p>
                   Možemo koristiti anonimne analitičke podatke isključivo
                   u svrhu poboljšanja sadržaja.
@@ -49,17 +49,17 @@ export default function PrivatnostPage() {
               </div>
 
               <div>
-                <h2 className="text-white font-medium mb-3">Kontakt</h2>
+                <h2 className="text-brand-heading font-medium mb-3">Kontakt</h2>
                 <p>
                   Za sva pitanja vezana za privatnost,{" "}
-                  <Link to="/kontakt" className="underline hover:text-white transition-colors">
+                  <Link to="/kontakt" className="underline hover:text-brand-heading transition-colors">
                     kontaktirajte nas
                   </Link>
                   .
                 </p>
               </div>
 
-              <p className="text-xs text-white/20 pt-4 border-t border-white/5">
+              <p className="text-xs text-brand-border-strong pt-4 border-t border-brand-border">
                 Posljednje ažuriranje: {year}
               </p>
             </div>

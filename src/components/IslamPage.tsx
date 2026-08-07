@@ -51,7 +51,7 @@ export default function IslamPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
+    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
       <Helmet>
         <title>{`Islam | ${SITE_NAME}`}</title>
         <meta name="description" content="Vera Islam" />
@@ -94,9 +94,9 @@ export default function IslamPage() {
                       <Link
                         key={article.slug}
                         to={`/categories/islam/article/${article.slug}`}
-                        className="block p-6 border border-white/5 bg-white/[0.01] rounded-lg hover:border-white/20 transition-all cursor-pointer group"
+                        className="block p-6 border border-brand-border bg-brand-surface rounded-lg hover:border-brand-border-strong transition-all cursor-pointer group"
                       >
-                        <h4 className="text-lg font-medium mb-3 text-white group-hover:text-brand-accent transition-colors leading-snug">
+                        <h4 className="text-lg font-medium mb-3 text-brand-heading group-hover:text-brand-accent transition-colors leading-snug">
                           {article.title}
                         </h4>
 
@@ -104,9 +104,9 @@ export default function IslamPage() {
                           <span>{formatDate(article.date)}</span>
                           {hasWordCount && (
                             <>
-                              <span className="text-white/10">·</span>
+                              <span className="text-brand-border">·</span>
                               <span>{wordCount} REČI</span>
-                              <span className="text-white/10">·</span>
+                              <span className="text-brand-border">·</span>
                               <span>{readingTime} MIN ČITANJA</span>
                             </>
                           )}
@@ -118,11 +118,11 @@ export default function IslamPage() {
               </div>
 
               {totalPages > 1 && (
-                <div className="flex items-center justify-between mt-16 pt-8 border-t border-white/5 not-prose">
+                <div className="flex items-center justify-between mt-16 pt-8 border-t border-brand-border not-prose">
                   <button
                     onClick={handlePrevPage}
                     disabled={currentPage === 1}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-brand-dim hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-brand-dim hover:text-brand-heading transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <span>←</span>
                     <span>Prethodna</span>
@@ -136,8 +136,8 @@ export default function IslamPage() {
                           onClick={() => handlePageClick(page)}
                           className={`px-3 py-2 text-sm border rounded transition-colors ${
                             currentPage === page
-                              ? "text-white bg-white/10 border-white/10"
-                              : "text-brand-dim hover:text-white border-transparent hover:border-white/10"
+                              ? "text-brand-heading bg-brand-surface border-brand-border"
+                              : "text-brand-dim hover:text-brand-heading border-transparent hover:border-brand-border"
                           }`}
                         >
                           {page}
@@ -149,7 +149,7 @@ export default function IslamPage() {
                   <button
                     onClick={handleNextPage}
                     disabled={currentPage === totalPages}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-brand-dim hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-brand-dim hover:text-brand-heading transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <span>Sledeća</span>
                     <span>→</span>

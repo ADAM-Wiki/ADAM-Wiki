@@ -33,7 +33,7 @@ function LastArticleCard({
     >
       <Link
         to={article.url}
-        className="group block h-full rounded-lg border border-white/5 bg-[#111111] p-8 transition-colors hover:border-white/20 hover:bg-[#171717]"
+        className="group block h-full rounded-lg border border-brand-border bg-brand-surface p-8 transition-colors hover:border-brand-border-strong hover:bg-brand-surface-hover"
       >
         <div className="flex items-start gap-4">
           <FileText className="mt-1 h-6 w-6 flex-shrink-0 text-brand-dim transition-colors group-hover:text-brand-accent" />
@@ -72,7 +72,7 @@ export default function ArticleSection() {
   if (latestArticles.length === 0) return null;
 
   return (
-    <section className="py-20 border-t border-white/5">
+    <section className="py-20 border-t border-brand-border">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-12 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -84,7 +84,7 @@ export default function ArticleSection() {
 
           <Link
             to="/categories"
-            className="group flex items-center gap-2 text-sm italic text-brand-dim transition-colors hover:text-white"
+            className="group flex items-center gap-2 text-sm italic text-brand-dim transition-colors hover:text-brand-heading"
           >
             SVI ČLANCI{" "}
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

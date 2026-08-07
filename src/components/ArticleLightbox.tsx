@@ -39,7 +39,7 @@ export default function ArticleLightbox({
   // transform or overflow, both of which would otherwise break `fixed`.
   return createPortal(
     <div
-      className="fixed inset-0 z-[100] m-0 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] m-0 flex items-center justify-center bg-brand-overlay p-4 backdrop-blur-sm"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -63,7 +63,7 @@ export default function ArticleLightbox({
       <button
         type="button"
         onClick={onClose}
-        className="absolute right-4 top-4 text-2xl text-white/80 transition-colors hover:text-white"
+        className="absolute right-4 top-4 text-2xl text-brand-text transition-colors hover:text-brand-heading"
         aria-label="Zatvori sliku"
       >
         ×

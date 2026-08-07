@@ -93,7 +93,7 @@ for (const { meta, search, base } of SOURCES) {
         id: `${articleId}::${i}`,
         articleId,
         title: a.title,
-        content: chunk,
+        content: chunk.text,
         tags: a.tags.join(" "),
       });
     }

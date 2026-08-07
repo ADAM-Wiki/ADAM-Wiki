@@ -1,3 +1,10 @@
+export interface SearchSnippet {
+  text: string;
+  /** DOM id of the heading this snippet sits under; "" for intro text. */
+  headingId: string;
+  headingText: string;
+}
+
 export interface SearchResult {
   id: string;
   title: string;
@@ -5,7 +12,7 @@ export interface SearchResult {
   url: string;
   excerpt?: string;
   snippet?: string;
-  snippets?: string[];
+  snippets?: SearchSnippet[];
   matchCount?: number;
   relevance: number;
 }

@@ -1,17 +1,27 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import type { SearchResult } from "../utils/searchShared";
+import type { SearchResult, SearchSnippet } from "../utils/searchShared";
 import { highlightText } from "../utils/highlight";
-import { Search, X, Loader2, FileText, FolderOpen } from "lucide-react";
+import {
+  Search,
+  X,
+  Loader2,
+  FileText,
+  FolderOpen,
+  CornerDownRight,
+} from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "motion/react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { SITE_NAME } from "../utils/siteConfig";
 import { useSearch } from "../hooks/useSearch";
+import { getTotalArticleCount } from "../utils/articleIndex";
+
+const totalArticles = getTotalArticleCount();
 
 const CATEGORY_LABELS: Record<string, string> = {
-  hadis: "Hadis",
+  hadis: "Hadiske nauke",
   hriscanstvo: "Hrišćanstvo",
   ahmedije: "Ahmedije",
   ateizam: "Ateizam",
@@ -108,7 +118,8 @@ export default function SearchPage() {
     setSelectedIndex(0);
   }, [results]);
 
-  const previewResult = articleResults[selectedIndex] ?? articleResults[0] ?? null;
+  const previewResult =
+    articleResults[selectedIndex] ?? articleResults[0] ?? null;
   const activeMobilePreview = mobilePreview;
 
   const openResult = useCallback(
@@ -152,14 +163,15 @@ export default function SearchPage() {
     active?.scrollIntoView({ block: "nearest" });
   }, [selectedIndex]);
 
-  const displaySnippets =
-    previewResult?.snippets && previewResult.snippets.length > 0
-      ? previewResult.snippets
-      : previewResult?.snippet
-        ? [previewResult.snippet]
-        : previewResult?.excerpt
-          ? [previewResult.excerpt]
-          : [];
+  const toSnippets = (result: SearchResult | null): SearchSnippet[] => {
+    if (!result) return [];
+    if (result.snippets?.length) return result.snippets;
+
+    const fallback = result.snippet ?? result.excerpt;
+    return fallback ? [{ text: fallback, headingId: "", headingText: "" }] : [];
+  };
+
+  const displaySnippets = toSnippets(previewResult);
 
   const displayMatchCount =
     previewResult?.matchCount && previewResult.matchCount > 0
@@ -174,18 +186,19 @@ export default function SearchPage() {
   );
 
   const highlightedSnippets = useMemo(
-    () => displaySnippets.map((snippet) => highlightText(snippet, query)),
+    () => displaySnippets.map((snippet) => highlightText(snippet.text, query)),
     [displaySnippets, query],
   );
 
-  const mobileDisplaySnippets =
-    activeMobilePreview?.snippets && activeMobilePreview.snippets.length > 0
-      ? activeMobilePreview.snippets
-      : activeMobilePreview?.snippet
-        ? [activeMobilePreview.snippet]
-        : activeMobilePreview?.excerpt
-          ? [activeMobilePreview.excerpt]
-          : [];
+  /** Opens the article at the heading the snippet was found under. */
+  const openSnippet = useCallback(
+    (result: SearchResult, snippet: SearchSnippet) => {
+      navigate(snippet.headingId ? `${result.url}#${snippet.headingId}` : result.url);
+    },
+    [navigate],
+  );
+
+  const mobileDisplaySnippets = toSnippets(activeMobilePreview);
 
   const mobileDisplayMatchCount =
     activeMobilePreview?.matchCount && activeMobilePreview.matchCount > 0
@@ -193,12 +206,13 @@ export default function SearchPage() {
       : mobileDisplaySnippets.length;
 
   const mobileHighlightedSnippets = useMemo(
-    () => mobileDisplaySnippets.map((snippet) => highlightText(snippet, query)),
+    () =>
+      mobileDisplaySnippets.map((snippet) => highlightText(snippet.text, query)),
     [mobileDisplaySnippets, query],
   );
 
   return (
-    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
+    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
       <Helmet>
         <title>{`Pretraga | ${SITE_NAME}`}</title>
         <meta name="description" content="Pretražite sve članke." />
@@ -208,19 +222,25 @@ export default function SearchPage() {
 
       <main className="pt-24 pb-20">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="mb-10">
+          <div className="mb-8 text-center">
             <span className="text-xs font-mono text-brand-dim tracking-widest uppercase">
               PRETRAGA
             </span>
-            <h1 className="text-3xl font-serif font-medium text-white mt-2 mb-1">
+            <h1 className="text-3xl font-serif font-medium text-brand-heading mt-2">
               Pretražite sadržaj
             </h1>
-            <p className="text-sm text-brand-dim">
-              Pronađite članke po naslovu ili sadržaju
+
+            <p className="mt-4 flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1 font-mono text-xs uppercase tracking-widest text-brand-dim">
+              <span className="font-serif text-2xl tracking-normal text-brand-accent">
+                {totalArticles}
+              </span>
+              članaka
+              <span className="text-brand-border-strong">·</span>
+              sa izvorima, citirano i indeksirano u celosti
             </p>
           </div>
 
-          <div className="relative mb-6 max-w-3xl">
+          <div className="relative mb-6 mx-auto max-w-2xl">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dim pointer-events-none" />
             <input
               ref={inputRef}
@@ -228,16 +248,16 @@ export default function SearchPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Unesite pojam za pretragu..."
+              placeholder="Pretraži arhivu..."
               aria-label="Pretraga sadržaja"
-              className="w-full bg-white/[0.03] border border-white/10 rounded-lg pl-11 pr-10 py-3 text-sm text-white placeholder:text-brand-dim focus:outline-none focus:border-brand-accent transition-colors"
+              className="w-full bg-brand-surface border border-brand-border rounded-lg pl-11 pr-10 py-3 text-sm text-brand-heading placeholder:text-brand-dim focus:outline-none focus:border-brand-accent transition-colors"
             />
             {isLoading ? (
               <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dim animate-spin" />
             ) : query ? (
               <button
                 onClick={handleClear}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-dim hover:text-white transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-dim hover:text-brand-heading transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -245,7 +265,7 @@ export default function SearchPage() {
           </div>
 
           {hasQuery && !isLoading && (
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4">
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mb-4">
               <p className="text-xs text-brand-dim font-mono uppercase tracking-widest">
                 {articleResults.length}{" "}
                 {articleResults.length === 1 ? "rezultat" : "rezultata"}
@@ -259,7 +279,7 @@ export default function SearchPage() {
           )}
 
           {hasQuery && !isLoading && categoryResults.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2 mb-6">
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
               <span className="text-[10px] font-mono uppercase tracking-widest text-brand-dim">
                 Kategorije
               </span>
@@ -268,7 +288,7 @@ export default function SearchPage() {
                   key={result.id}
                   type="button"
                   onClick={() => navigate(result.url)}
-                  className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-brand-dim hover:border-brand-accent hover:text-brand-accent transition-colors"
+                  className="flex items-center gap-1.5 rounded-full border border-brand-border bg-brand-surface px-3 py-1.5 text-xs text-brand-dim hover:border-brand-accent hover:text-brand-accent transition-colors"
                 >
                   <FolderOpen className="w-3 h-3 shrink-0" />
                   {result.title}
@@ -296,10 +316,10 @@ export default function SearchPage() {
           )}
 
           {!isLoading && hasQuery && articleResults.length > 0 && (
-            <div className="grid md:grid-cols-[1fr_400px] gap-0 border border-white/10 rounded-xl overflow-hidden">
+            <div className="grid md:grid-cols-[1fr_400px] gap-0 border border-brand-border rounded-xl overflow-hidden">
               <div
                 ref={listRef}
-                className="toc-scroll divide-y divide-white/5 overflow-y-auto max-h-[600px]"
+                className="toc-scroll divide-y divide-brand-border overflow-y-auto max-h-[600px]"
               >
                 <AnimatePresence>
                   {articleResults.map((result, index) => {
@@ -321,7 +341,9 @@ export default function SearchPage() {
                           }
                         }}
                         className={`px-5 py-4 cursor-pointer transition-colors group ${
-                          isActive ? "bg-white/[0.04]" : "hover:bg-white/[0.02]"
+                          isActive
+                            ? "bg-brand-surface"
+                            : "hover:bg-brand-surface-hover"
                         }`}
                       >
                         <div className="flex items-start gap-3">
@@ -337,7 +359,7 @@ export default function SearchPage() {
                               className={`text-sm font-medium leading-snug truncate transition-colors ${
                                 isActive
                                   ? "text-brand-accent"
-                                  : "text-white group-hover:text-brand-accent"
+                                  : "text-brand-heading group-hover:text-brand-accent"
                               }`}
                             >
                               {result.title}
@@ -353,7 +375,7 @@ export default function SearchPage() {
                 </AnimatePresence>
               </div>
 
-              <div className="hidden md:flex border-l border-white/10 bg-white/[0.015] p-6 flex-col justify-start min-h-[300px]">
+              <div className="hidden md:flex border-l border-brand-border bg-brand-surface p-6 flex-col justify-start min-h-[300px]">
                 <AnimatePresence mode="wait">
                   {previewResult ? (
                     <motion.div
@@ -391,14 +413,34 @@ export default function SearchPage() {
                           </p>
 
                           <div className="toc-scroll flex-1 overflow-y-auto max-h-[320px] pr-1.5 flex flex-col gap-2.5">
-                            {highlightedSnippets.map((snippet, i) => (
-                              <div
-                                key={i}
-                                className="text-xs text-brand-dim leading-relaxed bg-white/[0.03] border border-white/5 rounded-lg p-3 hover:bg-white/[0.05] transition-colors"
-                              >
-                                {snippet}
-                              </div>
-                            ))}
+                            {highlightedSnippets.map((snippet, i) => {
+                              const source = displaySnippets[i];
+                              return (
+                                <button
+                                  key={i}
+                                  type="button"
+                                  onClick={() =>
+                                    openSnippet(previewResult, source)
+                                  }
+                                  title={
+                                    source.headingText
+                                      ? `Otvori: ${source.headingText}`
+                                      : "Otvori članak"
+                                  }
+                                  className="group/snip w-full cursor-pointer rounded-lg border border-brand-border bg-brand-surface p-3 text-left text-xs leading-relaxed text-brand-dim transition-colors hover:border-brand-border-strong hover:bg-brand-surface-hover"
+                                >
+                                  {source.headingText && (
+                                    <span className="mb-1.5 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-brand-accent">
+                                      <CornerDownRight className="h-3 w-3 shrink-0" />
+                                      <span className="truncate">
+                                        {source.headingText}
+                                      </span>
+                                    </span>
+                                  )}
+                                  {snippet}
+                                </button>
+                              );
+                            })}
                           </div>
                         </div>
                       )}
@@ -406,7 +448,7 @@ export default function SearchPage() {
                       <button
                         type="button"
                         onClick={() => navigate(previewResult.url)}
-                        className="mt-auto w-full py-2.5 text-xs font-medium uppercase tracking-widest border border-white/10 text-brand-dim hover:border-brand-accent hover:text-brand-accent rounded-lg transition-colors"
+                        className="mt-auto w-full py-2.5 text-xs font-medium uppercase tracking-widest border border-brand-border text-brand-dim hover:border-brand-accent hover:text-brand-accent rounded-lg transition-colors"
                       >
                         Otvori članak →
                       </button>
@@ -421,7 +463,8 @@ export default function SearchPage() {
             <div className="text-center py-24 text-brand-dim">
               <Search className="w-8 h-8 mx-auto mb-4 opacity-30" />
               <p className="text-sm">
-                Nema rezultata za <span className="text-white">"{query}"</span>
+                Nema rezultata za{" "}
+                <span className="text-brand-heading">"{query}"</span>
               </p>
             </div>
           )}
@@ -432,7 +475,7 @@ export default function SearchPage() {
         {mobilePreview && activeMobilePreview && (
           <>
             <motion.div
-              className="fixed inset-0 z-40 bg-black/60 md:hidden"
+              className="fixed inset-0 z-40 bg-brand-overlay md:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -440,13 +483,13 @@ export default function SearchPage() {
             />
 
             <motion.div
-              className="fixed inset-x-0 bottom-0 z-50 md:hidden rounded-t-2xl border border-white/10 bg-[#0b0b0c] p-5 max-h-[78vh] flex flex-col"
+              className="fixed inset-x-0 bottom-0 z-50 md:hidden rounded-t-2xl border border-brand-border bg-brand-surface p-5 max-h-[78vh] flex flex-col"
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 260 }}
             >
-              <div className="w-10 h-1 rounded-full bg-white/15 mx-auto mb-4" />
+              <div className="w-10 h-1 rounded-full bg-brand-border-strong mx-auto mb-4" />
 
               <div className="flex items-start justify-between gap-4 mb-4">
                 <div>
@@ -461,7 +504,7 @@ export default function SearchPage() {
                 <button
                   type="button"
                   onClick={() => setMobilePreview(null)}
-                  className="shrink-0 rounded-md border border-white/10 p-2 text-brand-dim hover:text-white hover:border-white/20 transition-colors"
+                  className="shrink-0 rounded-md border border-brand-border p-2 text-brand-dim hover:text-brand-heading hover:border-brand-border-strong transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -479,14 +522,30 @@ export default function SearchPage() {
                   </p>
 
                   <div className="toc-scroll overflow-y-auto pr-1 flex flex-col gap-2.5">
-                    {mobileHighlightedSnippets.map((snippet, i) => (
-                      <div
-                        key={i}
-                        className="text-xs text-brand-dim leading-relaxed bg-white/[0.03] border border-white/5 rounded-lg p-3"
-                      >
-                        {snippet}
-                      </div>
-                    ))}
+                    {mobileHighlightedSnippets.map((snippet, i) => {
+                      const source = mobileDisplaySnippets[i];
+                      return (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => {
+                            openSnippet(activeMobilePreview, source);
+                            setMobilePreview(null);
+                          }}
+                          className="w-full cursor-pointer rounded-lg border border-brand-border bg-brand-surface p-3 text-left text-xs leading-relaxed text-brand-dim"
+                        >
+                          {source.headingText && (
+                            <span className="mb-1.5 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-brand-accent">
+                              <CornerDownRight className="h-3 w-3 shrink-0" />
+                              <span className="truncate">
+                                {source.headingText}
+                              </span>
+                            </span>
+                          )}
+                          {snippet}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -497,7 +556,7 @@ export default function SearchPage() {
                   navigate(activeMobilePreview.url);
                   setMobilePreview(null);
                 }}
-                className="mt-4 w-full py-3 text-xs font-medium uppercase tracking-widest border border-white/10 text-brand-dim hover:border-brand-accent hover:text-brand-accent rounded-lg transition-colors"
+                className="mt-4 w-full py-3 text-xs font-medium uppercase tracking-widest border border-brand-border text-brand-dim hover:border-brand-accent hover:text-brand-accent rounded-lg transition-colors"
               >
                 Otvori članak →
               </button>

@@ -15,7 +15,7 @@ export default function BackToTop() {
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       aria-label="Nazad na vrh"
-      className="fixed bottom-8 right-8 z-40 w-10 h-10 flex items-center justify-center rounded-full border border-white/10 bg-brand-bg text-brand-dim hover:text-white hover:border-white/30 transition-all shadow-lg"
+      className="fixed bottom-8 right-8 z-40 w-10 h-10 flex items-center justify-center rounded-full border border-brand-border bg-brand-bg text-brand-dim hover:text-brand-heading hover:border-brand-border-strong transition-all shadow-lg"
     >
       ↑
     </button>

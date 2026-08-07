@@ -32,9 +32,9 @@ export function MdxH2({ className = "", children, ...props }: HeadingProps) {
           }}
         />
         <div className="flex items-center gap-1.5">
-          <div className="w-1.5 h-1.5 rotate-45 border border-white/30" />
+          <div className="w-1.5 h-1.5 rotate-45 border border-brand-border-strong" />
           <div className="w-2 h-2 rotate-45 bg-brand-accent" />
-          <div className="w-1.5 h-1.5 rotate-45 border border-white/30" />
+          <div className="w-1.5 h-1.5 rotate-45 border border-brand-border-strong" />
         </div>
         <div
           className="flex-1 h-[3px]"
@@ -45,7 +45,7 @@ export function MdxH2({ className = "", children, ...props }: HeadingProps) {
         />
       </div>
       <h2
-        className={`scroll-mt-32 break-words text-4xl font-serif font-bold text-white [overflow-wrap:anywhere] ${className}`}
+        className={`scroll-mt-32 break-words text-4xl font-serif font-bold text-brand-heading [overflow-wrap:anywhere] ${className}`}
         {...props}
       >
         {children}
@@ -57,7 +57,7 @@ export function MdxH2({ className = "", children, ...props }: HeadingProps) {
 export function MdxH3({ className = "", children, ...props }: HeadingProps) {
   return (
     <h3
-      className={`scroll-mt-32 break-words flex items-center gap-3 text-3xl font-serif font-bold text-white [overflow-wrap:anywhere] ${className}`}
+      className={`scroll-mt-32 break-words flex items-center gap-3 text-3xl font-serif font-bold text-brand-heading [overflow-wrap:anywhere] ${className}`}
       {...props}
     >
       <span className="shrink-0 w-1.5 h-1.5 rotate-45 bg-[var(--color-brand-accent)]" />
@@ -80,12 +80,12 @@ export function MdxP({ className = "", children, ...props }: ParagraphProps) {
 export function Important({ className = "", children, ...props }: DivProps) {
   return (
     <div
-      className={`border-t-4 border-[#4adf80] bg-[#172b24] px-5 py-4 rounded-lg inline-block ${className}`}
+      className={`border-l-4 border-brand-note-fg px-5 py-4 inline-block ${className}`}
       {...props}
     >
       <div className="flex items-center gap-2 mb-2">
-        <Info className="w-5 h-5 text-[#4adf80]" />
-        <span className="font-semibold text-[#4adf80] tracking-wide">
+        <Info className="w-5 h-5 text-brand-note-fg" />
+        <span className="font-semibold text-brand-note-fg tracking-wide">
           Sažetak odgovora
         </span>
       </div>
@@ -97,11 +97,11 @@ export function Important({ className = "", children, ...props }: DivProps) {
 export function OpisSlike({ className = "", children, ...props }: DivProps) {
   return (
     <div
-      className={`border-t-4 border-teal-500/50 bg-teal-500/5 text-brand-text px-5 py-4 rounded-lg inline-block ${className}`}
+      className={`border-l-4 border-brand-info-fg text-brand-text px-5 py-4 inline-block ${className}`}
     >
       <div className="flex items-center gap-2 mb-2">
-        <Info className="w-5 h-5 text-teal-400/70" />
-        <span className="font-semibold text-teal-400 tracking-wide">
+        <Info className="w-5 h-5 text-brand-info-fg" />
+        <span className="font-semibold text-brand-info-fg tracking-wide">
           Opis Slike
         </span>
       </div>
@@ -113,7 +113,7 @@ export function OpisSlike({ className = "", children, ...props }: DivProps) {
 export function QuoteBox({ className = "", children, ...props }: DivProps) {
   return (
     <div
-      className={`border-t-4 border-brand-dim bg-brand-muted text-brand-text px-5 py-4 rounded-lg inline-block ${className}`}
+      className={`border-l-4 border-brand-dim bg-brand-muted text-brand-text px-5 py-4 inline-block ${className}`}
       {...props}
     >
       <div className="flex items-center gap-2 mb-2">
@@ -154,18 +154,17 @@ export function MdxLI({
 export function Warning({ className = "", children, ...props }: DivProps) {
   return (
     <div
-      className={`border-t-4 px-5 py-4 rounded-lg inline-block ${className}`}
+      className={`border-l-4 px-5 py-4 inline-block ${className}`}
       style={{
-        borderColor: "#ffd44a",
-        backgroundColor: "#2b2717",
+        borderColor: "var(--color-brand-warn-fg)",
       }}
       {...props}
     >
       <div className="flex items-center gap-2 mb-2">
-        <TriangleAlert className="w-5 h-5" style={{ color: "#ffd44a" }} />
+        <TriangleAlert className="w-5 h-5" style={{ color: "var(--color-brand-warn-fg)" }} />
         <span
           className="font-semibold text-sm tracking-wide"
-          style={{ color: "#ffd44a" }}
+          style={{ color: "var(--color-brand-warn-fg)" }}
         >
           Napomena
         </span>
@@ -188,18 +187,17 @@ export function Ucenjak({
 }: UcenjakProps) {
   return (
     <div
-      className={`px-5 py-4 rounded-lg inline-block border-t-4 ${className}`}
+      className={`px-5 py-4 inline-block border-l-4 ${className}`}
       style={{
-        borderColor: "#eab308",
-        backgroundColor: "#1f1a05",
+        borderColor: "var(--color-brand-scholar-fg)",
       }}
       {...props}
     >
       <div className="flex items-center gap-2 mb-3">
-        <BookOpenText className="w-5 h-5" style={{ color: "#eab308" }} />
+        <BookOpenText className="w-5 h-5" style={{ color: "var(--color-brand-scholar-fg)" }} />
         <span
           className="font-semibold text-sm tracking-wide"
-          style={{ color: "#eab308" }}
+          style={{ color: "var(--color-brand-scholar-fg)" }}
         >
           {reference}
         </span>
@@ -222,18 +220,17 @@ export function Quran({
 }: QuranProps) {
   return (
     <div
-      className={`px-5 py-4 rounded-lg inline-block border-t-4 ${className}`}
+      className={`px-5 py-4 inline-block border-l-4 ${className}`}
       style={{
-        borderColor: "#4a9eff",
-        backgroundColor: "#172038",
+        borderColor: "var(--color-brand-quran-fg)",
       }}
       {...props}
     >
       <div className="flex items-center gap-2 mb-3">
-        <BookOpenText className="w-5 h-5" style={{ color: "#4a9eff" }} />
+        <BookOpenText className="w-5 h-5" style={{ color: "var(--color-brand-quran-fg)" }} />
         <span
           className="font-semibold text-sm tracking-wide"
-          style={{ color: "#4a9eff" }}
+          style={{ color: "var(--color-brand-quran-fg)" }}
         >
           {reference}
         </span>
@@ -256,18 +253,17 @@ export function Bible({
 }: BibleProps) {
   return (
     <div
-      className={`px-5 py-4 rounded-lg inline-block border-t-4 ${className}`}
+      className={`px-5 py-4 inline-block border-l-4 ${className}`}
       style={{
-        borderColor: "#ff6b6b",
-        backgroundColor: "#2b1717",
+        borderColor: "var(--color-brand-bible-fg)",
       }}
       {...props}
     >
       <div className="flex items-center gap-2 mb-3">
-        <BookOpenText className="w-5 h-5" style={{ color: "#ff6b6b" }} />
+        <BookOpenText className="w-5 h-5" style={{ color: "var(--color-brand-bible-fg)" }} />
         <span
           className="font-semibold text-sm tracking-wide"
-          style={{ color: "#ff6b6b" }}
+          style={{ color: "var(--color-brand-bible-fg)" }}
         >
           {reference}
         </span>
@@ -320,7 +316,7 @@ export function ArticleLink({
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className={`border-t-4 border-brand-dim bg-brand-muted text-brand-text px-5 py-4 rounded-lg inline-block ${className}`}
+        className={`border-l-4 border-brand-dim bg-brand-muted text-brand-text px-5 py-4 inline-block ${className}`}
         {...props}
       >
         <div className="flex items-center gap-2 mb-2">

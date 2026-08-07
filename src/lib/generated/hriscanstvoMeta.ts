@@ -17,9 +17,12 @@ export const hriscanstvoMeta: GeneratedhriscanstvoMeta[] = [
     "slug": "Autorstvo-1-Jovanove-poslanice-Anonimno-pismo-bez-potvrdjene-veze-sa-apostolom-Jovanom",
     "category": "hriscanstvo",
     "tags": [
-      ""
+      "hriscanstvo",
+      "biblija",
+      "autorstvo",
+      "novi-zavet"
     ],
-    "description": "Kratak opis članka.",
+    "description": "Prva Jovanova poslanica je anonimno pismo. Džobes, Liju, Ahtemajer, Fridman i Ridling potvrđuju da je tradicionalno pripisivanje apostolu Jovanu neizvesno.",
     "wordCount": 830,
     "readingTimeMinutes": 5
   },
@@ -29,9 +32,12 @@ export const hriscanstvoMeta: GeneratedhriscanstvoMeta[] = [
     "slug": "stihovi-izbrisani-iz-najstarijih-rukopisa-i-odsutni-iz-svih-kritickih-izdanja",
     "category": "hriscanstvo",
     "tags": [
-      ""
+      "hriscanstvo",
+      "biblija",
+      "rukopisi",
+      "tekstualna-kritika"
     ],
-    "description": "Kratak opis članka.",
+    "description": "Marko 7:16, 9:44 i 9:46 odsutni su iz Sinajskog i Vatikanskog kodeksa i izbrisani su u svim kritičkim izdanjima. Reč je o kasnijem prepisivačkom dodavanju.",
     "wordCount": 800,
     "readingTimeMinutes": 4
   },
@@ -41,9 +47,12 @@ export const hriscanstvoMeta: GeneratedhriscanstvoMeta[] = [
     "slug": "tekstualne-varijante-u-novom-zavetu",
     "category": "hriscanstvo",
     "tags": [
-      ""
+      "hriscanstvo",
+      "biblija",
+      "rukopisi",
+      "tekstualna-kritika"
     ],
-    "description": "Kratak opis članka.",
+    "description": "Doksologija u Mateju 6:13, izraz na pokajanje u 9:13 i reč licemeri u 16:3 nisu prepisivačke omaške, nego teološki nabijene varijante koje menjaju smisao teksta.",
     "wordCount": 973,
     "readingTimeMinutes": 5
   },
@@ -53,9 +62,12 @@ export const hriscanstvoMeta: GeneratedhriscanstvoMeta[] = [
     "slug": "tri-stiha-koja-su-dodali-prepisivaci-i-koja-su-odsutna-iz-svih-drevnih-rukopisa",
     "category": "hriscanstvo",
     "tags": [
-      ""
+      "hriscanstvo",
+      "biblija",
+      "rukopisi",
+      "tekstualna-kritika"
     ],
-    "description": "Kratak opis članka.",
+    "description": "Matej 12:47, 18:11 i 17:21 odsutni su iz Sinajskog, Vatikanskog i Aleksandrijskog kodeksa. Svaki od njih stvara doktrinalni problem koji objašnjava umetanje.",
     "wordCount": 764,
     "readingTimeMinutes": 4
   },
@@ -65,9 +77,12 @@ export const hriscanstvoMeta: GeneratedhriscanstvoMeta[] = [
     "slug": "biblija-sadrzi-eksplicitne-seksualne-narative-i-moralno-problematicne-price",
     "category": "hriscanstvo",
     "tags": [
-      ""
+      "hriscanstvo",
+      "biblija",
+      "moral",
+      "dvostruki-standard"
     ],
-    "description": "Kratak opis članka.",
+    "description": "Kritičari islama napadaju islamske tekstove zbog morala, a prećutkuju eksplicitne odlomke u samoj Bibliji, od kojih mnogi uključuju proroke i pretke Isusa.",
     "wordCount": 1101,
     "readingTimeMinutes": 6
   },
@@ -77,9 +92,12 @@ export const hriscanstvoMeta: GeneratedhriscanstvoMeta[] = [
     "slug": "jos-cetiris-tiha-izostavljena-iz-najstarijih-rukopisa-matej-2314-Rimljanima-81-Matej-158",
     "category": "hriscanstvo",
     "tags": [
-      ""
+      "hriscanstvo",
+      "biblija",
+      "rukopisi",
+      "tekstualna-kritika"
     ],
-    "description": "Kratak opis članka.",
+    "description": "Matej 23:14, Rimljanima 8:1 i Matej 15:8 odsutni su iz najstarijih kodeksa i izostavljeni u kritičkim izdanjima, a svaki nosi doktrinalni motiv za izmenu.",
     "wordCount": 731,
     "readingTimeMinutes": 4
   }

@@ -4,34 +4,15 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import BackToTop from "./BackToTop";
+import { CATEGORIES } from "../utils/categoriesData";
 
-export const topics = [
-  "AHMEDIJE",
-  "ATEIZAM",
-  "HADIS",
-  "HINDUIZAM",
-  "HRIŠĆANSTVO",
-  "ISLAM",
-  "ISTORIJA",
-  "MUHAMMED ﷺ",
-  "NAUKA I ISLAM",
-  "ODGOVORI NA SUMNJE",
-  "OPOVRGAVANJE SIJA",
-];
+// Single source of truth, so a renamed category cannot drift between this page
+// and the home grid.
+const topics = CATEGORIES.map((category) => category.title);
 
-const CATEGORY_URLS: Record<string, string> = {
-  HADIS: "/categories/hadis",
-  ATEIZAM: "/categories/ateizam",
-  HRIŠĆANSTVO: "/categories/hriscanstvo",
-  HINDUIZAM: "/categories/hinduizam",
-  ISLAM: "/categories/islam",
-  ISTORIJA: "/categories/istorija",
-  AHMEDIJE: "/categories/ahmedije",
-  "ODGOVORI NA SUMNJE": "/categories/odgovori",
-  "OPOVRGAVANJE SIJA": "/categories/opovrgavanje",
-  "NAUKA I ISLAM": "/categories/nauka",
-  "MUHAMMED ﷺ": "/categories/muhammed",
-};
+const CATEGORY_URLS: Record<string, string> = Object.fromEntries(
+  CATEGORIES.map((category) => [category.title, category.url]),
+);
 
 export default function CategoriesPage() {
   const navigate = useNavigate();
@@ -42,7 +23,7 @@ export default function CategoriesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
+    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
       <Navbar />
 
       <main className="pt-20">
@@ -63,13 +44,13 @@ export default function CategoriesPage() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05 }}
-                  className={`group p-5 border border-white/5 hover:border-white/20 hover:bg-white/[0.02] transition-all cursor-pointer flex items-start gap-4 min-h-[50px] ${
+                  className={`group p-5 rounded-lg border border-brand-border bg-brand-surface hover:border-brand-border-strong hover:bg-brand-surface-hover transition-colors cursor-pointer flex items-start gap-4 min-h-[50px] ${
                     topic.length > 15 ? "sm:col-span-1" : ""
                   }`}
                   onClick={() => handleTopicClick(topic)}
                 >
                   <FolderOpen className="w-5 h-5 text-brand-dim group-hover:text-brand-accent transition-colors" />
-                  <span className="text-xs font-medium tracking-widest transition-colors group-hover:text-white uppercase">
+                  <span className="text-xs font-medium tracking-widest transition-colors group-hover:text-brand-heading uppercase">
                     {topic}
                   </span>
                 </motion.div>

@@ -68,7 +68,7 @@ export default function TagsPage() {
   const allTags = Array.from(tagMap.keys()).sort();
 
   return (
-    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
+    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
       <Helmet>
         <title>{`Tagovi | ${SITE_NAME}`}</title>
         <meta name="description" content="Pretražite članke po tagovima." />
@@ -89,10 +89,10 @@ export default function TagsPage() {
                 <a
                   key={tag}
                   href={`#${tag}`}
-                  className="px-4 py-2 text-sm border border-white/10 text-brand-dim hover:text-white hover:border-white/30 rounded-full transition-colors"
+                  className="px-4 py-2 text-sm border border-brand-border text-brand-dim hover:text-brand-heading hover:border-brand-border-strong rounded-full transition-colors"
                 >
                   #{tag}
-                  <span className="ml-2 text-xs text-white/20">
+                  <span className="ml-2 text-xs text-brand-border-strong">
                     {tagMap.get(tag)?.length}
                   </span>
                 </a>
@@ -104,9 +104,9 @@ export default function TagsPage() {
                 <div
                   key={tag}
                   id={tag}
-                  className="border-t border-white/5 pt-10"
+                  className="border-t border-brand-border pt-10"
                 >
-                  <h2 className="text-lg font-serif font-medium mb-6 text-white">
+                  <h2 className="text-lg font-serif font-medium mb-6 text-brand-heading">
                     #{tag}
                   </h2>
 
@@ -117,9 +117,9 @@ export default function TagsPage() {
                         onClick={() =>
                           navigate(`${article.basePath}/${article.slug}`)
                         }
-                        className="p-5 border border-white/5 bg-white/[0.01] rounded-lg hover:border-white/20 transition-all cursor-pointer group"
+                        className="p-5 border border-brand-border bg-brand-surface rounded-lg hover:border-brand-border-strong transition-all cursor-pointer group"
                       >
-                        <h3 className="text-sm font-medium text-white group-hover:text-brand-accent transition-colors leading-snug">
+                        <h3 className="text-sm font-medium text-brand-heading group-hover:text-brand-accent transition-colors leading-snug">
                           {article.title}
                         </h3>
 

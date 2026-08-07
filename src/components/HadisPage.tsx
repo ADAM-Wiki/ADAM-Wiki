@@ -51,14 +51,14 @@ export default function HadisPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
+    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
       <Helmet>
-        <title>{`Hadis | ${SITE_NAME}`}</title>
+        <title>{`Hadiske nauke | ${SITE_NAME}`}</title>
         <meta
           name="description"
           content="Islamski hadisi i njihova naučna objašnjenja. Istražite autentične hadise Poslanika Muhammeda s.a.v.s."
         />
-        <meta property="og:title" content={`Hadis | ${SITE_NAME}`} />
+        <meta property="og:title" content={`Hadiske nauke | ${SITE_NAME}`} />
         <meta
           property="og:description"
           content="Islamski hadisi i njihova naučna objašnjenja."
@@ -70,7 +70,7 @@ export default function HadisPage() {
           content={`${SITE_URL}/images/og-default.png`}
         />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`Hadis | ${SITE_NAME}`} />
+        <meta name="twitter:title" content={`Hadiske nauke | ${SITE_NAME}`} />
         <meta
           name="twitter:description"
           content="Islamski hadisi i njihova naučna objašnjenja."
@@ -83,9 +83,9 @@ export default function HadisPage() {
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex items-center gap-4 ">
-              <span className="text-xs font-mono text-brand-dim">HADIS</span>
+              <span className="text-xs font-mono text-brand-dim">HADISKE NAUKE</span>
               <h1 className="text-3xl font-serif font-medium">
-                Kategorija: Hadis
+                Kategorija: Hadiske nauke
               </h1>
             </div>
 
@@ -103,9 +103,9 @@ export default function HadisPage() {
                       <Link
                         key={article.slug}
                         to={`/categories/hadis/article/${article.slug}`}
-                        className="block p-6 border border-white/5 bg-white/[0.01] rounded-lg hover:border-white/20 transition-all cursor-pointer group"
+                        className="block p-6 border border-brand-border bg-brand-surface rounded-lg hover:border-brand-border-strong transition-all cursor-pointer group"
                       >
-                        <h4 className="text-lg font-medium mb-3 text-white group-hover:text-brand-accent transition-colors leading-snug">
+                        <h4 className="text-lg font-medium mb-3 text-brand-heading group-hover:text-brand-accent transition-colors leading-snug">
                           {article.title}
                         </h4>
 
@@ -113,9 +113,9 @@ export default function HadisPage() {
                           <span>{formatDate(article.date)}</span>
                           {hasWordCount && (
                             <>
-                              <span className="text-white/10">·</span>
+                              <span className="text-brand-border">·</span>
                               <span>{wordCount} REČI</span>
-                              <span className="text-white/10">·</span>
+                              <span className="text-brand-border">·</span>
                               <span>{readingTime} MIN ČITANJA</span>
                             </>
                           )}
@@ -127,11 +127,11 @@ export default function HadisPage() {
               </div>
 
               {totalPages > 1 && (
-                <div className="flex items-center justify-between mt-16 pt-8 border-t border-white/5 not-prose">
+                <div className="flex items-center justify-between mt-16 pt-8 border-t border-brand-border not-prose">
                   <button
                     onClick={handlePrevPage}
                     disabled={currentPage === 1}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-brand-dim hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-brand-dim hover:text-brand-heading transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <span>←</span>
                     <span>Prethodna</span>
@@ -145,8 +145,8 @@ export default function HadisPage() {
                           onClick={() => handlePageClick(page)}
                           className={`px-3 py-2 text-sm border rounded transition-colors ${
                             currentPage === page
-                              ? "text-white bg-white/10 border-white/10"
-                              : "text-brand-dim hover:text-white border-transparent hover:border-white/10"
+                              ? "text-brand-heading bg-brand-surface border-brand-border"
+                              : "text-brand-dim hover:text-brand-heading border-transparent hover:border-brand-border"
                           }`}
                         >
                           {page}
@@ -158,7 +158,7 @@ export default function HadisPage() {
                   <button
                     onClick={handleNextPage}
                     disabled={currentPage === totalPages}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-brand-dim hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-brand-dim hover:text-brand-heading transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <span>Sledeća</span>
                     <span>→</span>

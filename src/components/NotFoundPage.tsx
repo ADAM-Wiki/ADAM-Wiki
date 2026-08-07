@@ -8,7 +8,7 @@ export default function NotFoundPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-white">
+    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
       <Helmet>
         <title>{`404 — Stranica nije pronađena | ${SITE_NAME}`}</title>
         <meta name="description" content="Tražena stranica ne postoji." />
@@ -20,11 +20,11 @@ export default function NotFoundPage() {
         <section className="py-32">
           <div className="max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
 
-            <span className="text-[120px] font-serif font-medium leading-none text-white/5 select-none">
+            <span className="text-[120px] font-serif font-medium leading-none text-brand-border select-none">
               404
             </span>
 
-            <h1 className="text-3xl font-serif font-medium text-white -mt-6 mb-4">
+            <h1 className="text-3xl font-serif font-medium text-brand-heading -mt-6 mb-4">
               Stranica nije pronađena
             </h1>
 
@@ -35,7 +35,7 @@ export default function NotFoundPage() {
             <div className="flex flex-wrap gap-4 justify-center">
               <button
                 onClick={() => navigate("/")}
-                className="px-6 py-3 bg-white/5 border border-white/10 text-white text-sm rounded-lg hover:bg-white/10 transition"
+                className="px-6 py-3 bg-brand-surface border border-brand-border text-brand-heading text-sm rounded-lg hover:bg-brand-surface-hover transition"
               >
                 Početna
               </button>

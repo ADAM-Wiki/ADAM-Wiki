@@ -4,7 +4,7 @@ export default function Footer() {
   const navigate = useNavigate();
 
   return (
-    <footer className="py-24 border-t border-white/5 bg-black/50">
+    <footer className="py-24 border-t border-brand-border bg-brand-bg/50">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-16 mb-20">
 
@@ -22,20 +22,20 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-[10px] uppercase tracking-[0.3em] font-bold mb-8 text-white/40">Legalno</h4>
+            <h4 className="text-[10px] uppercase tracking-[0.3em] font-bold mb-8 text-brand-dim">Legalno</h4>
             <ul className="space-y-4 text-sm text-brand-dim">
               <li>
-                <button onClick={() => navigate("/privatnost")} className="hover:text-white transition-colors">
+                <button onClick={() => navigate("/privatnost")} className="hover:text-brand-heading transition-colors">
                   Privatnost
                 </button>
               </li>
               <li>
-                <button onClick={() => navigate("/uslovi")} className="hover:text-white transition-colors">
+                <button onClick={() => navigate("/uslovi")} className="hover:text-brand-heading transition-colors">
                   Uslovi korišćenja
                 </button>
               </li>
               <li>
-                <button onClick={() => navigate("/kolacici")} className="hover:text-white transition-colors">
+                <button onClick={() => navigate("/kolacici")} className="hover:text-brand-heading transition-colors">
                   Politika kolačića
                 </button>
               </li>
@@ -43,16 +43,16 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-[10px] uppercase tracking-[0.3em] font-bold mb-8 text-white/40">Navigacija</h4>
+            <h4 className="text-[10px] uppercase tracking-[0.3em] font-bold mb-8 text-brand-dim">Navigacija</h4>
             <ul className="space-y-4 text-sm text-brand-dim">
               <li>
-                <button onClick={() => navigate("/kontakt")} className="hover:text-white transition-colors">
+                <button onClick={() => navigate("/kontakt")} className="hover:text-brand-heading transition-colors">
                   Kontakt
                 </button>
               </li>
               
               <li>
-                <button onClick={() => navigate("/about")} className="hover:text-white transition-colors">
+                <button onClick={() => navigate("/about")} className="hover:text-brand-heading transition-colors">
                   O Projektu
                 </button>
               </li>
@@ -61,14 +61,14 @@ export default function Footer() {
 
         </div>
 
-        <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
+        <div className="pt-12 border-t border-brand-border flex flex-col md:flex-row justify-between items-center gap-8">
           <span className="text-[10px] tracking-[0.2em] uppercase text-brand-dim">
             © {new Date().getFullYear()} ADAM RESEARCH DATABASE — SVA PRAVA ZADRŽANA
           </span>
           <div className="flex gap-8">
-            <a href="https://www.youtube.com/@asocijacija-adam" target="_blank" rel="noopener noreferrer" className="text-[10px] tracking-[0.2em] text-brand-dim hover:text-white transition-colors">YOUTUBE</a>
-            <a href="https://www.facebook.com/asocijacijaadam" target="_blank" rel="noopener noreferrer" className="text-[10px] tracking-[0.2em] text-brand-dim hover:text-white transition-colors">FACEBOOK</a>
-            <a href="https://www.tiktok.com/@asocijacija.adam" target="_blank" rel="noopener noreferrer" className="text-[10px] tracking-[0.2em] text-brand-dim hover:text-white transition-colors">TIKTOK</a>
+            <a href="https://www.youtube.com/@asocijacija-adam" target="_blank" rel="noopener noreferrer" className="text-[10px] tracking-[0.2em] text-brand-dim hover:text-brand-heading transition-colors">YOUTUBE</a>
+            <a href="https://www.facebook.com/asocijacijaadam" target="_blank" rel="noopener noreferrer" className="text-[10px] tracking-[0.2em] text-brand-dim hover:text-brand-heading transition-colors">FACEBOOK</a>
+            <a href="https://www.tiktok.com/@asocijacija.adam" target="_blank" rel="noopener noreferrer" className="text-[10px] tracking-[0.2em] text-brand-dim hover:text-brand-heading transition-colors">TIKTOK</a>
           </div>
         </div>
 

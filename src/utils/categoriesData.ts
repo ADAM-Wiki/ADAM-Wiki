@@ -11,12 +11,12 @@ export interface CategoryData {
 export const CATEGORIES: CategoryData[] = [
   { id: "ahmedije", title: "AHMEDIJE", url: "/categories/ahmedije" },
   { id: "ateizam", title: "ATEIZAM", url: "/categories/ateizam" },
-  { id: "hadis", title: "HADIS", url: "/categories/hadis" },
+  { id: "hadis", title: "HADISKE NAUKE", url: "/categories/hadis" },
   { id: "hinduizam", title: "HINDUIZAM", url: "/categories/hinduizam" },
   { id: "hriscanstvo", title: "HRIŠĆANSTVO", url: "/categories/hriscanstvo" },
   { id: "islam", title: "ISLAM", url: "/categories/islam" },
   { id: "istorija", title: "ISTORIJA", url: "/categories/istorija" },
-  { id: "muhammed", title: "MUHAMMED", url: "/categories/muhammed" },
+  { id: "muhammed", title: "MUHAMMED ﷺ", url: "/categories/muhammed" },
   { id: "nauka", title: "NAUKA I ISLAM", url: "/categories/nauka" },
   { id: "odgovori", title: "ODGOVORI NA SUMNJE", url: "/categories/odgovori" },
   {

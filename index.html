@@ -54,6 +54,30 @@
       content="https://adam-wiki.github.io/ADAM-Wiki/images/og-default.png"
     />
 
+    <!--
+      Applies the saved theme before first paint. Pages are prerendered with the
+      dark theme baked in, so without this a light-theme visitor sees a dark
+      flash on every navigation.
+    -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("adam-theme");
+          var theme =
+            stored === "light" || stored === "dark"
+              ? stored
+              : window.matchMedia &&
+                  window.matchMedia("(prefers-color-scheme: light)").matches
+                ? "light"
+                : "dark";
+          document.documentElement.setAttribute("data-theme", theme);
+          document.documentElement.style.colorScheme = theme;
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
+      })();
+    </script>
+
     <!-- GitHub Pages SPA redirect restore -->
     <script>
       (function (l) {

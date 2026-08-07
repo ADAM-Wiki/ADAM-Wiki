@@ -42,11 +42,75 @@
   --font-serif: "Playfair Display", ui-serif, Georgia, serif;
   --font-lexend: "Lexend", ui-sans-serif, system-ui, sans-serif;
 
+  /* Dark theme is the default. Every value below is overridden wholesale by
+     html[data-theme="light"] further down, so components only ever reference
+     these semantic names - never a literal white/black. */
   --color-brand-bg: #0a0a0a;
-  --color-brand-muted: #1a1a1a;
-  --color-brand-accent: #3b82f6;
+  --color-brand-surface: #111111;
+  --color-brand-surface-hover: #171717;
+  --color-brand-field: #060606;
+  --color-brand-border: #1f1f1f;
+  --color-brand-border-strong: #333333;
+  --color-brand-heading: #ffffff;
   --color-brand-text: #e5e5e5;
   --color-brand-dim: #737373;
+  --color-brand-accent: #3b82f6;
+  --color-brand-on-accent: #ffffff;
+  --color-brand-muted: #1a1a1a;
+  --color-brand-overlay: rgba(0, 0, 0, 0.9);
+
+  /* MDX callouts. These render as an unfilled block with a left rule, so only
+     the rule/label colour is needed - it sits directly on the page background. */
+  --color-brand-note-fg: #4adf80;
+  --color-brand-info-fg: #2dd4bf;
+  --color-brand-warn-fg: #ffd44a;
+  --color-brand-scholar-fg: #eab308;
+  --color-brand-quran-fg: #4a9eff;
+  --color-brand-bible-fg: #ff6b6b;
+}
+
+/*
+ * Light ("paper") theme.
+ *
+ * Uses html[data-theme] rather than :root so it outranks the @theme block
+ * above, which lands at equal specificity.
+ */
+html[data-theme="light"] {
+  --color-brand-bg: #e9e4d8; /* background */
+  --color-brand-surface: #f4efe4; /* card      */
+  --color-brand-surface-hover: #d8d2c4; /* secondary */
+  --color-brand-field: #f4efe4;
+  --color-brand-border: #d2cbbb; /* border    */
+  --color-brand-border-strong: #cfc8b8; /* muted     */
+  --color-brand-heading: #2e2e2e; /* primary   */
+  --color-brand-muted: #e6e4d7; /* accent    */
+
+  /* Derived: the supplied muted/accent tones sit at ~1.1:1 against the page and
+     are unreadable as text or links, so body/dim/interactive colours are
+     darkened from the same warm family.
+
+     The accent is burnt umber rather than the dark theme's blue - a saturated
+     blue reads as foreign against warm paper, especially on hover. 5.63:1 on
+     the page, 6.23:1 on cards, 7.15:1 for white text on top. */
+  --color-brand-text: #3d3a35;
+  --color-brand-dim: #6f685c;
+  --color-brand-accent: #7c4d1f;
+  --color-brand-on-accent: #ffffff;
+  --color-brand-overlay: rgba(46, 46, 46, 0.6);
+
+  /* Callouts keep their colour identity, darkened so the rule and label read
+     against paper rather than against a dark panel. */
+  --color-brand-note-fg: #0f5c2c;
+  --color-brand-info-fg: #0b5b55;
+  --color-brand-warn-fg: #74510a;
+  --color-brand-scholar-fg: #6b5000;
+  --color-brand-quran-fg: #1e4f8a;
+  --color-brand-bible-fg: #9b2c2c;
+}
+
+/* Theme swap should feel instant, not animated element-by-element. */
+html.theme-switching * {
+  transition: none !important;
 }
 
 .toc-scroll {

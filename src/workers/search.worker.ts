@@ -27,6 +27,7 @@ import {
   getQueryTokens,
   getIndexTokens,
   type SearchResult,
+  type SearchSnippet,
 } from "../utils/searchShared";
 
 type ArticleListing = {
@@ -36,7 +37,10 @@ type ArticleListing = {
   tags: string[];
 };
 
-type ArticleChunks = { slug: string; chunks: string[] };
+type ArticleChunks = {
+  slug: string;
+  chunks: { text: string; headingId: string; headingText: string }[];
+};
 
 const ARTICLE_SOURCES: ReadonlyArray<{
   meta: readonly ArticleListing[];
@@ -98,6 +102,8 @@ interface SearchDocument {
   content: string; // Keeps only raw text to significantly save worker memory
   tags: string;
   chunkIndex: number;
+  headingId: string;
+  headingText: string;
 }
 
 interface BaseSearchData {
@@ -164,6 +170,9 @@ const searchDocuments: SearchDocument[] = [
       content: item.excerpt ?? "",
       tags: "",
       chunkIndex: 0,
+      // Categories and pages have no in-page anchors to link to.
+      headingId: "",
+      headingText: "",
     };
   }),
   ...ARTICLE_SOURCES.flatMap(({ meta, search, basePath }) => {
@@ -194,9 +203,11 @@ const searchDocuments: SearchDocument[] = [
         type: "article" as const,
         url: `${basePath}/${article.slug}`,
         excerpt: article.description,
-        content: part,
+        content: part.text,
         tags: article.tags?.join(" ") ?? "",
         chunkIndex: index,
+        headingId: part.headingId,
+        headingText: part.headingText,
       }));
     });
   }),
@@ -215,6 +226,8 @@ const miniSearch = new MiniSearch<SearchDocument>({
     "excerpt",
     "content",
     "chunkIndex",
+    "headingId",
+    "headingText",
   ],
   // Index-time tokenization only normalizes and splits. Query-side expansion
   // (getQueryTokens) is what bridges "albuhari" to "al buhari", so repeating it
@@ -392,11 +405,17 @@ self.onmessage = (
     const remainingSlots =
       MAX_SNIPPETS_PER_RESULT - (existing?.result.snippets?.length ?? 0);
 
-    const snippets =
+    // Each snippet carries the anchor of the section it came from, so a result
+    // can link straight to that heading rather than the top of the article.
+    const snippets: SearchSnippet[] =
       base.type === "article"
-        ? buildSnippets(doc.content, tokens, remainingSlots) // doc.content is raw content
+        ? buildSnippets(doc.content, tokens, remainingSlots).map((text) => ({
+            text,
+            headingId: doc.headingId,
+            headingText: doc.headingText,
+          }))
         : base.excerpt
-          ? [base.excerpt]
+          ? [{ text: base.excerpt, headingId: "", headingText: "" }]
           : [];
 
     if (!existing) {
@@ -409,7 +428,7 @@ self.onmessage = (
           type: base.type,
           url: base.url,
           excerpt: base.excerpt,
-          snippet: snippets[0],
+          snippet: snippets[0]?.text,
           snippets,
           relevance: hit.score,
           matchCount: 1,
@@ -423,13 +442,15 @@ self.onmessage = (
     existing.result.matchCount = existing.chunkHits;
 
     if (base.type === "article" && existing.result.snippets) {
+      const seen = new Set(existing.result.snippets.map((s) => s.text));
+
       for (const snippet of snippets) {
         if (existing.result.snippets.length >= MAX_SNIPPETS_PER_RESULT) break;
-        if (!existing.result.snippets.includes(snippet)) {
-          existing.result.snippets.push(snippet);
-        }
+        if (seen.has(snippet.text)) continue;
+        seen.add(snippet.text);
+        existing.result.snippets.push(snippet);
       }
-      existing.result.snippet ??= existing.result.snippets[0];
+      existing.result.snippet ??= existing.result.snippets[0]?.text;
     }
   }
 

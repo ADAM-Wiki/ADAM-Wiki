@@ -44,9 +44,9 @@ export default function KontaktPage() {
             </div>
 
             {sent ? (
-              <div className="border border-white/10 rounded-lg p-8 text-center">
+              <div className="border border-brand-border rounded-lg p-8 text-center">
                 <div className="text-3xl mb-4">✓</div>
-                <h2 className="text-white font-medium mb-2">Poruka poslana</h2>
+                <h2 className="text-brand-heading font-medium mb-2">Poruka poslana</h2>
                 <p className="text-brand-dim text-sm">Odgovorićemo vam u najkraćem mogućem roku.</p>
               </div>
             ) : (
@@ -58,7 +58,7 @@ export default function KontaktPage() {
                     type="text"
                     name="ime"
                     placeholder="Vase ime"
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-brand-dim outline-none focus:border-white/30 transition-colors"
+                    className="w-full bg-brand-surface border border-brand-border rounded-lg px-4 py-3 text-sm text-brand-heading placeholder:text-brand-dim outline-none focus:border-brand-border-strong transition-colors"
                   />
                 </div>
                 <div>
@@ -68,7 +68,7 @@ export default function KontaktPage() {
                     type="email"
                     name="email"
                     placeholder="vasa@email.com"
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-brand-dim outline-none focus:border-white/30 transition-colors"
+                    className="w-full bg-brand-surface border border-brand-border rounded-lg px-4 py-3 text-sm text-brand-heading placeholder:text-brand-dim outline-none focus:border-brand-border-strong transition-colors"
                   />
                 </div>
                 <div>
@@ -78,13 +78,13 @@ export default function KontaktPage() {
                     rows={5}
                     name="poruka"
                     placeholder="Vasa poruka..."
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-brand-dim outline-none focus:border-white/30 transition-colors resize-none"
+                    className="w-full bg-brand-surface border border-brand-border rounded-lg px-4 py-3 text-sm text-brand-heading placeholder:text-brand-dim outline-none focus:border-brand-border-strong transition-colors resize-none"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 bg-white/5 border border-white/10 text-white text-sm rounded-lg hover:bg-white/10 hover:border-white/30 transition-colors disabled:opacity-50"
+                  className="w-full py-3 bg-brand-surface border border-brand-border text-brand-heading text-sm rounded-lg hover:bg-brand-surface-hover hover:border-brand-border-strong transition-colors disabled:opacity-50"
                 >
                   {loading ? "Slanje..." : "Pošalji poruku"}
                 </button>
