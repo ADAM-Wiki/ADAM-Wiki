@@ -9,6 +9,7 @@ import { odgovoriMeta } from "../../src/lib/generated/odgovoriMeta";
 import { opovrgavanjeMeta } from "../../src/lib/generated/opovrgavanjeMeta";
 import { naukaMeta } from "../../src/lib/generated/naukaMeta";
 import { muhammedMeta } from "../../src/lib/generated/muhammedMeta";
+import { isPlaceholderArticle } from "../../src/lib/categoryArticles";
 
 export type Route = {
   /** Path relative to the site root, always starting with "/". */
@@ -55,19 +56,26 @@ export function getAllRoutes(): Route[] {
         lastmod: newestDate([article.date]),
         priority: 0.8,
         changefreq: "monthly",
+        // Scaffolding articles are no longer linked from anywhere; keeping them
+        // out of the sitemap stops "Test članak" being indexed.
+        noIndex: isPlaceholderArticle(article) || undefined,
       });
     }
 
+    const realArticles = articles.filter(
+      (article) => !isPlaceholderArticle(article),
+    );
+
     categoryRoutes.push({
       path: `/categories/${key}`,
-      lastmod: newestDate(articles.map((a) => a.date)),
+      lastmod: newestDate(realArticles.map((a) => a.date)),
       priority: 0.7,
       changefreq: "weekly",
     });
   }
 
   const allDates = CATEGORY_META.flatMap(({ articles }) =>
-    articles.map((a) => a.date),
+    articles.filter((a) => !isPlaceholderArticle(a)).map((a) => a.date),
   );
 
   return [

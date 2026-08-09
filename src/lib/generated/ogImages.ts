@@ -2,7 +2,7 @@
 // Maps "<category>/<slug>" to that article's Open Graph card.
 export const OG_IMAGES: Record<string, string> = {
   "hadis/sunnet-i-hadis-znacenje-važnost-i-ocuvanje": "/images/og/c68782996546.png",
-  "hadis/sahih-al-buhari-lanci-prenosa-istorija-rukopisa-metodologija-provere-autentičnosti-i-prenosioci-koji-su-bili kritikovani": "/images/og/046d0340a6a2.png",
+  "hadis/sahih-al-buhari-lanci-prenosa-istorija-rukopisa-metodologija-provere-autentičnosti-i-prenosioci-koji-su-bili-kritikovani": "/images/og/348205c29562.png",
   "hadis/hadis-je-ostao-nenapisan-dve-stotine-godina": "/images/og/464ce45f7ee3.png",
   "hadis/orijentalisti-i-njihovi-učenici-ponavljaju-iste-tvrdnje-i-sumnje-u-moderno-doba": "/images/og/2c4b1e5adf19.png",
   "hadis/sumnja-oko-naziva-sunnet-i-odgovor-na-nju": "/images/og/808b3dfc06be.png",

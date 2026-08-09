@@ -17,44 +17,38 @@ import ScrollToTop from "./components/ScrollToTop";
 
 const SearchPage = lazy(() => import("./components/SearchPage"));
 
-const HadisPage = lazy(() => import("./components/HadisPage"));
+// Every category listing shares one component; only the MDX behind an article
+// is category-specific, so those stay as separate lazily-loaded chunks.
+const CategoryPage = lazy(() => import("./components/CategoryPage"));
+
 const HadisArticlePage = lazy(() => import("./components/HadisArticlePage"));
-const AteizamPage = lazy(() => import("./components/AteizamPage"));
 const AteizamArticlePage = lazy(
   () => import("./components/AteizamArticlePage"),
 );
-const HriscanstvoPage = lazy(() => import("./components/HriscanstvoPage"));
 const HriscanstvoArticlePage = lazy(
   () => import("./components/HriscanstvoArticlePage"),
 );
-const HinduizamPage = lazy(() => import("./components/HinduizamPage"));
 const HinduizamArticlePage = lazy(
   () => import("./components/HinduizamArticlePage"),
 );
-const IslamPage = lazy(() => import("./components/IslamPage"));
 const IslamArticlePage = lazy(() => import("./components/IslamArticlePage"));
-const IstorijaPage = lazy(() => import("./components/IstorijaPage"));
 const IstorijaArticlePage = lazy(
   () => import("./components/IstorijaArticlePage"),
 );
-const AhmedijePage = lazy(() => import("./components/AhmedijePage"));
 const AhmedijeArticlePage = lazy(
   () => import("./components/AhmedijeArticlePage"),
 );
-const OdgovoriPage = lazy(() => import("./components/OdgovoriPage"));
 const OdgovoriArticlePage = lazy(
   () => import("./components/OdgovoriArticlePage"),
 );
-const OpovrgavanjePage = lazy(() => import("./components/OpovrgavanjePage"));
 const OpovrgavanjeArticlePage = lazy(
   () => import("./components/OpovrgavanjeArticlePage"),
 );
-const NaukaPage = lazy(() => import("./components/NaukaPage"));
 const NaukaArticlePage = lazy(() => import("./components/NaukaArticlePage"));
-const MuhammedPage = lazy(() => import("./components/MuhammedPage"));
 const MuhammedArticlePage = lazy(
   () => import("./components/MuhammedArticlePage"),
 );
+const SpisiArticlePage = lazy(() => import("./components/SpisiArticlePage"));
 
 const CategoriesPage = lazy(() => import("./components/CategoriesPage"));
 const NotFoundPage = lazy(() => import("./components/NotFoundPage"));
@@ -99,21 +93,8 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
 
           {/* CATEGORY PAGES */}
-          <Route path="/categories/hadis" element={<HadisPage />} />
-          <Route path="/categories/ateizam" element={<AteizamPage />} />
-          <Route path="/categories/hriscanstvo" element={<HriscanstvoPage />} />
-          <Route path="/categories/hinduizam" element={<HinduizamPage />} />
-          <Route path="/categories/islam" element={<IslamPage />} />
-          <Route path="/categories/istorija" element={<IstorijaPage />} />
-          <Route path="/categories/ahmedije" element={<AhmedijePage />} />
-          <Route path="/categories/odgovori" element={<OdgovoriPage />} />
-          <Route
-            path="/categories/opovrgavanje"
-            element={<OpovrgavanjePage />}
-          />
-          <Route path="/categories/nauka" element={<NaukaPage />} />
-          <Route path="/categories/muhammed" element={<MuhammedPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
+          <Route path="/categories/:categoryId" element={<CategoryPage />} />
 
           {/* ARTICLE PAGES */}
           <Route
@@ -159,6 +140,10 @@ export default function App() {
           <Route
             path="/categories/muhammed/article/:slug"
             element={<MuhammedArticlePage />}
+          />
+          <Route
+            path="/categories/spisi/article/:slug"
+            element={<SpisiArticlePage />}
           />
 
           {/* UTILITY PAGES */}

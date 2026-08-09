@@ -10,17 +10,4 @@ export type GeneratedOdgovoriMeta = {
   readingTimeMinutes: number;
 };
 
-export const odgovoriMeta: GeneratedOdgovoriMeta[] = [
-  {
-    "title": "Test članak",
-    "date": "2026-05-30",
-    "slug": "test-clanak",
-    "category": "odgovori",
-    "tags": [
-      "odgovori"
-    ],
-    "description": "Kratak opis članka.",
-    "wordCount": 1,
-    "readingTimeMinutes": 1
-  }
-];
+export const odgovoriMeta: GeneratedOdgovoriMeta[] = [];

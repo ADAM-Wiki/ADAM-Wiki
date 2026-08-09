@@ -146,8 +146,25 @@ async function renderRoute(
     { timeout: 30_000 },
   );
 
-  // Let entry animations and Helmet's head updates settle.
-  await new Promise((resolve) => setTimeout(resolve, 400));
+  // Entry animations must finish before the snapshot, or a card gets frozen
+  // at opacity 0 in the served HTML - invisible until React hydrates, and
+  // invisible to a crawler that does not run scripts. Motion writes inline
+  // opacity/transform while animating and clears them when done, so waiting
+  // for that to drain beats guessing a duration.
+  await page
+    .waitForFunction(
+      () =>
+        ![...document.querySelectorAll<HTMLElement>("[style]")].some(
+          (el) => el.style.opacity !== "" || el.style.transform !== "",
+        ),
+      { timeout: 10_000, polling: 100 },
+    )
+    .catch(() => {
+      console.warn(`  animations still running: ${routePath}`);
+    });
+
+  // Helmet's head updates.
+  await new Promise((resolve) => setTimeout(resolve, 200));
 
   await page.evaluate(prepareSnapshot);
 

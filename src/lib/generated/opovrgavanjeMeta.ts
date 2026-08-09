@@ -366,17 +366,5 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
     "description": "Predaja govori samo o optužbi, a ne o dokazanom delu. Bez svedoka i dokaza sudija ne može izvršiti šerijatsku kaznu, nego samo osloboditi ili odrediti ta'zir.",
     "wordCount": 943,
     "readingTimeMinutes": 5
-  },
-  {
-    "title": "Test članak",
-    "date": "2026-05-30",
-    "slug": "test-clanak",
-    "category": "opovrgavanje",
-    "tags": [
-      "opovrgavanje"
-    ],
-    "description": "Kratak opis članka.",
-    "wordCount": 1,
-    "readingTimeMinutes": 1
   }
 ];

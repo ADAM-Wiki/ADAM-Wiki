@@ -24,6 +24,7 @@ import { ateizamMeta } from "../src/lib/generated/ateizamMeta";
 import { ateizamSearch } from "../src/lib/generated/ateizamSearch";
 import { hriscanstvoMeta } from "../src/lib/generated/hriscanstvoMeta";
 import { hriscanstvoSearch } from "../src/lib/generated/hriscanstvoSearch";
+import { isPlaceholderArticle } from "../src/lib/categoryArticles";
 
 let failures = 0;
 function check(label: string, actual: unknown, expected: unknown) {
@@ -86,6 +87,8 @@ const titleById = new Map<string, string>();
 for (const { meta, search, base } of SOURCES) {
   const bySlug = new Map(search.map((e) => [e.slug, e.chunks]));
   for (const a of meta) {
+    // Mirrors the worker, which leaves scaffolding articles out of the index.
+    if (isPlaceholderArticle(a)) continue;
     const articleId = `${base}::${a.slug}`;
     titleById.set(articleId, a.title);
     for (const [i, chunk] of (bySlug.get(a.slug) ?? []).entries()) {

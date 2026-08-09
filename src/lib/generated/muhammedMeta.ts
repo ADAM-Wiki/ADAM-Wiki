@@ -10,17 +10,4 @@ export type GeneratedMuhammedMeta = {
   readingTimeMinutes: number;
 };
 
-export const muhammedMeta: GeneratedMuhammedMeta[] = [
-  {
-    "title": "Test članak",
-    "date": "2026-05-30",
-    "slug": "test-clanak",
-    "category": "muhammed",
-    "tags": [
-      "muhammed"
-    ],
-    "description": "Kratak opis članka.",
-    "wordCount": 1,
-    "readingTimeMinutes": 1
-  }
-];
+export const muhammedMeta: GeneratedMuhammedMeta[] = [];

@@ -10,17 +10,4 @@ export type GeneratedNaukaMeta = {
   readingTimeMinutes: number;
 };
 
-export const naukaMeta: GeneratedNaukaMeta[] = [
-  {
-    "title": "Test članak",
-    "date": "2026-05-30",
-    "slug": "test-clanak",
-    "category": "nauka",
-    "tags": [
-      "nauka"
-    ],
-    "description": "Kratak opis članka.",
-    "wordCount": 1,
-    "readingTimeMinutes": 1
-  }
-];
+export const naukaMeta: GeneratedNaukaMeta[] = [];

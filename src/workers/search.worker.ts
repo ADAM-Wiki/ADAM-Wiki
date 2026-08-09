@@ -11,6 +11,7 @@ import { muhammedMeta } from "../lib/generated/muhammedMeta";
 import { naukaMeta } from "../lib/generated/naukaMeta";
 import { odgovoriMeta } from "../lib/generated/odgovoriMeta";
 import { opovrgavanjeMeta } from "../lib/generated/opovrgavanjeMeta";
+import { spisiMeta } from "../lib/generated/spisiMeta";
 import { hadisSearch } from "../lib/generated/hadisSearch";
 import { hriscanstvoSearch } from "../lib/generated/hriscanstvoSearch";
 import { ahmedijeSearch } from "../lib/generated/ahmedijeSearch";
@@ -22,6 +23,7 @@ import { muhammedSearch } from "../lib/generated/muhammedSearch";
 import { naukaSearch } from "../lib/generated/naukaSearch";
 import { odgovoriSearch } from "../lib/generated/odgovoriSearch";
 import { opovrgavanjeSearch } from "../lib/generated/opovrgavanjeSearch";
+import { spisiSearch } from "../lib/generated/spisiSearch";
 import {
   normalizeForSearch,
   getQueryTokens,
@@ -29,6 +31,7 @@ import {
   type SearchResult,
   type SearchSnippet,
 } from "../utils/searchShared";
+import { isPlaceholderArticle } from "../lib/categoryArticles";
 
 type ArticleListing = {
   title: string;
@@ -90,6 +93,7 @@ const ARTICLE_SOURCES: ReadonlyArray<{
     search: opovrgavanjeSearch,
     basePath: "/categories/opovrgavanje/article",
   },
+  { meta: spisiMeta, search: spisiSearch, basePath: "/categories/spisi/article" },
 ];
 
 interface SearchDocument {
@@ -180,7 +184,13 @@ const searchDocuments: SearchDocument[] = [
       search.map((entry) => [entry.slug, entry.chunks]),
     );
 
-    return meta.flatMap((article) => {
+    // Scaffolding articles are not linked from anywhere, so they must not be
+    // findable either - "test" used to return them from six categories.
+    const realArticles = meta.filter(
+      (article) => !isPlaceholderArticle(article),
+    );
+
+    return realArticles.flatMap((article) => {
       const baseId = `${basePath}::${article.slug}`;
 
       const base: BaseSearchData = {

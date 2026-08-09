@@ -250,7 +250,9 @@ export default function SearchPage() {
               onKeyDown={handleKeyDown}
               placeholder="Pretraži arhivu..."
               aria-label="Pretraga sadržaja"
-              className="w-full bg-brand-surface border border-brand-border rounded-lg pl-11 pr-10 py-3 text-sm text-brand-heading placeholder:text-brand-dim focus:outline-none focus:border-brand-accent transition-colors"
+              // text-base below sm: iOS Safari zooms the whole page in when a
+              // focused field is under 16px, and never zooms back out.
+              className="w-full bg-brand-surface border border-brand-border rounded-lg pl-11 pr-10 py-3 text-base sm:text-sm text-brand-heading placeholder:text-brand-dim focus:outline-none focus:border-brand-accent transition-colors"
             />
             {isLoading ? (
               <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dim animate-spin" />

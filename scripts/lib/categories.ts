@@ -18,6 +18,7 @@ export const CATEGORIES: CategoryConfig[] = [
   { key: "opovrgavanje", typeName: "GeneratedOpovrgavanjeMeta" },
   { key: "nauka", typeName: "GeneratedNaukaMeta" },
   { key: "muhammed", typeName: "GeneratedMuhammedMeta" },
+  { key: "spisi", typeName: "GeneratedSpisiMeta" },
 ];
 
 export function getCategory(key: string): CategoryConfig {

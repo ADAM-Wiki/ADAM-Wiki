@@ -13,7 +13,7 @@ function Stat({ value, label }: { value: number; label: string }) {
       <div className="font-serif text-5xl leading-none text-brand-accent sm:text-6xl">
         {value}
       </div>
-      <div className="mt-3 font-mono text-sm uppercase tracking-[0.2em] text-brand-dim">
+      <div className="mt-2 font-mono text-sm uppercase tracking-[0.2em] text-brand-dim">
         {label}
       </div>
     </div>
@@ -30,11 +30,29 @@ export default function Hero() {
     navigate(trimmed ? `/search?q=${encodeURIComponent(trimmed)}` : "/search");
   };
 
+  // On phones the hero fills the viewport so the divider below it lands on the
+  // fold instead of leaving dead space. 100svh (not 100vh) is the height with
+  // the browser toolbars showing, which is what the reader sees on first paint.
   return (
-    <section className="relative overflow-hidden pb-28 pt-36">
-      {/* Centred watermark, matching the centred composition. */}
-      <div className="pointer-events-none absolute left-1/2 top-16 -translate-x-1/2 scale-150 select-none opacity-[0.03]">
-        <span className="font-serif text-[600px] leading-none">Å</span>
+    <section className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden pb-16 pt-20 sm:block sm:min-h-0 sm:pb-28 sm:pt-36">
+      {/*
+        Monogram. Sized against the viewport and centred on both axes so the
+        section's overflow-hidden never shears its feet flat against the
+        divider, and masked at the edges so it dissolves instead of cutting off.
+      */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none opacity-[0.07]"
+        style={{
+          maskImage:
+            "radial-gradient(circle, black 50%, transparent 80%)",
+          WebkitMaskImage:
+            "radial-gradient(circle, black 50%, transparent 80%)",
+        }}
+      >
+        <span className="block font-serif leading-none text-[min(70vh,34rem)]">
+          Å
+        </span>
       </div>
 
       <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
@@ -43,14 +61,14 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h1 className="font-serif text-[clamp(3rem,7vw,6rem)] leading-[1.08] tracking-tight">
+          <h1 className="font-serif text-[clamp(2.5rem,7vw,6rem)] leading-[1.08] tracking-tight">
             Uspostavljanje
             <br />
             <span className="font-normal italic text-brand-accent">Istine</span>{" "}
             kroz dokaze
           </h1>
 
-          <p className="mx-auto mt-8 max-w-2xl text-lg font-light leading-relaxed text-brand-dim">
+          <p className="mx-auto mt-4 max-w-2xl text-base font-light sm:mt-8 sm:text-lg leading-relaxed text-brand-dim">
             Naučna baza znanja posvećena odbrani islama kroz rukopisne dokaze,
             lingvističke dokaze i autentifikaciju hadisa, izgrađena za tragaoce
             za istinom u doba organizovane sumnje.
@@ -58,7 +76,7 @@ export default function Hero() {
 
           {/* Search is what most visitors arrive wanting; the placeholder shows
               the kind of question the archive actually answers. */}
-          <form onSubmit={handleSubmit} className="mx-auto mt-12 max-w-2xl">
+          <form onSubmit={handleSubmit} className="mx-auto mt-6 max-w-2xl sm:mt-12">
             <div className="relative">
               {/* The input keeps its own positioning context so the icon stays
                   centred against the field, not against the field plus the
@@ -71,7 +89,8 @@ export default function Hero() {
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Da li je Isus Bog?"
                   aria-label="Pretraga sadržaja"
-                  className="w-full rounded-lg border border-brand-border bg-brand-field py-4 pl-12 pr-5 text-sm text-brand-heading transition-colors placeholder:text-brand-dim focus:border-brand-accent focus:outline-none sm:pr-56"
+                  // See SearchPage: under 16px iOS zooms the page on focus.
+                  className="w-full rounded-lg border border-brand-border bg-brand-field py-4 pl-12 pr-5 text-base text-brand-heading transition-colors placeholder:text-brand-dim focus:border-brand-accent focus:outline-none sm:pr-56 sm:text-sm"
                 />
               </div>
 
@@ -87,7 +106,7 @@ export default function Hero() {
             </div>
           </form>
 
-          <div className="mt-14 flex items-center justify-center gap-10 sm:gap-16">
+          <div className="mt-6 flex items-center justify-center gap-10 sm:mt-14 sm:gap-16">
             <Stat value={totalArticles} label="Članaka" />
             <div className="h-12 w-px bg-brand-surface" />
             <Stat value={totalCategories} label="Kategorija" />

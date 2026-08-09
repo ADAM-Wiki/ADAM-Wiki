@@ -32,19 +32,16 @@
   </url>
   <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hinduizam</loc>
-    <lastmod>2026-05-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/islam</loc>
-    <lastmod>2026-05-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/istorija</loc>
-    <lastmod>2026-05-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -56,7 +53,6 @@
   </url>
   <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/odgovori</loc>
-    <lastmod>2026-05-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -68,13 +64,11 @@
   </url>
   <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/nauka</loc>
-    <lastmod>2026-05-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/muhammed</loc>
-    <lastmod>2026-05-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -85,7 +79,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/sahih-al-buhari-lanci-prenosa-istorija-rukopisa-metodologija-provere-autentičnosti-i-prenosioci-koji-su-bili kritikovani</loc>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/sahih-al-buhari-lanci-prenosa-istorija-rukopisa-metodologija-provere-autentičnosti-i-prenosioci-koji-su-bili-kritikovani</loc>
     <lastmod>2026-06-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -409,24 +403,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hinduizam/article/test-clanak</loc>
-    <lastmod>2026-05-30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/islam/article/test-clanak</loc>
-    <lastmod>2026-05-30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/istorija/article/test-clanak</loc>
-    <lastmod>2026-05-30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Ahmedije-o-istini-Israa-i-Miradza</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
@@ -489,12 +465,6 @@
   <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Protivrecnosti-Mirze-Gulama-Kadijanija</loc>
     <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/odgovori/article/test-clanak</loc>
-    <lastmod>2026-05-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -639,24 +609,6 @@
   <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/opovrgavanje/article/Zasto-Omer-nije-izvrsio-kaznu-nad-optuzenim</loc>
     <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/opovrgavanje/article/test-clanak</loc>
-    <lastmod>2026-05-30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/nauka/article/test-clanak</loc>
-    <lastmod>2026-05-30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/muhammed/article/test-clanak</loc>
-    <lastmod>2026-05-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

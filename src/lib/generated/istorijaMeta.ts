@@ -12,15 +12,618 @@ export type GeneratedIstorijaMeta = {
 
 export const istorijaMeta: GeneratedIstorijaMeta[] = [
   {
-    "title": "Test članak",
-    "date": "2026-05-30",
-    "slug": "test-clanak",
+    "title": "Abrahin slon - odgovor na primedbe",
+    "date": "2026-08-06",
+    "slug": "Abrahin-slon",
     "category": "istorija",
     "tags": [
-      "istorija"
+      "istorija",
+      "sira",
+      "orijentalisti",
+      "meka"
     ],
-    "description": "Kratak opis članka.",
-    "wordCount": 1,
+    "description": "Odgovori na primedbe o Abrahinom pohodu: datovanje njegove vladavine, mogućnost putovanja slona od Jemena do Meke, i pitanje tragova.",
+    "wordCount": 468,
+    "readingTimeMinutes": 3
+  },
+  {
+    "title": "Andaluzija - islamska civilizacija i oslobođenje od vizigotske vlasti",
+    "date": "2026-08-06",
+    "slug": "Andaluzija-i-oslobodjenje-od-vizigotske-vlasti",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "andaluzija",
+      "arapi",
+      "civilizacija"
+    ],
+    "description": "Pod Vizigotima nepismenost je bila osnovna odlika, a položaj robova nepodnošljiv. Pod arapskom vlašću Španija je, kako navodi princ Čarls, bila najcivilizovanija zemlja sveta.",
+    "wordCount": 464,
+    "readingTimeMinutes": 3
+  },
+  {
+    "title": "Andaluzija je arapska civilizacija",
+    "date": "2026-08-06",
+    "slug": "Andaluzija-je-arapska-civilizacija",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "andaluzija",
+      "arapi",
+      "civilizacija"
+    ],
+    "description": "Gistav le Bon navodi da su Arapi činili misaonu aristokratiju i civilizacijski činilac Andaluzije, a Mozhajm da su bili izvor znanja Evropi od desetog veka.",
+    "wordCount": 206,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Arabeska je arapska umetnost",
+    "date": "2026-08-06",
+    "slug": "arabeska-je-arapska-umetnost",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "umetnost",
+      "palmira"
+    ],
+    "description": "Biljni obrasci na palmirskim građevinama odgovaraju domaćim tkanim uzorcima, a Vorik Bol navodi da su znaci palmirske arhitekture duboko semitski.",
+    "wordCount": 181,
     "readingTimeMinutes": 1
+  },
+  {
+    "title": "Arapi i prenos znanja u Indiju",
+    "date": "2026-08-06",
+    "slug": "arapi-i-prenos-znanja-u-Indiju",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "indija",
+      "nauka"
+    ],
+    "description": "Majls navodi da su arapski trgovci bili razlog prenosa nauka sa arapskog Istoka u Indiju, a Bejts da je dinastija Gupta od Arapa preuzela astronomiju i matematiku.",
+    "wordCount": 195,
+    "readingTimeMinutes": 1
+  },
+  {
+    "title": "Arapi kao graditelji gradova u drevnim tekstovima",
+    "date": "2026-08-06",
+    "slug": "arapi-kao-graditelji-gradova",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "izvori",
+      "civilizacija"
+    ],
+    "description": "Plinije navodi da je arapski kralj Aspasin obnovio grad Haraks, a Juba da je Heliopolis u Egiptu osnovala skupina Arapa.",
+    "wordCount": 115,
+    "readingTimeMinutes": 1
+  },
+  {
+    "title": "Arapi Levanta i Iraka nazivani su Sirijcima",
+    "date": "2026-08-06",
+    "slug": "Arapi-Levanta-i-Iraka-nazivani-Sirijcima",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "sirija",
+      "izvori"
+    ],
+    "description": "Strabon Arape koji žive od Eufrata do egipatskog mora naziva Sirijcima, a Pojtingerova karta oblast od Damaska do Apameje označava kao Arabia Syria.",
+    "wordCount": 291,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Arapi među stanovnicima Aleksandrije u starom veku",
+    "date": "2026-08-06",
+    "slug": "arapi-medju-stanovnicima-Aleksandrije",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "aleksandrija",
+      "izvori"
+    ],
+    "description": "Dion Hrizostom u prvom veku nove ere među stanovnicima Aleksandrije izričito navodi i Arape, uz Grke, Italike, Libijce, Kilikijce i druge.",
+    "wordCount": 95,
+    "readingTimeMinutes": 1
+  },
+  {
+    "title": "Arapi u Jordanu i arapski identitet Jordana",
+    "date": "2026-08-06",
+    "slug": "arapi-u-Jordanu",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "jordan",
+      "izvori"
+    ],
+    "description": "Strabon Petru naziva gradom arapskih Nabatejaca, Origen Džeraš arapskom zemljom, a Jevsevije Kesarijski Aman gradom u zemljama Arapa.",
+    "wordCount": 266,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Arapi u Palestini i arapski identitet Palestine",
+    "date": "2026-08-06",
+    "slug": "arapi-u-Palestini",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "palestina",
+      "izvori"
+    ],
+    "description": "Strabon navodi da su Arapi rašireni po svim delovima Palestine, Prokopije zemlju od Ejle do Gaze naziva zemljom Arapa, a Josif Flavije beleži trinaest arapskih gradova.",
+    "wordCount": 292,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Arapski identitet Džezire",
+    "date": "2026-08-06",
+    "slug": "arapski-identitet-Dzezire",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "irak",
+      "izvori"
+    ],
+    "description": "Plinije na tri mesta govori o zemlji Arapa Edese, a Zaharija Ritor u šestom veku navodi da su Arapi stanovnici gornjih oblasti Mesopotamije.",
+    "wordCount": 243,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Arapski identitet Iraka i Džezire",
+    "date": "2026-08-06",
+    "slug": "arapski-identitet-Iraka",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "irak",
+      "izvori"
+    ],
+    "description": "Od Ksenofonta u petom veku pre nove ere do sirijskih izvora, niz svedočanstava severni i središnji Irak opisuje kao zemlju Arapa.",
+    "wordCount": 535,
+    "readingTimeMinutes": 3
+  },
+  {
+    "title": "Arapski identitet Libana",
+    "date": "2026-08-06",
+    "slug": "arapski-identitet-Libana",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "liban",
+      "izvori"
+    ],
+    "description": "Kurcije i Arijan planine Libana opisuju kao arapsku zemlju, a Isidor Seviljski ih izričito naziva planinama Arabije.",
+    "wordCount": 245,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Arapski identitet Sirije i njenog stanovništva",
+    "date": "2026-08-06",
+    "slug": "arapski-identitet-Sirije",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "sirija",
+      "izvori"
+    ],
+    "description": "Justin u drugom veku Damask naziva arapskom zemljom, Rimljani Feniciju Sekundu nazivaju Kraljevskom Arabijom, a Plinije severnu Siriju zemljom Arabijom.",
+    "wordCount": 246,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Asija bint Muzahim i Isis-Nefert - šest istorijskih podudarnosti",
+    "date": "2026-08-06",
+    "slug": "Asija-bint-Muzahim-i-Isis-Nefert",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "egipat",
+      "zene",
+      "kuran"
+    ],
+    "description": "Šest podudarnosti između Asije bint Muzahim, faraonove žene iz Kur'ana, i Isis-Nefert, žene Ramzesa II iz devetnaeste dinastije.",
+    "wordCount": 420,
+    "readingTimeMinutes": 3
+  },
+  {
+    "title": "Benu Nadir i tvrdnje orijentalista i Jevrejske enciklopedije",
+    "date": "2026-08-06",
+    "slug": "Benu-Nadir-i-tvrdnje-orijentalista",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "sira",
+      "medina",
+      "orijentalisti"
+    ],
+    "description": "Poznata predaja o povodu za pohod na Benu Nadir slaba je u sva tri lanca. Verodostojna predaja kod Ebu Davuda beleži njihovu izdaju nakon kurejšijskog pisma.",
+    "wordCount": 305,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Broj Britanaca koji prelaze na islam",
+    "date": "2026-08-06",
+    "slug": "broj-britanskih-prelazaka-na-islam",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "islam",
+      "britanija",
+      "statistika"
+    ],
+    "description": "Prema izveštaju lista Independent, broj Britanaca koji su izabrali islam udvostručio se u deceniji, a studija procenjuje 5.000 prelazaka godišnje.",
+    "wordCount": 223,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Da li je Meka postojala pre četvrtog veka?",
+    "date": "2026-08-06",
+    "slug": "da-li-je-Meka-postojala-pre-cetvrtog-veka",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "meka",
+      "orijentalisti",
+      "izvori"
+    ],
+    "description": "Najstariji zapis imena Meke potiče iz prvog veka pre nove ere. Ptolemej je u drugom veku spominje kao Makorabu, a Amijan Marcelin u četvrtom kao sveti grad.",
+    "wordCount": 250,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Da li je namaz preuzet od Sumerana?",
+    "date": "2026-08-06",
+    "slug": "da-li-je-namaz-preuzet-od-Sumerana",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "orijentalisti",
+      "namaz",
+      "izvori"
+    ],
+    "description": "Sumerska civilizacija nestala je u drugom milenijumu pre nove ere, a njeni natpisi dešifrovani su tek u devetnaestom veku, pa prenošenje nije ni bilo moguće.",
+    "wordCount": 297,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Da li se islam širio mačem? Šta istoričari zaista kažu",
+    "date": "2026-08-06",
+    "slug": "da-li-se-islam-sirio-macem",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "islam",
+      "orijentalisti",
+      "izvori"
+    ],
+    "description": "Savremeni hrišćanski svedoci, arheološki nalazi i zapadni istoričari govore protiv tvrdnje da se islam širio prisilom. De Lesi O'Liri to naziva besmislenim mitom.",
+    "wordCount": 493,
+    "readingTimeMinutes": 3
+  },
+  {
+    "title": "Da li su hrišćani prelazili na islam da bi izbegli džizju?",
+    "date": "2026-08-06",
+    "slug": "da-li-su-hriscani-prelazili-na-islam-zbog-dzizje",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "dzizja",
+      "kopti",
+      "izvori"
+    ],
+    "description": "Džizja je iznosila dva dinara godišnje i to samo za muškarce sposobne da nose oružje. Rimski porezi dostizali su 12,5 odsto, a neplaćanje je vodilo u zatvor.",
+    "wordCount": 476,
+    "readingTimeMinutes": 3
+  },
+  {
+    "title": "Da li su islamska osvajanja bila tlačenje? Kako su Rim i Persija zaista postupali",
+    "date": "2026-08-06",
+    "slug": "da-li-su-islamska-osvajanja-bila-tlacenje",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "osvajanja",
+      "vizantija",
+      "izvori"
+    ],
+    "description": "Egipat, Levant i Magreb donosili su najveći deo vizantijskih prihoda, a njihovo stanovništvo trpelo je verski progon i teške poreze. Islamska vlast donela je olakšanje.",
+    "wordCount": 1061,
+    "readingTimeMinutes": 6
+  },
+  {
+    "title": "Egipat pre islama",
+    "date": "2026-08-06",
+    "slug": "Egipat-pre-islama",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "egipat",
+      "izvori",
+      "drustvo"
+    ],
+    "description": "Egiptolozi Daglas Bruer i Šarlot But dokumentuju društvene prilike u starom Egiptu, uključujući pivnice i rasprostranjenost prostitucije.",
+    "wordCount": 315,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Gasanidi",
+    "date": "2026-08-06",
+    "slug": "Gasanidi",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "gasanidi",
+      "civilizacija"
+    ],
+    "description": "Gasanidi su bili obrazovana dinastija, pokrovitelji nauka i umetnosti, majstori navodnjavanja, i prevodili su grčka dela još pre islamskog osvajanja.",
+    "wordCount": 415,
+    "readingTimeMinutes": 3
+  },
+  {
+    "title": "Gotika i arhitektura Tadž Mahala kao arapske arhitekture",
+    "date": "2026-08-06",
+    "slug": "gotika-i-arapska-arhitektura",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "arhitektura",
+      "gotika"
+    ],
+    "description": "Britanski arhitekta Kristofer Ren razvio je saracensku teoriju, po kojoj se ono što nazivamo gotikom može pripisati jedino Arapima, a ne Gotima.",
+    "wordCount": 239,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Islamska arhitektura",
+    "date": "2026-08-06",
+    "slug": "islamska-arhitektura",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "arhitektura",
+      "andaluzija"
+    ],
+    "description": "Andaluzijska arapska arhitektura damaščanskog je porekla, a džamija Amra ibn el-Asa bila je osnov za arhitekturu džamija u islamskim zemljama do danas.",
+    "wordCount": 261,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Jevrejska plemena Medine - zašto su proterana i šta istorija beleži",
+    "date": "2026-08-06",
+    "slug": "jevrejska-plemena-Medine",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "sira",
+      "medina",
+      "orijentalisti"
+    ],
+    "description": "Medinska povelja obavezivala je sva plemena na zajedničku odbranu. Plemena su proterana zbog kršenja ugovora i izdaje u ratu, a ne zbog svoje vere.",
+    "wordCount": 570,
+    "readingTimeMinutes": 3
+  },
+  {
+    "title": "Jovan Nikijski i njegove optužbe o osvajanju Egipta",
+    "date": "2026-08-06",
+    "slug": "Jovan-Nikijski-i-osvajanje-Egipta",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "egipat",
+      "kopti",
+      "izvori"
+    ],
+    "description": "Izvorni koptski rukopis je izgubljen, a tekst je prošao kroz niz prevoda. Sam Batler priznaje da je iskvaren i pun grešaka.",
+    "wordCount": 216,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Kako je islam stigao na Maldive - svedočanstvo Ibn Batute",
+    "date": "2026-08-06",
+    "slug": "kako-je-islam-stigao-na-Maldive",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "islam",
+      "ibn-batuta",
+      "sirenje-islama"
+    ],
+    "description": "Ibn Batuta beleži kako su stanovnici Maldiva primili islam nakon što je Ebul-Berekat proveo noć u hramu učeći Kur'an i preživeo.",
+    "wordCount": 149,
+    "readingTimeMinutes": 1
+  },
+  {
+    "title": "Kako su muslimani postupali prema hrišćanima",
+    "date": "2026-08-06",
+    "slug": "kako-su-muslimani-postupali-prema-hriscanima",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "hriscani",
+      "izvori",
+      "osvajanja"
+    ],
+    "description": "Sirijski hrišćanski izvori sedmog veka dolazak muslimana opisuju kao izbavljenje. Omerov ugovor sa biskupom Gavrilom jamčio je verske slobode i zaštitu manastira.",
+    "wordCount": 285,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Ko je zaista uništio Aleksandrijsku biblioteku?",
+    "date": "2026-08-06",
+    "slug": "ko-je-unistio-aleksandrijsku-biblioteku",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "orijentalisti",
+      "aleksandrija",
+      "izvori"
+    ],
+    "description": "Optužba protiv Amra ibn el-Asa prvi put se javlja šest vekova nakon navodnog događaja. Serapeum je 391. godine razorio aleksandrijski patrijarh Teofil.",
+    "wordCount": 222,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Koptski ne znači egipatski",
+    "date": "2026-08-06",
+    "slug": "koptski-ne-znaci-egipatski",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "egipat",
+      "kopti",
+      "jezik"
+    ],
+    "description": "Naziv Kopti odnosi se na pravoslavne hrišćane Egipta, a koptski jezik je narečje nastalo iz grčkog, kako navodi i Teodor Valsamon.",
+    "wordCount": 115,
+    "readingTimeMinutes": 1
+  },
+  {
+    "title": "Krst na novcu u Muavijino doba",
+    "date": "2026-08-06",
+    "slug": "krst-na-novcu-u-Muavijino-doba",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "ashabi",
+      "muavija",
+      "numizmatika"
+    ],
+    "description": "Na novcu tog doba nisu bili samo krstovi, nego i zoroastrijski znaci vatre. Postepena promena vođena je trgovinskim razlozima, do reforme Abdul-Melika.",
+    "wordCount": 171,
+    "readingTimeMinutes": 1
+  },
+  {
+    "title": "Mit da su učenjaci islamske civilizacije uglavnom bili nearapi - dokumentovan odgovor",
+    "date": "2026-08-06",
+    "slug": "mit-da-su-ucenjaci-islamske-civilizacije-bili-nearapi",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "orijentalisti",
+      "nauka"
+    ],
+    "description": "Studije pokazuju da su Arapi kroz četiri veka činili 51 odsto svih učenjaka, a u prvom veku 90 odsto, i to uprkos odnosu stanovništva od jedan prema sto.",
+    "wordCount": 438,
+    "readingTimeMinutes": 3
+  },
+  {
+    "title": "Muslimanke učenjaci - baština čije je sunce zašlo",
+    "date": "2026-08-06",
+    "slug": "muslimanke-ucenjaci",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "zene",
+      "ucenjaci",
+      "civilizacija"
+    ],
+    "description": "Od Aiše, od koje je znanje uzelo 299 ljudi, do Fatime es-Samarkandi čiji je potpis stajao na fetvama. Sehavi beleži više od 1070 životopisa učenih žena jednog veka.",
+    "wordCount": 1495,
+    "readingTimeMinutes": 8
+  },
+  {
+    "title": "Nabatejska civilizacija",
+    "date": "2026-08-06",
+    "slug": "nabatejska-civilizacija",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "nabatejci",
+      "civilizacija"
+    ],
+    "description": "Arapski Nabatejci bili su majstori navodnjavanja i graditeljstva, porazili su Grke u tri bitke, a Strabon beleži da je Petra uživala dobru upravu.",
+    "wordCount": 482,
+    "readingTimeMinutes": 3
+  },
+  {
+    "title": "Optužbe da je Osman ibn Affan činio nepravde",
+    "date": "2026-08-06",
+    "slug": "optuzbe-protiv-Osmana-ibn-Affana",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "ashabi",
+      "osman",
+      "hilafet"
+    ],
+    "description": "Ibn el-Arebi el-Maliki te tvrdnje ocenjuje neistinitim i po senedu i po tekstu. Buhari beleži da mu tokom dvanaest godina uprave niko nije ništa prigovarao.",
+    "wordCount": 266,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Persija pod Sasanidima i dolazak islama",
+    "date": "2026-08-06",
+    "slug": "Persija-pod-Sasanidima-i-dolazak-islama",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "persija",
+      "sasanidi",
+      "osvajanja"
+    ],
+    "description": "Najveći deo persijskih prihoda dolazio je iz Iraka, gde su seljaci živeli u poretku bliskom ropstvu, a pismenost je bila skoncentrisana u uskom sloju.",
+    "wordCount": 225,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Pisci koji su govorili o Arapima pre islama",
+    "date": "2026-08-06",
+    "slug": "pisci-koji-su-govorili-o-Arapima-pre-islama",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "arapi",
+      "izvori",
+      "antika"
+    ],
+    "description": "Hronološki popis pisaca koji Arape spominju pre islama, od Homera i Hekateja iz Mileta do Prokopija, kroz petnaest vekova svedočanstava.",
+    "wordCount": 231,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Da li su predislamske arapske loze bile iskvarene?",
+    "date": "2026-08-06",
+    "slug": "predislamske-arapske-loze-i-brak-kod-Kurejsija",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "dzahilijjet",
+      "kurejsije",
+      "orijentalisti"
+    ],
+    "description": "Kurejšije i Arapi priznavali su isključivo brak sa mehrom, darom i svedocima. Sve drugo smatrali su bludom, a retka odstupanja bila su prezrena.",
+    "wordCount": 313,
+    "readingTimeMinutes": 2
+  },
+  {
+    "title": "Rani sirijski izvori o islamu - odgovor na teoriju o abasijskom islamu",
+    "date": "2026-08-06",
+    "slug": "rani-sirijski-izvori-o-islamu",
+    "category": "istorija",
+    "tags": [
+      "istorija",
+      "orijentalisti",
+      "izvori",
+      "islam"
+    ],
+    "description": "Sirijski hrišćanski spisi pre 750. godine nezavisno svedoče o islamu kao prepoznatoj verskoj i političkoj sili, vek pre uspona Abasija.",
+    "wordCount": 491,
+    "readingTimeMinutes": 3
   }
 ];

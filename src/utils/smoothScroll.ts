@@ -1,5 +1,14 @@
 let currentAnimationId: number | null = null;
 
+/**
+ * True while a programmatic scroll is running.
+ *
+ * Scroll-spy observers should ignore what they see during one: the click
+ * already decided the destination, and reporting every heading the page flies
+ * past just makes the highlight flicker.
+ */
+export const isSmoothScrolling = () => currentAnimationId !== null;
+
 export const smoothScrollTo = (
   target: number | HTMLElement,
   offset = 110,
@@ -9,6 +18,26 @@ export const smoothScrollTo = (
   if (currentAnimationId !== null) {
     cancelAnimationFrame(currentAnimationId);
     currentAnimationId = null;
+  }
+
+  const resolveY = () => {
+    const y =
+      typeof window !== "undefined" && target instanceof window.HTMLElement
+        ? target.getBoundingClientRect().top + window.scrollY - offset
+        : (target as number) - offset;
+    const maxY = Math.max(
+      0,
+      document.documentElement.scrollHeight - window.innerHeight,
+    );
+    return Math.min(Math.max(0, y), maxY);
+  };
+
+  // Someone who asked the system for less motion gets the destination, not the
+  // journey. The CSS rule below only covers native anchor scrolling.
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    window.scrollTo(0, resolveY());
+    onDone?.();
+    return;
   }
 
   // Temporarily disable CSS smooth scrolling to prevent conflicts

@@ -10,17 +10,4 @@ export type GeneratedIslamMeta = {
   readingTimeMinutes: number;
 };
 
-export const islamMeta: GeneratedIslamMeta[] = [
-  {
-    "title": "Test članak",
-    "date": "2026-05-30",
-    "slug": "test-clanak",
-    "category": "islam",
-    "tags": [
-      "islam2"
-    ],
-    "description": "Kratak opis članka.",
-    "wordCount": 1,
-    "readingTimeMinutes": 1
-  }
-];
+export const islamMeta: GeneratedIslamMeta[] = [];

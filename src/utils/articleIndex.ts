@@ -9,7 +9,9 @@ import { odgovoriMeta } from "../lib/generated/odgovoriMeta";
 import { opovrgavanjeMeta } from "../lib/generated/opovrgavanjeMeta";
 import { naukaMeta } from "../lib/generated/naukaMeta";
 import { muhammedMeta } from "../lib/generated/muhammedMeta";
+import { spisiMeta } from "../lib/generated/spisiMeta";
 import { CATEGORIES, type CategoryData } from "./categoriesData";
+import { isPlaceholderArticle } from "../lib/categoryArticles";
 
 export interface ArticleListing {
   title: string;
@@ -45,18 +47,10 @@ const META_BY_CATEGORY: Record<string, readonly ArticleListing[]> = {
   opovrgavanje: opovrgavanjeMeta,
   nauka: naukaMeta,
   muhammed: muhammedMeta,
+  spisi: spisiMeta,
 };
 
-/**
- * Scaffolding articles ("Test članak") exist so that empty categories still
- * build. They must never surface in listings - they were appearing on the home
- * page under "Poslednje dodano".
- */
-function isPlaceholder(article: ArticleListing): boolean {
-  return (
-    /^\s*test\b/i.test(article.title) || /^test-clanak$/i.test(article.slug)
-  );
-}
+const isPlaceholder = isPlaceholderArticle;
 
 function toCardData(
   article: ArticleListing,
@@ -110,6 +104,18 @@ export function getLatestArticles(
   }
 
   return picked;
+}
+
+/**
+ * One category's real articles, newest first - what the listing page renders.
+ * Placeholders are filtered here too, so a scaffolding-only category shows an
+ * empty state rather than a "Test članak" card.
+ */
+export function getCategoryListing(categoryId: string): ArticleListing[] {
+  return (META_BY_CATEGORY[categoryId] ?? [])
+    .filter((article) => !isPlaceholder(article))
+    .slice()
+    .sort(byDateDesc);
 }
 
 /** Categories with their real article counts, richest first. */

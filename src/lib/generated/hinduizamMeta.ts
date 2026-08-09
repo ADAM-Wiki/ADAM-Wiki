@@ -10,17 +10,4 @@ export type GeneratedHinduizamMeta = {
   readingTimeMinutes: number;
 };
 
-export const hinduizamMeta: GeneratedHinduizamMeta[] = [
-  {
-    "title": "Test članak",
-    "date": "2026-05-30",
-    "slug": "test-clanak",
-    "category": "hinduizam",
-    "tags": [
-      "hinduizam"
-    ],
-    "description": "Kratak opis članka.",
-    "wordCount": 1,
-    "readingTimeMinutes": 1
-  }
-];
+export const hinduizamMeta: GeneratedHinduizamMeta[] = [];

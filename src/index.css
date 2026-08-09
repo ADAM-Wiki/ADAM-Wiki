@@ -4,6 +4,15 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap");
 
+/* Amiri - a revival of the Bulaq press Naskh, the conventional face for
+   quoting classical Arabic. Google serves the Arabic subset behind its own
+   unicode-range, so pages with no Arabic on them never fetch it.
+
+   Regular only. Requesting 700 as well pulled a second 98 kB file on any page
+   with a ﷺ inside a bold heading; the browser now synthesises that one glyph
+   instead, which is invisible at this size and halves the download. */
+@import url("https://fonts.googleapis.com/css2?family=Amiri&display=swap");
+
 @import "tailwindcss";
 
 .prose h2,
@@ -37,10 +46,66 @@
   min-width: 1.5rem;
 }
 
+/* Bullet lists. Without this the li has no marker at all: the article is not
+   inside .prose, and Tailwind's preflight strips list-style. */
+.mdx-ul {
+  padding-left: 1rem;
+}
+
+/* The li is a flex row with gap-3, so the marker only needs to be a box - the
+   gap does the spacing. Diamond matches the h3 and section-divider marks. */
+.mdx-ul > li::before {
+  content: "";
+  flex-shrink: 0;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-top: 0.65rem;
+  background: var(--color-brand-accent);
+  rotate: 45deg;
+}
+
+/*
+ * Tables. Zebra rows make a forty-row isnad table scannable, and the header
+ * sticks below the fixed navbar so the column names stay visible.
+ */
+.mdx-table tbody tr:nth-child(even) td {
+  background-color: var(--color-brand-surface);
+}
+
+.mdx-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Pinned to the top of .mdx-table-wrap, which is the scrollport. */
+.mdx-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--color-brand-bg);
+}
+
+/* A fenced block already has its own frame; the inline chip would double it. */
+pre code {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+}
+
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
-  --font-lexend: "Lexend", ui-sans-serif, system-ui, sans-serif;
+  /* Amiri sits in every stack as the Arabic fallback. Font matching is
+     per-character, so Latin always resolves to the face in front of it -
+     Amiri is only ever reached for a glyph the Latin face does not have,
+     which in practice means Arabic and the ﷺ ligature. */
+  --font-sans: "Inter", "Amiri", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", "Amiri", ui-serif, Georgia, serif;
+  --font-lexend: "Lexend", "Amiri", ui-sans-serif, system-ui, sans-serif;
+  /* Segoe UI is deliberately absent: it was the de facto match on Windows and
+     its Arabic is a flat, simplified Naskh that read as wrong next to the
+     serif headings. Everything after Amiri is an installed-font fallback. */
+  --font-arabic:
+    "Amiri", "Noto Naskh Arabic", "Scheherazade New", "Traditional Arabic",
+    "Geeza Pro", serif;
 
   /* Dark theme is the default. Every value below is overridden wholesale by
      html[data-theme="light"] further down, so components only ever reference
@@ -62,7 +127,9 @@
   /* MDX callouts. These render as an unfilled block with a left rule, so only
      the rule/label colour is needed - it sits directly on the page background. */
   --color-brand-note-fg: #4adf80;
-  --color-brand-info-fg: #2dd4bf;
+  /* Muted rather than the neon #2dd4bf it started as - Opis Slike is
+     commentary, and it was shouting louder than the callouts around it. */
+  --color-brand-info-fg: #5fb3a8;
   --color-brand-warn-fg: #ffd44a;
   --color-brand-scholar-fg: #eab308;
   --color-brand-quran-fg: #4a9eff;
@@ -106,6 +173,125 @@ html[data-theme="light"] {
   --color-brand-scholar-fg: #6b5000;
   --color-brand-quran-fg: #1e4f8a;
   --color-brand-bible-fg: #9b2c2c;
+}
+
+/*
+ * Paper grain, light theme only.
+ *
+ * A fixed, non-interactive overlay rather than a background image, because the
+ * page wrapper paints an opaque colour that would hide anything behind it.
+ *
+ * Deliberately not applied in dark mode: fine noise over near-black is exactly
+ * where panels band and show colour casts, and the palette there is meant to
+ * read as flat and precise rather than tactile.
+ */
+html[data-theme="light"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/*
+ * Entrance for a listing page: heading first, then the cards staggering in
+ * behind it. Used by /categories and by every /categories/:id listing, so the
+ * two read as one movement when you click through.
+ *
+ * CSS rather than Motion on purpose. These pages are prerendered, so the cards
+ * are painted long before React hydrates - a JS entrance therefore fires after
+ * the reader has already seen the page (measured at 0.4s later on a fast
+ * connection, 2s on a throttled one), which looks like a flash rather than an
+ * arrival. A CSS animation starts with the first paint.
+ *
+ * fill-mode is `backwards`, never `both`: the resting state stays fully
+ * visible, so anything that does not run the animation - a crawler, a browser
+ * with animations off - still sees the card.
+ */
+@keyframes page-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-rise {
+  animation: page-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@keyframes page-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/*
+ * Reduced motion asks for less movement, not for a page that snaps into place,
+ * so the travel goes and a shorter cross-fade stays. Note this is a real
+ * setting on Windows - Settings > Accessibility > Visual effects > Animation
+ * effects - so a chunk of readers land here; `animation: none` meant they saw
+ * no entrance whatsoever. The stagger delays still apply.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .page-rise {
+    animation-name: page-fade;
+    animation-duration: 0.35s;
+  }
+}
+
+/*
+ * Marks where a footnote jump landed. Both ends of the jump are small - a
+ * bracketed number in running text, one line of a list - so arriving without
+ * a cue leaves you hunting.
+ */
+@keyframes anchor-flash {
+  from {
+    background-color: color-mix(
+      in oklab,
+      var(--color-brand-accent) 24%,
+      transparent
+    );
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+.anchor-flash {
+  animation: anchor-flash 1.6s ease-out;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anchor-flash {
+    animation-duration: 0.01ms;
+  }
+}
+
+/*
+ * Theme toggle icons. Both are in the DOM so the markup is theme-independent
+ * and survives hydration; only one is ever painted.
+ */
+.theme-icon-light {
+  display: none;
+}
+
+html[data-theme="light"] .theme-icon-dark {
+  display: none;
+}
+
+html[data-theme="light"] .theme-icon-light {
+  display: block;
 }
 
 /* Theme swap should feel instant, not animated element-by-element. */

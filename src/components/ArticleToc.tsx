@@ -15,14 +15,16 @@ export default function ArticleToc({
 }: ArticleTocProps) {
   const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const navRef = useRef<HTMLElement | null>(null);
-  const isProgrammaticScrollRef = useRef(false);
-  const pendingHeadingRef = useRef<string | null>(null);
 
   const arabicNumber = useMemo(() => new Intl.NumberFormat("ar-u-nu-arab"), []);
+  const shouldScroll = tocItems.length > 10;
 
-  // Auto-scroll TOC sidebar container to keep active items in view
+  // Keep the active item visible inside the sidebar's own scroller.
   useEffect(() => {
-    if (tocItems.length === 0) return;
+    // Only when the nav actually scrolls. Otherwise scrollIntoView walks up to
+    // the nearest scrollable ancestor - the document - and yanks the page
+    // out from under whoever is reading.
+    if (!shouldScroll || tocItems.length === 0) return;
 
     const activeIndex = tocItems.findIndex((item) => item.id === activeHeading);
     const activeEl = itemRefs.current[activeHeading];
@@ -35,11 +37,16 @@ export default function ArticleToc({
       return;
     }
 
-    activeEl.scrollIntoView({
-      block: "nearest",
-      behavior: "auto",
-    });
-  }, [activeHeading, tocItems]);
+    // Scroll the container directly rather than asking the browser to find one.
+    const itemTop = activeEl.offsetTop;
+    const itemBottom = itemTop + activeEl.offsetHeight;
+    const viewTop = navEl.scrollTop;
+    const viewBottom = viewTop + navEl.clientHeight;
+
+    if (itemTop < viewTop) navEl.scrollTop = itemTop - 8;
+    else if (itemBottom > viewBottom)
+      navEl.scrollTop = itemBottom - navEl.clientHeight + 8;
+  }, [activeHeading, tocItems, shouldScroll]);
 
   if (tocItems.length === 0) return null;
 
@@ -52,27 +59,20 @@ export default function ArticleToc({
     const el = document.getElementById(id);
     if (!el) return;
 
-    isProgrammaticScrollRef.current = true;
-    pendingHeadingRef.current = id;
-
     onActiveChange(id);
     window.history.replaceState(null, "", `#${id}`);
 
-    // Pass the element and set the duration (e.g., 800ms)
-    smoothScrollTo(el, 110, 800, () => {
-      isProgrammaticScrollRef.current = false;
-      pendingHeadingRef.current = null;
-    });
+    // While this runs, ArticlePage's scroll-spy stands down - see
+    // isSmoothScrolling in utils/smoothScroll.
+    smoothScrollTo(el, 110, 800);
   };
-
-  const shouldScroll = tocItems.length > 10;
 
   return (
     <aside className="hidden lg:block self-start sticky top-28">
       <div className="border-y border-[var(--color-brand-muted)] bg-[var(--color-brand-bg)] p-4">
         <nav
           ref={navRef}
-          aria-label="Table of contents"
+          aria-label="Sadržaj članka"
           className={`toc-scroll space-y-1 pr-1 ${
             shouldScroll
               ? "toc-fade max-h-[420px] overflow-y-auto pt-4 pb-3"
@@ -106,9 +106,11 @@ export default function ArticleToc({
                 {item.level === 2 ? (
                   <>
                     <span
+                      // The active tint was a hardcoded rgba blue, which stayed
+                      // blue on the paper theme where the accent is umber.
                       className={`mr-3 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border text-[11px] font-medium transition-colors ${
                         isActive
-                          ? "border-[var(--color-brand-accent)] bg-[color:rgba(59,130,246,0.10)] text-[var(--color-brand-accent)]"
+                          ? "border-brand-accent bg-brand-accent/10 text-brand-accent"
                           : "border-[var(--color-brand-dim)] bg-transparent text-[var(--color-brand-text)]"
                       }`}
                     >
@@ -120,7 +122,10 @@ export default function ArticleToc({
                     </span>
                   </>
                 ) : (
-                  <div className="flex min-w-0 w-full items-center gap-3 transition-transform duration-200 group-hover:translate-x-[3px]">
+                  // No nested translate: the button already shifts 3px on
+                  // hover, and both together moved sub-items twice as far as
+                  // top-level ones.
+                  <div className="flex min-w-0 w-full items-center gap-3">
                     <span
                       className={`h-1.5 w-1.5 shrink-0 rotate-45 transition-colors ${
                         isActive
