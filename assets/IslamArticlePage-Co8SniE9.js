@@ -1,0 +1,1 @@
+import{k as t,j as r}from"./index-Dkq3MUsq.js";import{A as e}from"./ArticlePage-hrbstQaw.js";import"./NotFoundPage-CBV--CCU.js";import"./siteConfig-CUg2k8kE.js";import"./check-Doa3EPjE.js";const s=t(Object.assign({}));function l(){return r.jsx(e,{categoryId:"islam",articles:s})}export{l as default};

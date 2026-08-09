@@ -1,0 +1,1 @@
+import{k as t,j as r}from"./index-Dkq3MUsq.js";import{A as a}from"./ArticlePage-hrbstQaw.js";import"./NotFoundPage-CBV--CCU.js";import"./siteConfig-CUg2k8kE.js";import"./check-Doa3EPjE.js";const e=t(Object.assign({}));function n(){return r.jsx(a,{categoryId:"nauka",articles:e})}export{n as default};

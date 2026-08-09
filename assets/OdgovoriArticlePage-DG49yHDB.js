@@ -1,0 +1,1 @@
+import{k as r,j as o}from"./index-Dkq3MUsq.js";import{A as t}from"./ArticlePage-hrbstQaw.js";import"./NotFoundPage-CBV--CCU.js";import"./siteConfig-CUg2k8kE.js";import"./check-Doa3EPjE.js";const e=r(Object.assign({}));function m(){return o.jsx(t,{categoryId:"odgovori",articles:e})}export{m as default};
