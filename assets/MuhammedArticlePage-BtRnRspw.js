@@ -1,1 +1,0 @@
-import{k as t,j as e}from"./index-Dkq3MUsq.js";import{A as r}from"./ArticlePage-hrbstQaw.js";import"./NotFoundPage-CBV--CCU.js";import"./siteConfig-CUg2k8kE.js";import"./check-Doa3EPjE.js";const m=t(Object.assign({}));function p(){return e.jsx(r,{categoryId:"muhammed",articles:m})}export{p as default};

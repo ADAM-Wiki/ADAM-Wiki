@@ -1,0 +1,1 @@
+import{l as t,j as i}from"./index-CX8quFMU.js";import{A as r}from"./ArticlePage-Cj8jq3CH.js";import"./NotFoundPage-DFMT3wDa.js";import"./siteConfig-CUg2k8kE.js";import"./check-Clc6l_Mc.js";const e=t(Object.assign({}));function n(){return i.jsx(r,{categoryId:"hinduizam",articles:e})}export{n as default};
