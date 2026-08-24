@@ -1,0 +1,114 @@
+<!DOCTYPE html><html lang="sr" data-theme="dark" style="color-scheme: dark;"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>#propisi | Adam-Wiki</title>
+    <link rel="icon" type="image/png" href="/ADAM-Wiki/Icon-32x32.png">
+
+    <!--
+      Overwritten by the theme script below before first paint, and again by
+      useTheme on every toggle. Without it mobile browser chrome stays its own
+      colour and the page appears to float in a differently-coloured frame.
+    -->
+    <meta name="theme-color" content="#11100d">
+
+    <!--
+      The two base Latin subsets: Inter sets all body and interface text,
+      Cormorant every heading, so these two are what the reader watches swap in.
+      The matching latin-ext files carry the Serbian diacritics and are left to
+      normal discovery - preloading all four would put 200kB ahead of the
+      application bundle, which costs more than the swap it saves.
+    -->
+    <link rel="preload" as="font" type="font/woff2" href="/ADAM-Wiki/fonts/inter-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/ADAM-Wiki/fonts/cormorant-latin.woff2" crossorigin="">
+
+    <!--
+      Fallback metadata for any route that is not prerendered. Every tag below
+      carries data-default: the prerenderer drops it whenever the page's own
+      Helmet tags supply the same key, so crawlers never see a duplicate.
+
+      These matter because social crawlers do not execute JavaScript - without
+      them a shared link previews with no title, description or image.
+    -->
+    
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:site_name" content="Adam-Wiki">
+    <meta property="og:locale" content="sr_RS">
+    
+    
+    
+    
+    <meta property="og:image" content="https://adam-wiki.github.io/ADAM-Wiki/images/og-default.jpg">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Adam-Wiki">
+    <meta name="twitter:description" content="Adam-Wiki — članci i odgovori o islamu, hadisu, hrišćanstvu, ateizmu i istoriji.">
+    <meta name="twitter:image" content="https://adam-wiki.github.io/ADAM-Wiki/images/og-default.jpg">
+
+    <!--
+      Applies the saved theme before first paint. Pages are prerendered with the
+      dark theme baked in, so without this a light-theme visitor sees a dark
+      flash on every navigation.
+    -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("adam-theme");
+          var theme =
+            stored === "light" || stored === "dark"
+              ? stored
+              : window.matchMedia &&
+                  window.matchMedia("(prefers-color-scheme: light)").matches
+                ? "light"
+                : "dark";
+          document.documentElement.setAttribute("data-theme", theme);
+          document.documentElement.style.colorScheme = theme;
+
+          var themeColor = document.querySelector('meta[name="theme-color"]');
+          if (themeColor) {
+            themeColor.setAttribute(
+              "content",
+              theme === "light" ? "#f5f1e8" : "#11100d",
+            );
+          }
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
+      })();
+    </script>
+
+    <!-- GitHub Pages SPA redirect restore -->
+    <script>
+      (function (l) {
+        if (l.search) {
+          var q = {};
+          l.search
+            .slice(1)
+            .split("&")
+            .forEach(function (v) {
+              var a = v.split("=");
+              q[a[0]] = a.slice(1).join("=").replace(/~and~/g, "&");
+            });
+
+          if (q.p !== undefined) {
+            window.history.replaceState(
+              null,
+              null,
+              l.pathname.replace(/\/$/, "") +
+                (q.p || "") +
+                (q.q ? "?" + q.q : "") +
+                l.hash,
+            );
+          }
+        }
+      })(window.location);
+    </script>
+    <script type="module" crossorigin="" src="/ADAM-Wiki/assets/index-DeD3pord.js"></script>
+    <link rel="stylesheet" crossorigin="" href="/ADAM-Wiki/assets/index-bZv5E_O9.css">
+  <link rel="modulepreload" as="script" crossorigin="" href="/ADAM-Wiki/assets/TagPage-D2XU8DMH.js"><link rel="modulepreload" as="script" crossorigin="" href="/ADAM-Wiki/assets/Pagination-DZ_BPh5a.js"><link rel="modulepreload" as="script" crossorigin="" href="/ADAM-Wiki/assets/check-De2c9e6a.js"><link rel="modulepreload" as="script" crossorigin="" href="/ADAM-Wiki/assets/siteConfig-CUg2k8kE.js"><link rel="modulepreload" as="script" crossorigin="" href="/ADAM-Wiki/assets/arrow-left-DxmGVBW9.js"><meta name="description" content="1 članak sa temom „propisi“."><meta property="og:title" content="#propisi | Adam-Wiki"><meta property="og:description" content="1 članak sa temom „propisi“."><meta property="og:type" content="website"><meta property="og:url" content="https://adam-wiki.github.io/ADAM-Wiki/tags/propisi"></head>
+  <body>
+    <div id="root"><div class="min-h-screen bg-brand-bg selection:bg-brand-accent selection:text-brand-on-accent"><a href="#glavni-sadrzaj" class="sr-only rounded-lg border border-brand-accent bg-brand-bg px-4 py-2 text-sm font-medium text-brand-heading focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60]">Preskoči na sadržaj</a><nav class="fixed top-0 left-0 w-full z-50 print:hidden border-b border-brand-border bg-brand-bg/80 backdrop-blur-md"><div class="max-w-7xl mx-auto px-6 h-16 grid grid-cols-[auto_1fr_auto] items-center gap-4"><div class="flex items-center gap-4 min-w-0"><button class="md:hidden flex items-center justify-center w-10 h-10 text-brand-dim hover:text-brand-heading transition-colors shrink-0" aria-label="Otvori meni" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu w-5 h-5" aria-hidden="true"><path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path></svg></button><a class="text-brand-heading font-bold text-sm uppercase tracking-widest whitespace-nowrap" href="/ADAM-Wiki" data-discover="true">Adam</a></div><div class="hidden md:flex items-center justify-center gap-6 min-w-0"><a class="text-xs uppercase tracking-widest transition-colors whitespace-nowrap text-brand-dim hover:text-brand-heading" href="/ADAM-Wiki/tags" data-discover="true">Tagovi</a><a class="text-xs uppercase tracking-widest transition-colors whitespace-nowrap text-brand-dim hover:text-brand-heading" href="/ADAM-Wiki/categories" data-discover="true">Kategorije</a><a class="text-xs uppercase tracking-widest transition-colors whitespace-nowrap text-brand-dim hover:text-brand-heading" href="/ADAM-Wiki/about" data-discover="true">O nama</a><a class="text-xs uppercase tracking-widest transition-colors whitespace-nowrap text-brand-dim hover:text-brand-heading" href="/ADAM-Wiki/kontakt" data-discover="true">Kontakt</a><a class="text-xs uppercase tracking-widest transition-colors whitespace-nowrap text-brand-dim hover:text-brand-heading" href="/ADAM-Wiki/kuran-cirilica" data-discover="true">Besplatan Kur’an</a></div><div class="flex items-center justify-end gap-2 min-w-0"><button type="button" aria-label="Promeni temu" title="Promeni temu" class="flex items-center justify-center rounded-full border border-brand-border bg-brand-surface p-2.5 text-brand-dim transition-colors hover:border-brand-border-strong hover:text-brand-heading"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun theme-icon-dark h-4 w-4 shrink-0" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon theme-icon-light h-4 w-4 shrink-0" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg></button><a aria-label="Pretraga" class="flex items-center gap-3 rounded-full border border-brand-border bg-brand-surface px-2.5 py-2.5 text-xs uppercase tracking-widest text-brand-heading hover:bg-brand-surface-hover transition-colors whitespace-nowrap" href="/ADAM-Wiki/search" data-discover="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search w-4 h-4 shrink-0" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg></a></div></div></nav><main id="glavni-sadrzaj" tabindex="-1" class="pt-24 pb-20"><div class="mx-auto max-w-5xl px-6"><header class="text-center"><a class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-brand-dim transition-colors hover:text-brand-accent" href="/ADAM-Wiki/tags" data-discover="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left h-3 w-3 shrink-0" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>Svi tagovi</a><h1 class="mt-3 font-serif text-3xl font-medium text-brand-heading">#propisi</h1><p class="mt-4 flex flex-wrap items-baseline justify-center gap-x-3 font-mono text-xs uppercase tracking-widest text-brand-dim"><span class="font-serif text-2xl tracking-normal text-brand-accent">1</span>članak</p></header><div class="mt-10 flex flex-wrap items-center justify-center gap-2"><span class="font-mono text-[10px] uppercase tracking-widest text-brand-dim">Uz ovaj tag</span><a class="group flex items-center gap-1.5 rounded-full border border-brand-border bg-brand-surface px-3 py-1.5 text-xs text-brand-dim transition-colors hover:border-brand-accent hover:text-brand-accent" href="/ADAM-Wiki/tags/kuran" data-discover="true">kuran<span class="font-mono text-[10px] text-brand-dim/70">1</span></a><a class="group flex items-center gap-1.5 rounded-full border border-brand-border bg-brand-surface px-3 py-1.5 text-xs text-brand-dim transition-colors hover:border-brand-accent hover:text-brand-accent" href="/ADAM-Wiki/tags/nesh" data-discover="true">nesh<span class="font-mono text-[10px] text-brand-dim/70">1</span></a><a class="group flex items-center gap-1.5 rounded-full border border-brand-border bg-brand-surface px-3 py-1.5 text-xs text-brand-dim transition-colors hover:border-brand-accent hover:text-brand-accent" href="/ADAM-Wiki/tags/ocuvanje" data-discover="true">ocuvanje<span class="font-mono text-[10px] text-brand-dim/70">1</span></a></div><div class="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3"><div class="page-rise" style="animation-delay: 0ms;"><a class="group flex h-full flex-col rounded-lg border border-brand-border bg-brand-surface p-5 transition-colors hover:border-brand-border-strong hover:bg-brand-surface-hover" href="/ADAM-Wiki/categories/kuran/article/Ajet-o-kamenovanju-i-derogacija-ucenja" data-discover="true"><span class="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-brand-dim"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text h-3 w-3 shrink-0" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>OČUVANJE KUR'ANA</span><h2 class="mt-2 text-base font-medium leading-snug text-brand-heading transition-colors group-hover:text-brand-accent">Ajet o kamenovanju - zašto je njegovo učenje derogirano</h2><p class="mt-2 line-clamp-2 text-sm leading-relaxed text-brand-dim">Reč je o dokumentovanom slučaju derogacije učenja uz zadržavanje propisa. Omer ga nije uneo u mushaf da se ne bi reklo da je Kur'anu dodao.</p><div class="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-4 font-mono text-[10px] uppercase tracking-widest text-brand-dim"><span>6. avgust 2026.</span><span class="flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock h-3 w-3 shrink-0" aria-hidden="true"><path d="M12 6v6l4 2"></path><circle cx="12" cy="12" r="10"></circle></svg>3 min</span></div></a></div></div></div></main><footer class="py-24 print:hidden border-t border-brand-border bg-brand-bg/50"><div class="max-w-7xl mx-auto px-6"><div class="grid md:grid-cols-4 gap-16 mb-20"><div class="col-span-2"><a class="text-2xl font-medium tracking-[0.2em] uppercase block mb-8 hover:text-brand-dim transition-colors" href="/ADAM-Wiki" data-discover="true">Adam</a><p class="text-brand-dim font-light max-w-sm leading-relaxed">Arhiva naučnih dokaza i istraživanja posvećena istini u doba sumnje. Transparentnost, integritet i dokumentovana istorija.</p></div><nav aria-label="Legalno"><h2 class="text-[10px] uppercase tracking-[0.3em] font-bold mb-8 text-brand-dim">Legalno</h2><ul class="space-y-4 text-sm text-brand-dim"><li><a class="hover:text-brand-heading transition-colors" href="/ADAM-Wiki/privatnost" data-discover="true">Privatnost</a></li><li><a class="hover:text-brand-heading transition-colors" href="/ADAM-Wiki/uslovi" data-discover="true">Uslovi korišćenja</a></li><li><a class="hover:text-brand-heading transition-colors" href="/ADAM-Wiki/kolacici" data-discover="true">Politika kolačića</a></li></ul></nav><nav aria-label="Navigacija"><h2 class="text-[10px] uppercase tracking-[0.3em] font-bold mb-8 text-brand-dim">Navigacija</h2><ul class="space-y-4 text-sm text-brand-dim"><li><a class="hover:text-brand-heading transition-colors" href="/ADAM-Wiki/kontakt" data-discover="true">Kontakt</a></li><li><a class="hover:text-brand-heading transition-colors" href="/ADAM-Wiki/about" data-discover="true">O Projektu</a></li></ul></nav></div><div class="pt-12 border-t border-brand-border flex flex-col md:flex-row justify-between items-center gap-8"><span class="text-[10px] tracking-[0.2em] uppercase text-brand-dim">© 2026 ADAM RESEARCH DATABASE — SVA PRAVA ZADRŽANA</span><div class="flex gap-8"><a href="https://www.youtube.com/@asocijacija-adam" target="_blank" rel="noopener noreferrer" class="text-[10px] tracking-[0.2em] text-brand-dim hover:text-brand-heading transition-colors">YOUTUBE</a><a href="https://www.facebook.com/asocijacijaadam" target="_blank" rel="noopener noreferrer" class="text-[10px] tracking-[0.2em] text-brand-dim hover:text-brand-heading transition-colors">FACEBOOK</a><a href="https://www.tiktok.com/@asocijacija.adam" target="_blank" rel="noopener noreferrer" class="text-[10px] tracking-[0.2em] text-brand-dim hover:text-brand-heading transition-colors">TIKTOK</a></div></div></div></footer></div></div>
+
+  
+
+</body></html>
