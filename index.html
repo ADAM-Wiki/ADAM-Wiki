@@ -7,6 +7,35 @@
     <link rel="icon" type="image/png" href="/ADAM-Wiki/Icon-32x32.png" />
 
     <!--
+      Overwritten by the theme script below before first paint, and again by
+      useTheme on every toggle. Without it mobile browser chrome stays its own
+      colour and the page appears to float in a differently-coloured frame.
+    -->
+    <meta name="theme-color" content="#11100d" />
+
+    <!--
+      The two base Latin subsets: Inter sets all body and interface text,
+      Cormorant every heading, so these two are what the reader watches swap in.
+      The matching latin-ext files carry the Serbian diacritics and are left to
+      normal discovery - preloading all four would put 200kB ahead of the
+      application bundle, which costs more than the swap it saves.
+    -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/ADAM-Wiki/fonts/inter-latin.woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/ADAM-Wiki/fonts/cormorant-latin.woff2"
+      crossorigin
+    />
+
+    <!--
       Fallback metadata for any route that is not prerendered. Every tag below
       carries data-default: the prerenderer drops it whenever the page's own
       Helmet tags supply the same key, so crawlers never see a duplicate.
@@ -38,7 +67,7 @@
     <meta
       data-default
       property="og:image"
-      content="https://adam-wiki.github.io/ADAM-Wiki/images/og-default.png"
+      content="https://adam-wiki.github.io/ADAM-Wiki/images/og-default.jpg"
     />
 
     <meta data-default name="twitter:card" content="summary_large_image" />
@@ -51,7 +80,7 @@
     <meta
       data-default
       name="twitter:image"
-      content="https://adam-wiki.github.io/ADAM-Wiki/images/og-default.png"
+      content="https://adam-wiki.github.io/ADAM-Wiki/images/og-default.jpg"
     />
 
     <!--
@@ -72,6 +101,14 @@
                 : "dark";
           document.documentElement.setAttribute("data-theme", theme);
           document.documentElement.style.colorScheme = theme;
+
+          var themeColor = document.querySelector('meta[name="theme-color"]');
+          if (themeColor) {
+            themeColor.setAttribute(
+              "content",
+              theme === "light" ? "#f5f1e8" : "#11100d",
+            );
+          }
         } catch (e) {
           document.documentElement.setAttribute("data-theme", "dark");
         }

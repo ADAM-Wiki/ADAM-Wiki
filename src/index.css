@@ -1,17 +1,15 @@
 @plugin "@tailwindcss/typography";
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
+/* Inter, Cormorant Garamond, Playfair Display, Lexend and Amiri, served from
+   our own origin rather than fonts.googleapis.com - see fonts.css for why, and
+   for what it does not change. The per-subset unicode-range split is kept
+   exactly as Google serves it, so a page with no Arabic on it still never
+   fetches Amiri's Arabic file.
 
-@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap");
-
-/* Amiri - a revival of the Bulaq press Naskh, the conventional face for
-   quoting classical Arabic. Google serves the Arabic subset behind its own
-   unicode-range, so pages with no Arabic on them never fetch it.
-
-   Regular only. Requesting 700 as well pulled a second 98 kB file on any page
-   with a ﷺ inside a bold heading; the browser now synthesises that one glyph
-   instead, which is invisible at this size and halves the download. */
-@import url("https://fonts.googleapis.com/css2?family=Amiri&display=swap");
+   Amiri stays regular-only. Requesting 700 as well pulled a second 98 kB file
+   on any page with a ﷺ inside a bold heading; the browser now synthesises that
+   one glyph instead, which is invisible at this size and halves the download. */
+@import "./fonts.css";
 
 @import "tailwindcss";
 
@@ -92,13 +90,110 @@ pre code {
   font-size: inherit;
 }
 
+/*
+ * Marker highlight - <Marker> in MDX.
+ *
+ * Drawn under the words rather than as a filled band over them. A band would
+ * sit between the glyph and the page, so its alpha would have to be retuned
+ * per theme to keep text readable - translucent amber goes muddy over near
+ * black and washes out over cream. An underline leaves the glyphs on the page
+ * background, so neither theme can lose contrast.
+ *
+ * SVG rather than a border or a gradient: a ruler-straight line under prose
+ * reads as a link. These wobble on purpose.
+ *
+ * Colour is baked into each data URI because url() cannot interpolate a var(),
+ * hence the same four strokes declared once per theme. Amber in both: it is
+ * the one highlighter colour that is legible on near-black and on paper, and
+ * it stays clear of the accent so a marked phrase never looks like a link.
+ */
+
+/*
+ * The element is <mark>, so the highlight survives with no CSS at all - which
+ * is the whole point of using it - but that also means undoing the UA's yellow
+ * block first.
+ *
+ * box-decoration-break: clone draws the stroke again on each line, so a marked
+ * phrase that wraps gets one stroke per line instead of a single one smeared
+ * across the paragraph's full width.
+ */
+/*
+ * Two geometries live here.
+ *
+ * The default is a wash *over* the text: at 1.02em it covers the x-height and
+ * most of the cap height, which is what a highlighter actually does. Descenders
+ * are not a problem to dodge at that size - a j or p sits inside the wash
+ * rather than being struck through by a line - and the low alpha keeps every
+ * glyph legible through it.
+ *
+ * Variant 1 is the exception and opts back out below: it is a stroke *under*
+ * the text, so it keeps the shorter band and the deeper bottom padding that
+ * buys it room below the descenders.
+ */
+.marker {
+  background-color: transparent;
+  color: inherit;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  /* Tall enough to clear the ascenders. At 1.02em the wash stopped at about
+     cap height, and once the marked run took a dark ink the tops of the letters
+     were dark-on-dark above the band and simply disappeared - the phrase read
+     as though it had been sliced along the top. */
+  background-size: 100% 1.3em;
+  padding-bottom: 0.18em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* The underline sweep. Without the extra padding the stroke crosses the tail of
+   a j or p and the phrase looks struck through rather than marked. Its text
+   colour is untouched: the stroke sits below the baseline, so no glyph is ever
+   on top of it. */
+.marker-1 {
+  background-image: var(--marker-1);
+  background-size: 100% 0.56em;
+  padding-bottom: 0.24em;
+}
+
+/*
+ * Dark ink inside the three washes.
+ *
+ * They are as saturated as variant 1's stroke, which is what makes them read as
+ * the same highlighter. At that strength the page's own light body text is
+ * unreadable on top - near-white on amber measures about 1.5:1 - so the marked
+ * run flips to a dark ink instead, the way text on a real highlighter does.
+ * Roughly 9:1 on the dark theme and 9:1 on paper, and it needs no per-theme
+ * value because both washes end up light.
+ */
+.marker-2,
+.marker-3,
+.marker-4 {
+  color: #1a140f;
+}
+
+/* Marginally taller: the two passes are offset from one another, so the pair
+   needs a little more room than a single band to keep the overlap centred. */
+.marker-2 {
+  background-image: var(--marker-2);
+  background-size: 100% 1.34em;
+}
+
+.marker-3 {
+  background-image: var(--marker-3);
+}
+
+.marker-4 {
+  background-image: var(--marker-4);
+}
+
 @theme {
   /* Amiri sits in every stack as the Arabic fallback. Font matching is
      per-character, so Latin always resolves to the face in front of it -
      Amiri is only ever reached for a glyph the Latin face does not have,
      which in practice means Arabic and the ﷺ ligature. */
   --font-sans: "Inter", "Amiri", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Playfair Display", "Amiri", ui-serif, Georgia, serif;
+  --font-serif:
+    "Cormorant Garamond", "Playfair Display", "Amiri", ui-serif, Georgia, serif;
   --font-lexend: "Lexend", "Amiri", ui-sans-serif, system-ui, sans-serif;
   /* Segoe UI is deliberately absent: it was the de facto match on Windows and
      its Arabic is a flat, simplified Naskh that read as wrong next to the
@@ -107,33 +202,30 @@ pre code {
     "Amiri", "Noto Naskh Arabic", "Scheherazade New", "Traditional Arabic",
     "Geeza Pro", serif;
 
-  /* Dark theme is the default. Every value below is overridden wholesale by
-     html[data-theme="light"] further down, so components only ever reference
-     these semantic names - never a literal white/black. */
-  --color-brand-bg: #0a0a0a;
-  --color-brand-surface: #111111;
-  --color-brand-surface-hover: #171717;
-  --color-brand-field: #060606;
-  --color-brand-border: #1f1f1f;
-  --color-brand-border-strong: #333333;
-  --color-brand-heading: #ffffff;
-  --color-brand-text: #e5e5e5;
-  --color-brand-dim: #737373;
-  --color-brand-accent: #3b82f6;
-  --color-brand-on-accent: #ffffff;
-  --color-brand-muted: #1a1a1a;
-  --color-brand-overlay: rgba(0, 0, 0, 0.9);
+  /* Dark theme now uses a more restrained heritage palette: near-black, warm
+     ivory, and muted bronze with a subtle olive undertone instead of bright green. */
+  --color-brand-bg: #11100d;
+  --color-brand-surface: #1b1714;
+  --color-brand-surface-hover: #261f1c;
+  --color-brand-field: #161310;
+  --color-brand-border: #3a312b;
+  --color-brand-border-strong: #5a4a3d;
+  --color-brand-heading: #f4efe6;
+  --color-brand-text: #e7dfd4;
+  --color-brand-dim: #b7ac98;
+  --color-brand-accent: #c7a16a;
+  --color-brand-on-accent: #1a140f;
+  --color-brand-muted: #201b18;
+  --color-brand-overlay: rgba(17, 16, 13, 0.88);
 
   /* MDX callouts. These render as an unfilled block with a left rule, so only
      the rule/label colour is needed - it sits directly on the page background. */
-  --color-brand-note-fg: #4adf80;
-  /* Muted rather than the neon #2dd4bf it started as - Opis Slike is
-     commentary, and it was shouting louder than the callouts around it. */
-  --color-brand-info-fg: #5fb3a8;
-  --color-brand-warn-fg: #ffd44a;
-  --color-brand-scholar-fg: #eab308;
-  --color-brand-quran-fg: #4a9eff;
-  --color-brand-bible-fg: #ff6b6b;
+  --color-brand-note-fg: #9db08b;
+  --color-brand-info-fg: #8cae9f;
+  --color-brand-warn-fg: #d7b36b;
+  --color-brand-scholar-fg: #d8b774;
+  --color-brand-quran-fg: #9fb7d9;
+  --color-brand-bible-fg: #d28a7a;
 }
 
 /*
@@ -143,36 +235,29 @@ pre code {
  * above, which lands at equal specificity.
  */
 html[data-theme="light"] {
-  --color-brand-bg: #e9e4d8; /* background */
-  --color-brand-surface: #f4efe4; /* card      */
-  --color-brand-surface-hover: #d8d2c4; /* secondary */
-  --color-brand-field: #f4efe4;
-  --color-brand-border: #d2cbbb; /* border    */
-  --color-brand-border-strong: #cfc8b8; /* muted     */
-  --color-brand-heading: #2e2e2e; /* primary   */
-  --color-brand-muted: #e6e4d7; /* accent    */
+  --color-brand-bg: #f5f1e8; /* warm paper background */
+  --color-brand-surface: #fbf8f3; /* card */
+  --color-brand-surface-hover: #e9e0cf; /* secondary */
+  --color-brand-field: #f7f3eb;
+  --color-brand-border: #d7c5a7; /* border */
+  --color-brand-border-strong: #b88c5b; /* muted */
+  --color-brand-heading: #2e2019; /* primary */
+  --color-brand-muted: #efe5d4; /* accent */
 
-  /* Derived: the supplied muted/accent tones sit at ~1.1:1 against the page and
-     are unreadable as text or links, so body/dim/interactive colours are
-     darkened from the same warm family.
-
-     The accent is burnt umber rather than the dark theme's blue - a saturated
-     blue reads as foreign against warm paper, especially on hover. 5.63:1 on
-     the page, 6.23:1 on cards, 7.15:1 for white text on top. */
-  --color-brand-text: #3d3a35;
-  --color-brand-dim: #6f685c;
-  --color-brand-accent: #7c4d1f;
-  --color-brand-on-accent: #ffffff;
-  --color-brand-overlay: rgba(46, 46, 46, 0.6);
+  --color-brand-text: #3d2f2a;
+  --color-brand-dim: #665e54;
+  --color-brand-accent: #9e7040;
+  --color-brand-on-accent: #fffaf4;
+  --color-brand-overlay: rgba(46, 32, 25, 0.6);
 
   /* Callouts keep their colour identity, darkened so the rule and label read
      against paper rather than against a dark panel. */
-  --color-brand-note-fg: #0f5c2c;
-  --color-brand-info-fg: #0b5b55;
-  --color-brand-warn-fg: #74510a;
-  --color-brand-scholar-fg: #6b5000;
-  --color-brand-quran-fg: #1e4f8a;
-  --color-brand-bible-fg: #9b2c2c;
+  --color-brand-note-fg: #5c6d4b;
+  --color-brand-info-fg: #4b6763;
+  --color-brand-warn-fg: #8a6513;
+  --color-brand-scholar-fg: #7a5b16;
+  --color-brand-quran-fg: #405d87;
+  --color-brand-bible-fg: #9b4a42;
 }
 
 /*
@@ -380,18 +465,151 @@ article h3 {
   scroll-margin-top: 120px;
 }
 
+/*
+ * Headings wrap to even line lengths instead of leaving one word stranded on
+ * the last line. `balance` is capped by browsers at a handful of lines, which
+ * is why body copy gets `pretty` - same widow protection, no line-count limit.
+ */
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
+}
+
+p,
+li {
+  text-wrap: pretty;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/*
+ * One focus ring for everything interactive.
+ *
+ * Most controls on the site carried no focus style at all and fell back to the
+ * browser default, which is invisible against a dark page in several browsers.
+ * :focus-visible rather than :focus, so a mouse click does not leave a ring
+ * behind; :where() keeps specificity at zero so any component can still opt out.
+ */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-brand-accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* The skip link's target. Focusing a container to move the reader there should
+   not then draw a ring around the entire page. */
+main:focus,
+main:focus-visible {
+  outline: none;
+}
+
+/*
+ * Search results skip layout and paint entirely while off-screen.
+ *
+ * A broad query returns a few hundred rows into a 600px scroller, and styling
+ * and laying out every one of them on each keystroke is what made typing feel
+ * heavy. This is the cheap half of virtualisation: the rows stay in the DOM, so
+ * find-in-page, the arrow-key selection and the scrollbar all keep working,
+ * but the ones nobody can see cost nothing to render.
+ *
+ * contain-intrinsic-size is the assumed height of a skipped row, and is what
+ * keeps the scrollbar from jumping as rows come into view. It matches the real
+ * row height: 16px label + 12px category + padding.
+ */
+.search-result-row {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 74px;
+}
+
+/*
+ * Must come after the rule above, and neither may be !important: an important
+ * declaration outranks a normal one whatever the order or the media query, so
+ * `scroll-behavior: smooth !important` was quietly overriding this and every
+ * reduced-motion reader still got the smooth scroll.
+ */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 }
 
-html {
-  scroll-behavior: smooth !important;
-}
-
 body {
   overflow-x: hidden;
+  background:
+    radial-gradient(circle at top, rgba(199, 161, 106, 0.08), transparent 38%),
+    linear-gradient(180deg, var(--color-brand-bg) 0%, rgba(17, 16, 13, 1) 100%);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, black 35%, transparent 88%);
+  -webkit-mask-image: radial-gradient(
+    circle at center,
+    black 35%,
+    transparent 88%
+  );
+}
+
+body:has(.page-no-grid)::before {
+  display: none;
+}
+
+body:has(.home-page)::before {
+  opacity: 0.12;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='.16'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+html[data-theme="light"] body:has(.home-page)::before {
+  display: none;
+}
+
+.hero-ornament {
+  position: absolute;
+  inset: 1.5rem clamp(1.25rem, 5vw, 4rem);
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.hero-ornament::before,
+.hero-ornament::after {
+  content: "";
+  position: absolute;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.hero-ornament::before {
+  top: 1rem;
+  left: 0;
+  border-top: 1px solid
+    color-mix(in srgb, var(--color-brand-accent) 45%, transparent);
+  border-left: 1px solid
+    color-mix(in srgb, var(--color-brand-accent) 45%, transparent);
+}
+
+.hero-ornament::after {
+  right: 0;
+  bottom: 1rem;
+  border-right: 1px solid
+    color-mix(in srgb, var(--color-brand-note-fg) 55%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-brand-note-fg) 55%, transparent);
 }
 
 @layer base {
@@ -420,4 +638,144 @@ body {
   );
   mask-image: radial-gradient(ellipse at center, black 45%, transparent 85%);
   opacity: 0.6;
+}
+
+/*
+ * Print / "Sačuvaj kao PDF".
+ *
+ * Driven by the button in ArticleShare, which just calls window.print() - the
+ * browser's own PDF export. Everything that makes the export usable is here
+ * rather than in a PDF library, so the output stays real text: selectable,
+ * searchable, with the diacritics and the Arabic still shaped by their fonts.
+ *
+ * Placed last in the file on purpose. The token overrides below have to beat
+ * html[data-theme="light"], which they only tie with on specificity, so source
+ * order is what decides them.
+ */
+@media print {
+  @page {
+    margin: 18mm 16mm;
+  }
+
+  /* Paper, whichever theme the reader had on screen. Values are the light
+     theme's, which are already tuned for a warm page, except the background:
+     printing the cream would waste ink, and browsers drop backgrounds by
+     default anyway. */
+  :root,
+  html[data-theme="light"],
+  html[data-theme="dark"] {
+    --color-brand-bg: #ffffff;
+    --color-brand-surface: #ffffff;
+    --color-brand-surface-hover: #ffffff;
+    --color-brand-field: #ffffff;
+    --color-brand-muted: #ffffff;
+    --color-brand-border: #bdbdbd;
+    --color-brand-border-strong: #8a8a8a;
+    --color-brand-heading: #000000;
+    --color-brand-text: #1a1a1a;
+    --color-brand-dim: #555555;
+    --color-brand-accent: #333333;
+    --color-brand-on-accent: #ffffff;
+    --color-brand-note-fg: #0f5c2c;
+    --color-brand-info-fg: #0b5b55;
+    --color-brand-warn-fg: #74510a;
+    --color-brand-scholar-fg: #6b5000;
+    --color-brand-quran-fg: #1e4f8a;
+    --color-brand-bible-fg: #9b2c2c;
+
+    /* The ochre set even for a dark-theme reader - the amber is tuned against
+       near-black and all but vanishes on white. */
+    --marker-1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 20' preserveAspectRatio='none'%3E%3Cpath d='M2 10.8C50 7 120 7.8 198 6.4L198 10C120 16.4 50 15.8 2 14.4Z' fill='%23d08c12' opacity='.85'/%3E%3C/svg%3E");
+    --marker-2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 24' preserveAspectRatio='none'%3E%3Cpath d='M1 2.2C48 0.6 104 2.2 198 1.2L198 13C132 14.4 56 13 1 14.2Z' fill='%23e8a51c' opacity='.55'/%3E%3Cpath d='M3 9.6C56 8 118 9.8 197 8.6L197 22.4C126 23.6 52 22.4 3 23.4Z' fill='%23e8a51c' opacity='.55'/%3E%3C/svg%3E");
+    --marker-3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 24' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='p' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23e8a51c' stop-opacity='.55'/%3E%3Cstop offset='.55' stop-color='%23e8a51c' stop-opacity='.80'/%3E%3Cstop offset='1' stop-color='%23e8a51c' stop-opacity='.90'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M1 2C40 0.4 88 2 140 0.9C168 0.4 186 1.5 199 0.8L199 22.6C150 23.7 96 22.4 48 23.4C30 23.7 14 23 1 23.5Z' fill='url(%23p)'/%3E%3C/svg%3E");
+    --marker-4: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 24' preserveAspectRatio='none'%3E%3Cpath d='M1 2.6L10 1.2L22 2.4L34 1L46 2.2L58 1.2L70 2.6L82 1.2L94 2.4L106 1L118 2.2L130 1L142 2.4L154 1.2L166 2.6L178 1.4L190 2.4L199 1.2L199 21.6L188 23L176 21.8L164 23.2L152 22L140 23.4L128 22.2L116 23.4L104 22.2L92 23.6L80 22.4L68 23.4L56 22.2L44 23.6L32 22.4L20 23.4L8 22.2L1 23.4Z' fill='%23e8a51c' opacity='.75'/%3E%3C/svg%3E");
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  /* Fixed, so it would reprint over every single page. */
+  html[data-theme="light"] body::after {
+    display: none !important;
+  }
+
+  /* Beats the `lg:block` it carries, which the print media query does not
+     necessarily switch off - paper width is browser-dependent. */
+  .article-toc {
+    display: none !important;
+  }
+
+  /* The empty 300px sidebar column would otherwise still reserve its track and
+     squeeze the text into two thirds of the page. */
+  .article-layout {
+    display: block !important;
+  }
+
+  .article-body {
+    max-width: none !important;
+  }
+
+  /* Screen padding that turns into blank paper: the navbar offset on main, and
+     a 5rem gap at the top of the first page. */
+  main {
+    padding-top: 0 !important;
+  }
+
+  main > section {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* On screen this is a scrollport with a pinned header, which on paper means
+     everything past 32rem is simply cut off. */
+  .mdx-table-wrap {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .mdx-table th {
+    position: static !important;
+  }
+
+  /* Backgrounds are dropped by default when printing, which would silently
+     take every marker stroke with them. */
+  .marker {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page-rise {
+    animation: none !important;
+  }
+
+  /* Keep a heading with the text it introduces, and never split a figure,
+     quotation or table row group across a page. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    break-after: avoid-page;
+  }
+
+  img,
+  figure,
+  blockquote,
+  tr {
+    break-inside: avoid;
+  }
+
+  img {
+    max-width: 100% !important;
+  }
+
+  /* Nothing is clickable on paper, so an external reference has to carry its
+     address. Restricted to the sources list - doing it for every inline link
+     litters the running text with URLs. */
+  .mdx-izvori a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    word-break: break-all;
+  }
 }

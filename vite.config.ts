@@ -20,6 +20,14 @@ export default defineConfig(({ mode }) => {
     ],
     define: {
       "process.env.GEMINI_API_KEY": JSON.stringify(env.GEMINI_API_KEY),
+      // Frozen at build rather than read from the clock.
+      //
+      // The copyright year was `new Date().getFullYear()`, which the
+      // prerenderer evaluates at build time and the browser evaluates again on
+      // every visit. From 1 January those two disagree and React hydrates onto
+      // markup that no longer matches. Substituting a literal makes the
+      // prerendered HTML and the client bundle identical by construction.
+      __BUILD_YEAR__: JSON.stringify(new Date().getFullYear()),
     },
     resolve: {
       alias: {

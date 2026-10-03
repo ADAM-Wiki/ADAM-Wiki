@@ -36,6 +36,14 @@ export function normalizeForSearch(str: string): string {
   let normalized = protectedStr
     .toLowerCase()
     .replace(/\[([^\]]*)\]/g, "$1")
+    // Apostrophes bind the letters on either side rather than separating them:
+    // "Kur'an" is one word, not two. Deleted rather than spaced, and handled
+    // here rather than left to the punctuation rule below, which turned it into
+    // "kur" + "an" - so a search for "kuran", the spelling used in our own URLs
+    // and tags, matched almost nothing. The modifier-letter forms (U+02BB..BF)
+    // have to be listed explicitly because \p{L} counts them as letters and the
+    // punctuation rule leaves them sitting inside the token.
+    .replace(/['‘’ʻʼʽʾʿ`´]/g, "")
     .replace(/[-/_]/g, " ")
     .replace(/dž/gi, "dz")
     .replace(/đ/gi, "d")

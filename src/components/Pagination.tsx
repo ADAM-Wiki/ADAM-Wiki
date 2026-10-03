@@ -64,6 +64,16 @@ function PagePicker({ currentPage, totalPages, onPageChange }: PaginationProps) 
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const listRef = useRef<HTMLDivElement | null>(null);
+
+  // Focus the current page when the list opens, so the arrow keys below start
+  // from where the reader actually is rather than from the top of the range.
+  useEffect(() => {
+    if (!open) return;
+    listRef.current
+      ?.querySelector<HTMLButtonElement>('[aria-selected="true"]')
+      ?.focus();
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -71,10 +81,43 @@ function PagePicker({ currentPage, totalPages, onPageChange }: PaginationProps) 
     const onPointerDown = (event: MouseEvent | TouchEvent) => {
       if (!wrapperRef.current?.contains(event.target as Node)) setOpen(false);
     };
+
+    /**
+     * A listbox is expected to be driven by the arrow keys; without them this
+     * was a list of 30-odd pages you could only reach by tabbing through every
+     * one of them.
+     */
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      setOpen(false);
-      triggerRef.current?.focus();
+      if (event.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+        return;
+      }
+
+      const options = Array.from(
+        listRef.current?.querySelectorAll<HTMLButtonElement>('[role="option"]') ??
+          [],
+      );
+      if (options.length === 0) return;
+
+      const index = options.indexOf(document.activeElement as HTMLButtonElement);
+      if (index === -1) return;
+
+      const target =
+        event.key === "ArrowDown"
+          ? options[Math.min(index + 1, options.length - 1)]
+          : event.key === "ArrowUp"
+            ? options[Math.max(index - 1, 0)]
+            : event.key === "Home"
+              ? options[0]
+              : event.key === "End"
+                ? options[options.length - 1]
+                : null;
+
+      if (!target) return;
+
+      event.preventDefault();
+      target.focus();
     };
 
     document.addEventListener("mousedown", onPointerDown);
@@ -135,7 +178,10 @@ function PagePicker({ currentPage, totalPages, onPageChange }: PaginationProps) 
             Idi na stranu
           </p>
 
-          <div className="toc-scroll max-h-56 overflow-y-auto p-1.5">
+          <div
+            ref={listRef}
+            className="toc-scroll max-h-56 overflow-y-auto overscroll-contain p-1.5"
+          >
             {pages.map((page) => {
               const active = page === currentPage;
               return (

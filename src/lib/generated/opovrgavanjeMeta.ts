@@ -23,8 +23,8 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "hadis"
     ],
     "description": "Predaja na koju se šije pozivaju slaba je, jer je prenosi Abdul-Melik ibn Mervan ed-Devsi, nepoznata ličnost bez pouzdane ocene u delima o prenosiocima.",
-    "wordCount": 379,
-    "readingTimeMinutes": 2
+    "wordCount": 417,
+    "readingTimeMinutes": 3
   },
   {
     "title": "Aišina predaja o gusulu i hadis o obrezanju",
@@ -68,7 +68,7 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "omer"
     ],
     "description": "Predaja iz Taberijevog tefsira koju šije navode slaba je zbog prenosioca Ebu Hišama er-Rifaija, kojeg je oslabila većina učenjaka.",
-    "wordCount": 1267,
+    "wordCount": 1260,
     "readingTimeMinutes": 7
   },
   {
@@ -83,11 +83,11 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "ashabi"
     ],
     "description": "Reč ehedžere ni u jednoj predaji nije pripisana Omeru. Sve predaje od njega beleže samo da je Poslanika savladala bol i da nam je dovoljna Allahova Knjiga.",
-    "wordCount": 850,
+    "wordCount": 974,
     "readingTimeMinutes": 5
   },
   {
-    "title": "Da li se Aiša kupala pred dvojicom ljudi? Šijska primedba na Buhariju 249",
+    "title": "Da li se Aiša kupala pred dvojicom ljudi? Šijska primedba na Buhariju 251",
     "date": "2026-08-05",
     "slug": "Da-li-se-Aisa-kupala-pred-dvojicom-ljudi",
     "category": "opovrgavanje",
@@ -98,7 +98,7 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "hadis"
     ],
     "description": "Rafidije tvrde da je Aiša puštala strane ljude da uđu kod nje i da se pred njima kupala. Sam tekst hadisa kaže: između nas i nje bio je zastor.",
-    "wordCount": 1516,
+    "wordCount": 1465,
     "readingTimeMinutes": 8
   },
   {
@@ -113,7 +113,7 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "omer"
     ],
     "description": "Šije tvrde da je Omer uvredio Poslanika i sprečio ga da napiše oporuku. Odgovor na četiri tačke te tvrdnje iz sunijskih i šijskih izvora.",
-    "wordCount": 1385,
+    "wordCount": 1330,
     "readingTimeMinutes": 7
   },
   {
@@ -128,7 +128,7 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "fatima"
     ],
     "description": "Šije godinama koriste događaj sa Fedekom protiv Ebu Bekra. Odgovor na tu tvrdnju, uz predaju da je Fatima preselila zadovoljna Ebu Bekrom.",
-    "wordCount": 833,
+    "wordCount": 940,
     "readingTimeMinutes": 5
   },
   {
@@ -143,7 +143,7 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "akida"
     ],
     "description": "Rafidije navode predaje o škripanju Arša da bi se rugale islamskom verovanju. Sve te predaje su slabe, izmešane ili izmišljene, i nijedna nije verodostojna.",
-    "wordCount": 1756,
+    "wordCount": 1617,
     "readingTimeMinutes": 9
   },
   {
@@ -158,7 +158,7 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "hadis"
     ],
     "description": "Predaja nema verodostojan sened i mursel je. Zehebi ju je označio kao izmišljenu, a Ibn Hadžer je pokazao da joj protivreči i sama hronologija.",
-    "wordCount": 205,
+    "wordCount": 208,
     "readingTimeMinutes": 2
   },
   {
@@ -187,7 +187,7 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "fikh"
     ],
     "description": "Većina učenjaka i imami četiri mezheba slažu se da dojenje deteta starijeg od dve godine ne uspostavlja zabranu braka. Slučaj Salima bio je poseban propis.",
-    "wordCount": 444,
+    "wordCount": 408,
     "readingTimeMinutes": 3
   },
   {
@@ -202,7 +202,7 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "hadis"
     ],
     "description": "Predaju sa ovim tekstom prenosi jedino Ebu Beldž, a njegove usamljene predaje se ne prihvataju. Verodostojnost seneda ne znači i verodostojnost teksta.",
-    "wordCount": 960,
+    "wordCount": 930,
     "readingTimeMinutes": 5
   },
   {
@@ -216,7 +216,7 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "istorija"
     ],
     "description": "Predaje na kojima se te optužbe zasnivaju slabe su ili bez seneda, a prenose ih nepoznati ili oslabljeni prenosioci, u okviru neprijateljstva među savremenicima.",
-    "wordCount": 1061,
+    "wordCount": 1069,
     "readingTimeMinutes": 6
   },
   {
@@ -231,7 +231,7 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "akida"
     ],
     "description": "Sačuvanost Poslanika odnosi se na dostavljanje objave. Ono što spada u ovosvetske stvari, poput bolesti, ne ulazi u tu sačuvanost, a sihr je vrsta bolesti.",
-    "wordCount": 237,
+    "wordCount": 242,
     "readingTimeMinutes": 2
   },
   {
@@ -246,7 +246,7 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "istorija"
     ],
     "description": "Tvrdnja da su Benu Mustalik bili miroljubivi nema osnova. Učestvovali su na Uhudu, okupljali vojsku, a njihov vođa je otvoreno najavio da će zatrti Poslanika.",
-    "wordCount": 669,
+    "wordCount": 691,
     "readingTimeMinutes": 4
   },
   {
@@ -261,7 +261,7 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "mehdi"
     ],
     "description": "Šijske knjige prenose predaju da će njihov Kaim, kada se pojavi, oživeti Aišu i izvršiti nad njom kaznu. Predaja se nalazi u tri njihova izvora.",
-    "wordCount": 242,
+    "wordCount": 309,
     "readingTimeMinutes": 2
   },
   {
@@ -275,8 +275,8 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "hadis"
     ],
     "description": "Predaja je slaba i po senedu i po tekstu, a u njenom lancu nalazi se Hanzala es-Sedusi, poznat po izmišljanju hadisa i odbačen kod većine hadiskih učenjaka.",
-    "wordCount": 293,
-    "readingTimeMinutes": 2
+    "wordCount": 472,
+    "readingTimeMinutes": 3
   },
   {
     "title": "Tvrdnja da je Talha želeo da oženi Aišu",
@@ -290,7 +290,7 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "hadis"
     ],
     "description": "Šije se pozivaju na Tefsir Ibn Abbasa, delo koje mu je samo pripisano. Sve predaje tog navoda su slabe, a prenosioci u njihovim lancima ocenjeni su lažljivcima.",
-    "wordCount": 259,
+    "wordCount": 258,
     "readingTimeMinutes": 2
   },
   {
@@ -305,8 +305,8 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "namaz"
     ],
     "description": "Šije tvrde da je Omer uveo teraviju. On je samo objedinio male skupine koje su već klanjale u mesdžidu iza jednog imama. Sam namaz je sunnet Poslanika.",
-    "wordCount": 2764,
-    "readingTimeMinutes": 14
+    "wordCount": 5154,
+    "readingTimeMinutes": 26
   },
   {
     "title": "Tvrdnja da je Ibnul-Kajjim dozvolio samozadovoljavanje",
@@ -319,7 +319,7 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "fikh"
     ],
     "description": "Šije tvrde da je Ibnul-Kajjim izdao fetvu kojom to dozvoljava. Njegov tekst, naveden u celini, kaže upravo suprotno: ispravno je da nije dozvoljeno.",
-    "wordCount": 655,
+    "wordCount": 651,
     "readingTimeMinutes": 4
   },
   {
@@ -334,8 +334,8 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "hadis"
     ],
     "description": "Predaju prenosi Zuhri, koji Omera nije zatekao ni video. Uz to, reč nebiz ne znači nužno opojno piće, a šijske knjige o nebizu govore opširno.",
-    "wordCount": 1592,
-    "readingTimeMinutes": 8
+    "wordCount": 1641,
+    "readingTimeMinutes": 9
   },
   {
     "title": "Tvrdnja da je Poslanik dozvolio Aliji džunupluk u mesdžidu",
@@ -349,7 +349,7 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "alija"
     ],
     "description": "Sve predaje koje se za ovu tvrdnju navode iz sunijskih knjiga slabe su ili izmišljene, a njihove lance čine šijski i nepoznati prenosioci.",
-    "wordCount": 1364,
+    "wordCount": 1365,
     "readingTimeMinutes": 7
   },
   {
@@ -364,7 +364,7 @@ export const opovrgavanjeMeta: GeneratedOpovrgavanjeMeta[] = [
       "fikh"
     ],
     "description": "Predaja govori samo o optužbi, a ne o dokazanom delu. Bez svedoka i dokaza sudija ne može izvršiti šerijatsku kaznu, nego samo osloboditi ili odrediti ta'zir.",
-    "wordCount": 943,
+    "wordCount": 948,
     "readingTimeMinutes": 5
   }
 ];

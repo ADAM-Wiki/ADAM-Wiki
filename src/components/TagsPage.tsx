@@ -34,8 +34,18 @@ function tierScale(containerWidth: number): number {
   return Math.min(1, Math.max(0.7, containerWidth / REFERENCE_WIDTH));
 }
 
+/**
+ * The floor rises as the cloud narrows.
+ *
+ * At a phone width the scale bottoms out at 0.7, which put the two smallest
+ * tiers at 11px each - illegible, indistinguishable from one another, and an
+ * 11px-tall tap target on the one page whose whole purpose is tapping tags.
+ * Since estimateWidth reads this same function, widening the small tiers feeds
+ * back into the row packing and the disc stays a disc.
+ */
 function tierPx(tier: number, scale: number): number {
-  return Math.max(11, Math.round(TIER_PX_BASE[tier] * scale));
+  const floor = scale < 0.85 ? 15 : 11;
+  return Math.max(floor, Math.round(TIER_PX_BASE[tier] * scale));
 }
 
 function collectTags(): TagCount[] {
@@ -75,7 +85,9 @@ const AVG_GLYPH_RATIO = 0.55;
 const ROW_GAP_PX = 20;
 
 function estimateWidth(tag: string, tier: number, scale: number): number {
-  return tag.length * tierPx(tier, scale) * AVG_GLYPH_RATIO + ROW_GAP_PX * scale;
+  return (
+    tag.length * tierPx(tier, scale) * AVG_GLYPH_RATIO + ROW_GAP_PX * scale
+  );
 }
 
 /**
@@ -158,7 +170,10 @@ function circularRows(
   return rows.filter((row) => row.length).map(centreWeighted);
 }
 
-const tagHref = (tag: string) => `/search?q=${encodeURIComponent(tag)}`;
+// The tag's own page, not a full-text search for its name. As a search the
+// cloud contradicted itself: "kuran" is on 112 articles and returned two hits,
+// because the search matches prose while the cloud counts frontmatter.
+const tagHref = (tag: string) => `/tags/${encodeURIComponent(tag)}`;
 
 export default function TagsPage() {
   const cloudRef = useRef<HTMLDivElement | null>(null);
@@ -212,7 +227,7 @@ export default function TagsPage() {
   }, [cloudWidth, scale]);
 
   return (
-    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
+    <div className="page-no-grid min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
       <Helmet>
         <title>{`Tagovi | ${SITE_NAME}`}</title>
         <meta
@@ -223,7 +238,7 @@ export default function TagsPage() {
 
       <Navbar />
 
-      <main className="pt-24 pb-20">
+      <main id="glavni-sadrzaj" tabIndex={-1} className="pt-24 pb-20">
         <div className="mx-auto max-w-5xl px-6">
           <div className="text-center">
             <span className="font-mono text-xs uppercase tracking-widest text-brand-dim">
@@ -270,7 +285,21 @@ export default function TagsPage() {
                       to={tagHref(tag)}
                       title={`${tag} — ${count} ${count === 1 ? "članak" : "članaka"}`}
                       style={{ fontSize: `${tierPx(tier, scale)}px` }}
-                      className={`inline-block whitespace-nowrap leading-none decoration-2 underline-offset-4 transition-transform duration-200 hover:scale-110 hover:text-brand-accent hover:underline ${TIER_STYLES[tier]}`}
+                      // motion-safe on the scale only: MotionConfig covers the
+                      // Motion components, but this hover is plain CSS and
+                      // would keep zooming under a reduced-motion setting.
+                      // min-w-0/max-w-full: rows are packed from an *estimated*
+                      // glyph width and a row always takes at least one tag, so
+                      // a single very long name could be wider than the disc and
+                      // bleed out of it. Clipped with an ellipsis instead - the
+                      // full name is on the title attribute either way.
+                      //
+                      // Vertical padding only, and only where it is needed: it
+                      // lifts a small tag to a ~31px hit area without touching
+                      // the width, which estimateWidth budgets the rows on.
+                      // Horizontal padding here would desync the packing from
+                      // the rendered size and wrap the rows flat.
+                      className={`inline-block max-w-full min-w-0 overflow-hidden text-ellipsis whitespace-nowrap py-2 leading-none decoration-2 underline-offset-4 transition-transform duration-200 motion-safe:hover:scale-110 hover:text-brand-accent hover:underline sm:py-1 ${TIER_STYLES[tier]}`}
                     >
                       {tag}
                     </Link>
@@ -295,10 +324,7 @@ export default function TagsPage() {
                     <span className="font-serif text-2xl leading-none text-brand-accent">
                       {letter}
                     </span>
-                    <span
-                      aria-hidden
-                      className="h-px flex-1 bg-brand-border"
-                    />
+                    <span aria-hidden className="h-px flex-1 bg-brand-border" />
                     <span className="font-mono text-[10px] uppercase tracking-widest text-brand-dim">
                       {entries.length}
                     </span>

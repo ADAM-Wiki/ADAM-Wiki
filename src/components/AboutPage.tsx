@@ -31,7 +31,7 @@ export default function AboutPage() {
   const totalCategories = getCategoryStats().filter((c) => c.count > 0).length;
 
   return (
-    <div className="min-h-screen bg-brand-bg selection:bg-brand-accent selection:text-brand-on-accent">
+    <div className="page-no-grid min-h-screen bg-brand-bg selection:bg-brand-accent selection:text-brand-on-accent">
       <Helmet>
         <title>{`O Projektu | ${SITE_NAME}`}</title>
         <meta name="description" content={DESCRIPTION} />
@@ -42,7 +42,7 @@ export default function AboutPage() {
 
       <Navbar />
 
-      <main className="pt-24 pb-20">
+      <main id="glavni-sadrzaj" tabIndex={-1} className="pt-24 pb-20">
         <div className="mx-auto max-w-3xl px-6">
           <header className="text-center">
             <span className="font-mono text-xs uppercase tracking-widest text-brand-dim">
@@ -76,8 +76,8 @@ export default function AboutPage() {
             </p>
             <p className="text-brand-dim">
               Cilj projekta je pružiti čitaocima pristup proverenim
-              informacijama, izvorima i analizama koje su često teško dostupne na
-              jezicima ex-Yu prostora.
+              informacijama, izvorima i analizama koje su često teško dostupne
+              na jezicima ex-Yu prostora.
             </p>
           </div>
 
@@ -114,7 +114,9 @@ export default function AboutPage() {
             >
               <div className="flex items-center gap-2.5">
                 <Youtube className="h-5 w-5 shrink-0 text-brand-accent" />
-                <h2 className="font-medium text-brand-heading">YouTube kanal</h2>
+                <h2 className="font-medium text-brand-heading">
+                  YouTube kanal
+                </h2>
                 <ArrowUpRight className="ml-auto h-4 w-4 shrink-0 text-brand-border-strong transition-colors group-hover:text-brand-accent" />
               </div>
               <p className="mt-3 text-sm leading-relaxed text-brand-dim">

@@ -12,6 +12,21 @@ export type GeneratedSpisiMeta = {
 
 export const spisiMeta: GeneratedSpisiMeta[] = [
   {
+    "title": "Meka i Jesrib u Bibliji",
+    "date": "2026-09-18",
+    "slug": "Meka-i-Jesrib-u-Bibliji",
+    "category": "spisi",
+    "tags": [
+      "spisi",
+      "biblija",
+      "meka",
+      "medina"
+    ],
+    "description": "Postanje 10:30 i naziv Meša, prevod iz Njukasla iz 1811. koji donosi Meka i Medina, Rašijevo poistovećivanje i kumranski rukopis o budućem Domu Božijem.",
+    "wordCount": 1776,
+    "readingTimeMinutes": 9
+  },
+  {
     "title": "Agej 2:7 - da li je želja svih naroda proročanstvo o Muhammedu ﷺ?",
     "date": "2026-08-06",
     "slug": "Agej-2-7-zelja-svih-naroda",
@@ -23,7 +38,7 @@ export const spisiMeta: GeneratedSpisiMeta[] = [
       "hebrejski"
     ],
     "description": "Hebrejski koren hmd odgovara arapskom korenu h-m-d, od kojeg dolazi ime Muhammed. Godfri Higins navodi da je Muhammed kod Ageja izričito najavljen i po imenu.",
-    "wordCount": 220,
+    "wordCount": 219,
     "readingTimeMinutes": 2
   },
   {
@@ -38,23 +53,8 @@ export const spisiMeta: GeneratedSpisiMeta[] = [
       "kuran"
     ],
     "description": "Jevrejstvo kao vera počinje sa Musaom, pa Ibrahim, koji mu prethodi, ne može biti Jevrejin. To priznaju i jevrejski i hrišćanski izvori.",
-    "wordCount": 395,
-    "readingTimeMinutes": 2
-  },
-  {
-    "title": "Dodatne napomene o Poslaniku ﷺ u Bibliji",
-    "date": "2026-08-06",
-    "slug": "Dodatne-napomene-o-Poslaniku-u-Bibliji",
-    "category": "spisi",
-    "tags": [
-      "spisi",
-      "biblija",
-      "rukopisi",
-      "muhammed"
-    ],
-    "description": "Zbirka kraćih napomena i rukopisnih nalaza: Avakum 3:3, Psalam 72, Isaija 42:11, koptski rukopisi i Ibn Ezra o bunaru Lahaj-Roi.",
-    "wordCount": 300,
-    "readingTimeMinutes": 2
+    "wordCount": 1085,
+    "readingTimeMinutes": 6
   },
   {
     "title": "Hodočašće u Izlasku 5:1 - hebrejski glagol hagag",
@@ -68,8 +68,8 @@ export const spisiMeta: GeneratedSpisiMeta[] = [
       "hebrejski"
     ],
     "description": "Hebrejski glagol u Izlasku 5:1 Strongov rečnik prevodi kao obaviti hodočašće, a Braunov rečnik ga izričito upoređuje sa arapskim hodočašćem u Meku.",
-    "wordCount": 508,
-    "readingTimeMinutes": 3
+    "wordCount": 613,
+    "readingTimeMinutes": 4
   },
   {
     "title": "Isaija 29:12 - knjiga data onome ko ne zna da čita",
@@ -83,8 +83,8 @@ export const spisiMeta: GeneratedSpisiMeta[] = [
       "objava"
     ],
     "description": "Isaija 29:12 govori o knjizi koja se daje onome ko nije učen, uz odgovor: ne znam čitati. To se poredi sa prvim susretom u pećini Hira.",
-    "wordCount": 253,
-    "readingTimeMinutes": 2
+    "wordCount": 2048,
+    "readingTimeMinutes": 11
   },
   {
     "title": "Isaija 42:1 - oblik etmah i pitanje imena Ahmed",
@@ -98,8 +98,8 @@ export const spisiMeta: GeneratedSpisiMeta[] = [
       "hebrejski"
     ],
     "description": "Masoretski oblik etmah-bo grafički je blizak obliku ahmad. Matej to mesto prenosi rečju ljubljeni, koja se ne izvodi iz korena tamah, nego iz korena hamad.",
-    "wordCount": 417,
-    "readingTimeMinutes": 3
+    "wordCount": 2376,
+    "readingTimeMinutes": 12
   },
   {
     "title": "Isaija 42 - proročanstvo i pomen Kedara",
@@ -113,38 +113,8 @@ export const spisiMeta: GeneratedSpisiMeta[] = [
       "kedar"
     ],
     "description": "Isaija 42:11 spominje naselja u kojima živi Kedar. Biblijski rečnici Kedar poistovećuju sa arapskim plemenima, a Šaf navodi da ga predanje čini pretkom Muhammeda.",
-    "wordCount": 440,
-    "readingTimeMinutes": 3
-  },
-  {
-    "title": "Kovčeg zaveta i Kaba - poređenje",
-    "date": "2026-08-06",
-    "slug": "Kovceg-zaveta-i-Kaba",
-    "category": "spisi",
-    "tags": [
-      "spisi",
-      "biblija",
-      "kaba",
-      "kovceg-zaveta"
-    ],
-    "description": "Poređenje položaja Kovčega zaveta kod Jevreja sa položajem Kabe i Crnog kamena kod muslimana, uz napomenu o onome što izvorni tekst ne dokazuje.",
-    "wordCount": 212,
-    "readingTimeMinutes": 2
-  },
-  {
-    "title": "Meka i Jesrib u Bibliji",
-    "date": "2026-08-06",
-    "slug": "Meka-i-Jesrib-u-Bibliji",
-    "category": "spisi",
-    "tags": [
-      "spisi",
-      "biblija",
-      "meka",
-      "medina"
-    ],
-    "description": "Postanje 10:30 i naziv Meša, prevod iz Njukasla iz 1811. koji donosi Meka i Medina, Rašijevo poistovećivanje i kumranski rukopis o budućem Domu Božijem.",
-    "wordCount": 290,
-    "readingTimeMinutes": 2
+    "wordCount": 7386,
+    "readingTimeMinutes": 37
   },
   {
     "title": "Mojsijev zavet - proročanstvo i račun godina",
@@ -158,8 +128,8 @@ export const spisiMeta: GeneratedSpisiMeta[] = [
       "hronologija"
     ],
     "description": "Apokrifni Mojsijev zavet, pronađen u Milanu 1861. godine, sadrži račun koji vodi u razdoblje između 567. i 574. godine.",
-    "wordCount": 255,
-    "readingTimeMinutes": 2
+    "wordCount": 1794,
+    "readingTimeMinutes": 9
   },
   {
     "title": "Da li Osija 9:6 spominje Muhammeda po imenu? Hebrejska reč mahmad",
@@ -173,11 +143,11 @@ export const spisiMeta: GeneratedSpisiMeta[] = [
       "hebrejski"
     ],
     "description": "Nevokalizovani hebrejski oblik mem-het-mem-dalet može se čitati i kao lično ime. Septuaginta ga prenosi kao Mahmas, dakle kao vlastito ime.",
-    "wordCount": 315,
-    "readingTimeMinutes": 2
+    "wordCount": 1777,
+    "readingTimeMinutes": 9
   },
   {
-    "title": "Da li je Isa najavio Ahmeda u Jovanu 16? Grčko-arapska veza",
+    "title": "Da li je Isus najavio „Ahmeda“ u Jovanu 16? Objašnjenje grčko-arapske veze",
     "date": "2026-08-06",
     "slug": "Parakletos-u-Jovanu-16",
     "category": "spisi",
@@ -188,8 +158,8 @@ export const spisiMeta: GeneratedSpisiMeta[] = [
       "grcki"
     ],
     "description": "Grčki oblici parakletos i periklitos, sirijski Munahhema, upotreba reči alos umesto heteros, i istorijski pretendenti na naziv Parakleta.",
-    "wordCount": 480,
-    "readingTimeMinutes": 3
+    "wordCount": 7237,
+    "readingTimeMinutes": 37
   },
   {
     "title": "Da li Ponovljeni zakon 18:18 najavljuje Muhammeda ﷺ? Poslanik poput Musaa",

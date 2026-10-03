@@ -10,6 +10,7 @@ import { opovrgavanjeMeta } from "../lib/generated/opovrgavanjeMeta";
 import { naukaMeta } from "../lib/generated/naukaMeta";
 import { muhammedMeta } from "../lib/generated/muhammedMeta";
 import { spisiMeta } from "../lib/generated/spisiMeta";
+import { kuranMeta } from "../lib/generated/kuranMeta";
 import { CATEGORIES, type CategoryData } from "./categoriesData";
 import { isPlaceholderArticle } from "../lib/categoryArticles";
 
@@ -48,6 +49,7 @@ const META_BY_CATEGORY: Record<string, readonly ArticleListing[]> = {
   nauka: naukaMeta,
   muhammed: muhammedMeta,
   spisi: spisiMeta,
+  kuran: kuranMeta,
 };
 
 const isPlaceholder = isPlaceholderArticle;
@@ -136,6 +138,38 @@ export function getCategoryStats(): CategoryStats[] {
 
 export function getTotalArticleCount(): number {
   return getAllArticles().length;
+}
+
+/**
+ * Tags are authored as lowercase slugs, so they are already URL-safe and are
+ * compared as written. Folding case here anyway keeps a stray "Kuran" in some
+ * article's frontmatter from silently creating a second, near-empty tag page.
+ */
+const normalizeTag = (tag: string) => tag.trim().toLowerCase();
+
+/** Every article carrying a tag, newest first. */
+export function getArticlesByTag(tag: string): ArticleCardData[] {
+  const wanted = normalizeTag(tag);
+
+  return getAllArticles().filter((article) =>
+    article.tags?.some((candidate) => normalizeTag(candidate) === wanted),
+  );
+}
+
+/** Every tag in use with its article count, most used first. */
+export function getTagCounts(): Array<{ tag: string; count: number }> {
+  const counts = new Map<string, number>();
+
+  for (const article of getAllArticles()) {
+    for (const tag of article.tags ?? []) {
+      const clean = normalizeTag(tag);
+      if (clean) counts.set(clean, (counts.get(clean) ?? 0) + 1);
+    }
+  }
+
+  return [...counts.entries()]
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag, "sr"));
 }
 
 /** "12. jun 2026." - matches the formatting used on article pages. */

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { MDXProvider } from "@mdx-js/react";
+import { FileDown } from "lucide-react";
 
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -46,7 +47,7 @@ const formatDate = (dateString: string): string => {
 
 const truncateDescription = (text: string, maxLength = 155): string => {
   if (text.length <= maxLength) return text;
-  return `${text.slice(0, maxLength).trimEnd()}...`;
+  return `${text.slice(0, maxLength).trimEnd()}…`;
 };
 
 // Must stay byte-identical to slugifyHeading in scripts/lib/generate-category-meta.ts,
@@ -73,11 +74,11 @@ export default function ArticlePage({
   articles,
 }: ArticlePageProps) {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
 
   const [activeHeading, setActiveHeading] = useState("");
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
   const [wordCount, setWordCount] = useState(0);
+  const [printUnavailable, setPrintUnavailable] = useState(false);
 
   const articleRef = useRef<HTMLElement | null>(null);
 
@@ -167,6 +168,49 @@ export default function ArticlePage({
     return () => observer.disconnect();
   }, [tocItems]);
 
+  /**
+   * Print, and notice when nothing happened.
+   *
+   * window.print() is a no-op in several places a reader of this site plausibly
+   * is: Firefox for Android has never implemented it, and the in-app browsers
+   * inside Facebook, Instagram and TikTok ignore it - which matters here,
+   * because those are the channels the site is shared through. In all of them
+   * the button simply did nothing, with no way to tell whether it had worked.
+   *
+   * There is no reliable way to ask a browser whether it can print, so this
+   * watches for the dialog actually opening. Chrome and Firefox announce it
+   * with `beforeprint`; Safari instead flips the `print` media query. If
+   * neither has happened shortly after the call, nothing opened.
+   */
+  const handlePrint = () => {
+    let opened = false;
+    const markOpened = () => {
+      opened = true;
+    };
+
+    const printQuery = window.matchMedia("print");
+    const onQueryChange = (event: MediaQueryListEvent) => {
+      if (event.matches) opened = true;
+    };
+
+    window.addEventListener("beforeprint", markOpened);
+    printQuery.addEventListener?.("change", onQueryChange);
+
+    try {
+      window.print();
+    } catch {
+      // Some embedded browsers throw instead of quietly doing nothing.
+    }
+
+    // Desktop browsers block inside print() until the dialog is dismissed, so
+    // by the time this is scheduled `opened` is already true there.
+    window.setTimeout(() => {
+      window.removeEventListener("beforeprint", markOpened);
+      printQuery.removeEventListener?.("change", onQueryChange);
+      setPrintUnavailable(!opened);
+    }, 800);
+  };
+
   if (!article) {
     return <NotFoundPage />;
   }
@@ -234,22 +278,22 @@ export default function ArticlePage({
 
       <Navbar />
 
-      <main className="pt-20">
+      <main id="glavni-sadrzaj" tabIndex={-1} className="pt-20">
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="grid lg:grid-cols-[300px_1fr] gap-12 items-start">
+            <div className="article-layout grid lg:grid-cols-[300px_1fr] gap-12 items-start">
               <ArticleToc
                 tocItems={tocItems}
                 activeHeading={activeHeading}
                 onActiveChange={setActiveHeading}
               />
 
-              <div className="min-w-0 lg:col-start-2 max-w-prose">
+              <div className="article-body min-w-0 lg:col-start-2 max-w-prose">
                 <header className="mb-12">
                   <div className="flex items-center gap-4 mb-6">
                     <Link
                       to={categoryUrl}
-                      className="text-xs font-mono text-brand-dim transition-colors hover:text-brand-accent"
+                      className="text-xs font-mono text-brand-dim transition-colors hover:text-brand-accent print:hidden"
                     >
                       {eyebrow}
                     </Link>
@@ -263,9 +307,9 @@ export default function ArticlePage({
                       {formatDate(date)}
                     </span>
 
-                    <span className="text-brand-border">·</span>
+                    <span className="text-brand-border print:hidden">·</span>
 
-                    <span className="flex items-center gap-1.5 px-3 py-1 bg-brand-surface border border-brand-border rounded-full text-xs font-medium text-brand-heading">
+                    <span className="print:hidden flex items-center gap-1.5 px-3 py-1 bg-brand-surface border border-brand-border rounded-full text-xs font-medium text-brand-heading">
                       <svg
                         className="w-3.5 h-3.5 opacity-60"
                         viewBox="0 0 24 24"
@@ -279,19 +323,58 @@ export default function ArticlePage({
                       {calculateReadingTime(wordCount)}
                     </span>
 
-                    <span className="text-brand-border">·</span>
+                    <span className="text-brand-border print:hidden">·</span>
 
-                    <span className="text-[11px] uppercase tracking-widest text-brand-dim font-medium">
+                    <span className="text-[11px] uppercase tracking-widest text-brand-dim font-medium print:hidden">
                       {wordCount} REČI
                     </span>
+
+                    {/* The browser's own print pipeline, not a PDF library:
+                        every browser offers "Sačuvaj kao PDF" as a print
+                        destination, and going through it keeps the text real
+                        text - selectable, searchable, with our diacritics and
+                        the Arabic intact. Rasterising the page to a canvas
+                        would lose all of that. The printed layout itself lives
+                        in @media print in index.css. */}
+                    <button
+                      type="button"
+                      onClick={handlePrint}
+                      title="Otvara prozor za štampu - izaberi „Sačuvaj kao PDF“ kao odredište"
+                      // min-h-11 below sm: at 26px tall this was under half the
+                      // 44px a thumb needs, and it is the only thing in this row
+                      // anyone taps.
+                      className="print:hidden flex min-h-11 items-center gap-1.5 rounded-full border border-brand-border bg-brand-surface px-3 text-xs font-medium text-brand-dim transition-colors hover:border-brand-border-strong hover:text-brand-heading sm:min-h-0 sm:py-1"
+                    >
+                      <FileDown aria-hidden className="w-3.5 h-3.5 shrink-0" />
+                      Sačuvaj kao PDF
+                    </button>
                   </div>
 
+                  {/* Only appears when the browser declined to open the print
+                      dialog. The title attribute above is a desktop-only
+                      affordance - there is no hover on a phone, which is
+                      exactly where this fails. */}
+                  {printUnavailable && (
+                    <p
+                      role="status"
+                      className="mb-8 flex items-start gap-2 rounded-lg border border-brand-border bg-brand-surface p-3 text-xs leading-relaxed text-brand-dim print:hidden"
+                    >
+                      <FileDown aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                      <span>
+                        Vaš pregledač ne otvara prozor za štampu. Otvorite ovu
+                        stranicu u Chrome-u ili Safari-ju — u meniju pregledača
+                        izaberite <strong>Štampaj</strong>, pa{" "}
+                        <strong>„Sačuvaj kao PDF“</strong> kao odredište.
+                      </span>
+                    </p>
+                  )}
+
                   {tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 print:hidden">
                       {tags.map((tag) => (
                         <Link
                           key={tag}
-                          to={`/search?q=${encodeURIComponent(tag)}`}
+                          to={`/tags/${encodeURIComponent(tag)}`}
                           className="text-xs text-brand-dim border border-brand-border px-3 py-1 rounded-full hover:border-brand-border-strong hover:text-brand-heading transition-colors"
                         >
                           #{tag}
@@ -326,7 +409,7 @@ export default function ArticlePage({
         </section>
 
         {relatedArticles.length > 0 && (
-          <section className="py-12 border-t border-brand-border">
+          <section className="py-12 border-t border-brand-border print:hidden">
             <div className="max-w-7xl mx-auto px-6">
               <div className="grid lg:grid-cols-[240px_minmax(0,1fr)] gap-12">
                 <div className="hidden lg:block" />
@@ -346,13 +429,13 @@ export default function ArticlePage({
 
                   <div className="grid md:grid-cols-3 gap-4">
                     {relatedArticles.map((rel) => (
-                      <div
+                      <Link
                         key={rel.slug}
-                        onClick={() => {
-                          navigate(`${categoryUrl}/article/${rel.slug}`);
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        }}
-                        className="p-5 border border-brand-border bg-brand-surface rounded-lg hover:border-brand-border-strong transition-all cursor-pointer group"
+                        to={`${categoryUrl}/article/${rel.slug}`}
+                        onClick={() =>
+                          window.scrollTo({ top: 0, behavior: "smooth" })
+                        }
+                        className="block p-5 border border-brand-border bg-brand-surface rounded-lg hover:border-brand-border-strong transition-colors group"
                       >
                         <h3 className="text-sm font-medium text-brand-heading group-hover:text-brand-accent transition-colors leading-snug mb-2">
                           {rel.title}
@@ -370,7 +453,7 @@ export default function ArticlePage({
                             ))}
                           </div>
                         )}
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 </div>

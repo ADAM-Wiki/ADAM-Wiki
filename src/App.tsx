@@ -5,6 +5,7 @@
 
 import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { MotionConfig } from "motion/react";
 
 // The home page is what a first-time visitor lands on, so it stays in the main
 // bundle. Every other route is split out and fetched on navigation.
@@ -14,6 +15,10 @@ import TopicsGrid from "./components/TopicsGrid";
 import ArticleSection from "./components/ArticleSection";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
+// Mounted at the root rather than per page: the offer follows the reader
+// across the archive, and it decides for itself where to stay quiet.
+import KuranPromo from "./components/KuranPromo";
+import { KURAN_PATH } from "./utils/kuranPromo";
 
 const SearchPage = lazy(() => import("./components/SearchPage"));
 
@@ -49,10 +54,13 @@ const MuhammedArticlePage = lazy(
   () => import("./components/MuhammedArticlePage"),
 );
 const SpisiArticlePage = lazy(() => import("./components/SpisiArticlePage"));
+const KuranArticlePage = lazy(() => import("./components/KuranArticlePage"));
 
 const CategoriesPage = lazy(() => import("./components/CategoriesPage"));
 const NotFoundPage = lazy(() => import("./components/NotFoundPage"));
 const TagsPage = lazy(() => import("./components/TagsPage"));
+const TagPage = lazy(() => import("./components/TagPage"));
+const KuranPage = lazy(() => import("./components/KuranPage"));
 const AboutPage = lazy(() => import("./components/AboutPage"));
 const KontaktPage = lazy(() => import("./components/KontaktPage"));
 const PrivatnostPage = lazy(() => import("./components/PrivatnostPage"));
@@ -69,10 +77,10 @@ function RouteFallback() {
 
 function HomePage() {
   return (
-    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
+    <div className="home-page min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
       <Navbar />
 
-      <main>
+      <main id="glavni-sadrzaj" tabIndex={-1}>
         <Hero />
         <TopicsGrid />
         <ArticleSection />
@@ -85,78 +93,91 @@ function HomePage() {
 
 export default function App() {
   return (
-    <Router basename="/ADAM-Wiki">
-      <ScrollToTop />
+    // reducedMotion="user" makes every motion component on the site honour the
+    // system setting: transform and layout animations are dropped, opacity
+    // fades are kept. One switch here rather than a useReducedMotion() call in
+    // each of the six components that animate.
+    <MotionConfig reducedMotion="user">
+      <Router basename="/ADAM-Wiki">
+        <ScrollToTop />
+        <KuranPromo />
 
-      <Suspense fallback={<RouteFallback />}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
+        <Suspense fallback={<RouteFallback />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
 
-          {/* CATEGORY PAGES */}
-          <Route path="/categories" element={<CategoriesPage />} />
-          <Route path="/categories/:categoryId" element={<CategoryPage />} />
+            {/* CATEGORY PAGES */}
+            <Route path="/categories" element={<CategoriesPage />} />
+            <Route path="/categories/:categoryId" element={<CategoryPage />} />
 
-          {/* ARTICLE PAGES */}
-          <Route
-            path="/categories/hadis/article/:slug"
-            element={<HadisArticlePage />}
-          />
-          <Route
-            path="/categories/ateizam/article/:slug"
-            element={<AteizamArticlePage />}
-          />
-          <Route
-            path="/categories/hriscanstvo/article/:slug"
-            element={<HriscanstvoArticlePage />}
-          />
-          <Route
-            path="/categories/hinduizam/article/:slug"
-            element={<HinduizamArticlePage />}
-          />
-          <Route
-            path="/categories/islam/article/:slug"
-            element={<IslamArticlePage />}
-          />
-          <Route
-            path="/categories/istorija/article/:slug"
-            element={<IstorijaArticlePage />}
-          />
-          <Route
-            path="/categories/ahmedije/article/:slug"
-            element={<AhmedijeArticlePage />}
-          />
-          <Route
-            path="/categories/odgovori/article/:slug"
-            element={<OdgovoriArticlePage />}
-          />
-          <Route
-            path="/categories/opovrgavanje/article/:slug"
-            element={<OpovrgavanjeArticlePage />}
-          />
-          <Route
-            path="/categories/nauka/article/:slug"
-            element={<NaukaArticlePage />}
-          />
-          <Route
-            path="/categories/muhammed/article/:slug"
-            element={<MuhammedArticlePage />}
-          />
-          <Route
-            path="/categories/spisi/article/:slug"
-            element={<SpisiArticlePage />}
-          />
+            {/* ARTICLE PAGES */}
+            <Route
+              path="/categories/hadis/article/:slug"
+              element={<HadisArticlePage />}
+            />
+            <Route
+              path="/categories/ateizam/article/:slug"
+              element={<AteizamArticlePage />}
+            />
+            <Route
+              path="/categories/hriscanstvo/article/:slug"
+              element={<HriscanstvoArticlePage />}
+            />
+            <Route
+              path="/categories/hinduizam/article/:slug"
+              element={<HinduizamArticlePage />}
+            />
+            <Route
+              path="/categories/islam/article/:slug"
+              element={<IslamArticlePage />}
+            />
+            <Route
+              path="/categories/istorija/article/:slug"
+              element={<IstorijaArticlePage />}
+            />
+            <Route
+              path="/categories/ahmedije/article/:slug"
+              element={<AhmedijeArticlePage />}
+            />
+            <Route
+              path="/categories/odgovori/article/:slug"
+              element={<OdgovoriArticlePage />}
+            />
+            <Route
+              path="/categories/opovrgavanje/article/:slug"
+              element={<OpovrgavanjeArticlePage />}
+            />
+            <Route
+              path="/categories/nauka/article/:slug"
+              element={<NaukaArticlePage />}
+            />
+            <Route
+              path="/categories/muhammed/article/:slug"
+              element={<MuhammedArticlePage />}
+            />
+            <Route
+              path="/categories/spisi/article/:slug"
+              element={<SpisiArticlePage />}
+            />
+            <Route
+              path="/categories/kuran/article/:slug"
+              element={<KuranArticlePage />}
+            />
 
-          {/* UTILITY PAGES */}
-          <Route path="/tags" element={<TagsPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/kontakt" element={<KontaktPage />} />
-          <Route path="/privatnost" element={<PrivatnostPage />} />
-          <Route path="/uslovi" element={<UsloviPage />} />
-          <Route path="/kolacici" element={<KolaciciPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-          <Route path="/search" element={<SearchPage />} />
-        </Routes>
-      </Suspense>
-    </Router>
+            {/* UTILITY PAGES */}
+            <Route path="/tags" element={<TagsPage />} />
+            <Route path="/tags/:tag" element={<TagPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/kontakt" element={<KontaktPage />} />
+            <Route path="/privatnost" element={<PrivatnostPage />} />
+            <Route path="/uslovi" element={<UsloviPage />} />
+            <Route path="/kolacici" element={<KolaciciPage />} />
+            <Route path={KURAN_PATH} element={<KuranPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+            <Route path="/search" element={<SearchPage />} />
+          </Routes>
+        </Suspense>
+      </Router>
+    </MotionConfig>
   );
 }

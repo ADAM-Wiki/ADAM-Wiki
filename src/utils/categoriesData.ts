@@ -120,6 +120,15 @@ export const CATEGORIES: CategoryData[] = [
     description:
       "Najave poslanika Muhammeda ﷺ u ranijim objavama - hebrejski tekst, rukopisi i jezička analiza.",
   },
+  {
+    id: "kuran",
+    title: "OČUVANJE KUR'ANA",
+    url: "/categories/kuran",
+    label: "Očuvanje Kur'ana",
+    eyebrow: "OČUVANJE KUR'ANA",
+    description:
+      "Očuvanje kur'anskog teksta - kiraeti, osmanski mushaf, rani rukopisi i odgovori na prigovore.",
+  },
 ];
 
 export const topics: string[] = CATEGORIES.map((category) => category.title);

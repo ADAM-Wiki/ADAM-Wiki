@@ -16,14 +16,35 @@ import { CATEGORIES } from "./lib/categories";
  */
 
 const OG_DIR = path.resolve("public/images/og");
-const DEFAULT_OUTPUT = path.resolve("public/images/og-default.png");
+const DEFAULT_OUTPUT = path.resolve("public/images/og-default.jpg");
 const MAP_OUTPUT = path.resolve("src/lib/generated/ogImages.ts");
+const FONT_DIR = path.resolve("public/fonts");
 
+/**
+ * Bumped whenever the card design changes.
+ *
+ * Filenames are content hashes and a card is skipped when its file already
+ * exists, so without this a redesign would regenerate nothing at all - every
+ * hash would be unchanged and every card left on the old design. Folding the
+ * version into the hash renames all of them, which re-renders the set and lets
+ * the existing prune step clear out the previous generation.
+ */
+const DESIGN_VERSION = "2";
+
+/**
+ * The site's own dark-theme tokens, copied from :root in src/index.css.
+ *
+ * These used to be a generic near-black with a Tailwind blue accent, which is
+ * the one thing a share card must not be: the site is warm black with a gold
+ * accent, so a shared link previewed as though it belonged to a different
+ * project.
+ */
 const BRAND = {
-  bg: "#0a0a0a",
-  accent: "#3b82f6",
-  text: "#e5e5e5",
-  dim: "#737373",
+  bg: "#11100d",
+  accent: "#c7a16a",
+  heading: "#f4efe6",
+  text: "#e7dfd4",
+  dim: "#b7ac98",
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -38,7 +59,31 @@ const CATEGORY_LABELS: Record<string, string> = {
   opovrgavanje: "Opovrgavanje šija",
   nauka: "Nauka i islam",
   muhammed: "Muhammed",
+  // Both were missing, so their cards printed the raw slug - "spisi", "kuran" -
+  // where every other category printed a label.
+  spisi: "Muhammed ﷺ u ranijim spisima",
+  kuran: "Očuvanje Kur'ana",
 };
+
+/**
+ * The site's real typefaces, inlined as base64.
+ *
+ * The cards used to be set in Georgia and system-ui, which is nobody's brand.
+ * These are the same files the site serves; inlining them means the renderer
+ * needs no server and cannot race a network fetch, and latin-ext is included
+ * because that is where the Serbian diacritics live.
+ */
+function fontFace(family: string, file: string): string {
+  const data = fs.readFileSync(path.join(FONT_DIR, file)).toString("base64");
+  return `@font-face{font-family:"${family}";font-style:normal;font-weight:400 700;src:url(data:font/woff2;base64,${data}) format("woff2");}`;
+}
+
+const FONTS = [
+  fontFace("Cormorant Garamond", "cormorant-latin.woff2"),
+  fontFace("Cormorant Garamond", "cormorant-latin-ext.woff2"),
+  fontFace("Inter", "inter-latin.woff2"),
+  fontFace("Inter", "inter-latin-ext.woff2"),
+].join("");
 
 function escapeHtml(value: string): string {
   return value
@@ -51,26 +96,35 @@ function escapeHtml(value: string): string {
 /** Longer titles step down in size so they keep fitting the card. */
 function titleFontSize(title: string): number {
   const n = title.length;
-  if (n <= 40) return 78;
-  if (n <= 70) return 64;
-  if (n <= 110) return 52;
-  if (n <= 150) return 44;
-  return 38;
+  if (n <= 40) return 86;
+  if (n <= 70) return 72;
+  if (n <= 110) return 58;
+  if (n <= 150) return 48;
+  return 42;
 }
 
+/**
+ * The share card.
+ *
+ * Carries the home page's oversized Å monogram, so the card someone sees in a
+ * message and the page they land on open with the same mark. The title is set
+ * in the site's display serif and left-aligned - a share card is usually seen
+ * small in a feed, where a left edge is far quicker to scan than a centred
+ * block.
+ */
 function card(options: {
   title: string;
   subtitle?: string;
   eyebrow?: string;
-  isDefault?: boolean;
 }): string {
-  const { title, subtitle, eyebrow, isDefault = false } = options;
+  const { title, subtitle, eyebrow } = options;
 
   return `<!doctype html>
 <html>
   <head>
     <meta charset="utf-8" />
     <style>
+      ${FONTS}
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body {
         width: 1200px;
@@ -80,84 +134,119 @@ function card(options: {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        padding: 88px 90px 96px;
+        padding: 80px 90px;
         position: relative;
         overflow: hidden;
-        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-family: Inter, sans-serif;
+        -webkit-font-smoothing: antialiased;
       }
       .glow {
         position: absolute;
-        top: -280px;
-        right: -220px;
-        width: 760px;
-        height: 760px;
-        border-radius: 50%;
-        background: radial-gradient(circle, ${BRAND.accent}30 0%, transparent 70%);
+        inset: 0;
+        background: radial-gradient(
+          circle at 72% 40%,
+          rgba(199, 161, 106, 0.13) 0%,
+          transparent 58%
+        );
       }
+      /* Cropped by the card edges on purpose, the way it is on the hero. */
+      .monogram {
+        position: absolute;
+        right: -40px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-family: "Cormorant Garamond", serif;
+        font-size: 620px;
+        line-height: 0.8;
+        color: ${BRAND.accent};
+        opacity: 0.09;
+      }
+      .content { position: relative; z-index: 1; max-width: 840px; }
       .brand {
-        font-size: 30px;
+        font-size: 24px;
         font-weight: 700;
-        letter-spacing: 7px;
+        letter-spacing: 8px;
         text-transform: uppercase;
-        color: ${BRAND.text};
+        color: ${BRAND.heading};
       }
       .brand .sep { color: ${BRAND.accent}; }
       .rule {
-        width: 104px;
-        height: 4px;
+        width: 96px;
+        height: 3px;
         background: ${BRAND.accent};
-        margin: 26px 0 34px;
+        margin: 24px 0 30px;
       }
       h1 {
-        font-family: Georgia, "Times New Roman", serif;
-        font-weight: 500;
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 600;
         font-size: ${titleFontSize(title)}px;
-        line-height: 1.16;
-        letter-spacing: -1px;
-        max-height: 340px;
+        line-height: 1.08;
+        letter-spacing: -0.02em;
+        color: ${BRAND.heading};
+        text-wrap: balance;
+        max-height: 360px;
         overflow: hidden;
       }
       .subtitle {
-        margin-top: 26px;
-        font-size: 29px;
-        line-height: 1.45;
+        margin-top: 24px;
+        font-size: 26px;
+        line-height: 1.5;
         color: ${BRAND.dim};
-        max-width: 940px;
+        max-width: 760px;
       }
       .footer {
         position: absolute;
         left: 90px;
         right: 90px;
-        bottom: 66px;
+        bottom: 64px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        font-family: ui-monospace, "SF Mono", Menlo, monospace;
-        font-size: 22px;
+        z-index: 1;
+        font-size: 19px;
         letter-spacing: 3px;
         text-transform: uppercase;
         color: ${BRAND.dim};
       }
-      .eyebrow { color: ${BRAND.accent}; }
+      .eyebrow { color: ${BRAND.accent}; font-weight: 500; letter-spacing: 4px; }
     </style>
   </head>
   <body>
     <div class="glow"></div>
-    <div class="brand">Adam<span class="sep">-</span>Wiki</div>
-    <div class="rule"></div>
-    <h1>${escapeHtml(title)}</h1>
-    ${subtitle ? `<div class="subtitle">${escapeHtml(subtitle)}</div>` : ""}
+    <div class="monogram">Å</div>
+    <div class="content">
+      <div class="brand">Adam<span class="sep">-</span>Wiki</div>
+      <div class="rule"></div>
+      <h1>${escapeHtml(title)}</h1>
+      ${subtitle ? `<div class="subtitle">${escapeHtml(subtitle)}</div>` : ""}
+    </div>
     <div class="footer">
       <span class="eyebrow">${escapeHtml(eyebrow ?? "")}</span>
-      <span>${isDefault ? "adam-wiki.github.io" : "adam-wiki.github.io"}</span>
+      <span>adam-wiki.github.io</span>
     </div>
   </body>
 </html>`;
 }
 
+/**
+ * JPEG at 92, not PNG.
+ *
+ * The monogram and the corner glow are large smooth gradients, which lossless
+ * PNG stores terribly - the cards came out at ~190kB each, or 37MB across the
+ * set, all of it committed and deployed. The same pixels are 60kB as JPEG, and
+ * at quality 92 there is no visible artefacting on the type. Every platform
+ * that reads og:image accepts JPEG.
+ */
 async function shoot(page: Page, html: string, output: string): Promise<void> {
   await page.setContent(html, { waitUntil: "load" });
-  await page.screenshot({ path: output as `${string}.png`, type: "png" });
+  // The faces are inlined, but decoding still happens after load - without this
+  // a card can be captured while the title is still in the fallback serif.
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({
+    path: output as `${string}.jpg`,
+    type: "jpeg",
+    quality: 92,
+  });
 }
 
 type ArticleEntry = {
@@ -181,7 +270,7 @@ async function loadArticles(): Promise<ArticleEntry[]> {
     for (const article of articles) {
       const hash = crypto
         .createHash("sha1")
-        .update(`${key}|${article.slug}|${article.title}`)
+        .update(`v${DESIGN_VERSION}|${key}|${article.slug}|${article.title}`)
         .digest("hex")
         .slice(0, 12);
 
@@ -192,7 +281,7 @@ async function loadArticles(): Promise<ArticleEntry[]> {
         hash,
         // Hashed filename keeps paths short: article slugs run to 90+ chars and
         // some contain spaces and diacritics.
-        file: `${hash}.png`,
+        file: `${hash}.jpg`,
       });
     }
   }
@@ -217,7 +306,7 @@ async function run(): Promise<void> {
       title: "Uspostavljanje istine kroz dokaze",
       subtitle:
         "Članci i odgovori o islamu, hadisu, hrišćanstvu, ateizmu i istoriji.",
-      isDefault: true,
+      eyebrow: "Arhiva",
     }),
     DEFAULT_OUTPUT,
   );

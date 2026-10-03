@@ -1,7 +1,7 @@
 import { OG_IMAGES } from "../lib/generated/ogImages";
 import { SITE_URL } from "./siteConfig";
 
-const DEFAULT_OG_IMAGE = "/images/og-default.png";
+const DEFAULT_OG_IMAGE = "/images/og-default.jpg";
 
 /**
  * Absolute URL of the Open Graph card for an article.

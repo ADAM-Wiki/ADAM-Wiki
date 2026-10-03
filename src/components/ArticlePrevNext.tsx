@@ -24,7 +24,7 @@ export default function ArticlePrevNext({
   return (
     <nav
       aria-label="Ostali članci u kategoriji"
-      className="mt-10 grid gap-4 border-t border-brand-border pt-8 sm:grid-cols-2"
+      className="mt-10 print:hidden grid gap-4 border-t border-brand-border pt-8 sm:grid-cols-2"
     >
       {previous ? (
         <Link

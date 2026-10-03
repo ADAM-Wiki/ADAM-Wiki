@@ -9,6 +9,8 @@ import { odgovoriMeta } from "../../src/lib/generated/odgovoriMeta";
 import { opovrgavanjeMeta } from "../../src/lib/generated/opovrgavanjeMeta";
 import { naukaMeta } from "../../src/lib/generated/naukaMeta";
 import { muhammedMeta } from "../../src/lib/generated/muhammedMeta";
+import { spisiMeta } from "../../src/lib/generated/spisiMeta";
+import { kuranMeta } from "../../src/lib/generated/kuranMeta";
 import { isPlaceholderArticle } from "../../src/lib/categoryArticles";
 
 export type Route = {
@@ -34,6 +36,10 @@ const CATEGORY_META = [
   { key: "opovrgavanje", articles: opovrgavanjeMeta },
   { key: "nauka", articles: naukaMeta },
   { key: "muhammed", articles: muhammedMeta },
+  // Both were live routes in App.tsx but absent here, so their articles were
+  // neither prerendered nor listed in the sitemap - kuran alone is 55 of them.
+  { key: "spisi", articles: spisiMeta },
+  { key: "kuran", articles: kuranMeta },
 ];
 
 function newestDate(dates: string[]): string | undefined {
@@ -43,6 +49,38 @@ function newestDate(dates: string[]): string | undefined {
     .sort((a, b) => b.getTime() - a.getTime());
 
   return valid[0]?.toISOString().slice(0, 10);
+}
+
+/**
+ * One route per tag in use.
+ *
+ * Tags became real pages rather than a search query, so they are worth
+ * prerendering and indexing like any other listing - each is a hand-curated
+ * grouping that no category covers.
+ */
+function tagRoutes(): Route[] {
+  const dates = new Map<string, string[]>();
+
+  for (const { articles } of CATEGORY_META) {
+    for (const article of articles) {
+      if (isPlaceholderArticle(article)) continue;
+
+      for (const tag of article.tags ?? []) {
+        const clean = tag.trim().toLowerCase();
+        if (!clean) continue;
+        dates.set(clean, [...(dates.get(clean) ?? []), article.date]);
+      }
+    }
+  }
+
+  return [...dates.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([tag, tagDates]) => ({
+      path: `/tags/${encodeURIComponent(tag)}`,
+      lastmod: newestDate(tagDates),
+      priority: 0.4,
+      changefreq: "weekly" as const,
+    }));
 }
 
 export function getAllRoutes(): Route[] {
@@ -89,8 +127,11 @@ export function getAllRoutes(): Route[] {
     ...categoryRoutes,
     ...articleRoutes,
     { path: "/tags", priority: 0.5, changefreq: "weekly" },
+    ...tagRoutes(),
     { path: "/about", priority: 0.4, changefreq: "yearly" },
     { path: "/kontakt", priority: 0.3, changefreq: "yearly" },
+    // A giveaway landing page people are meant to find and share.
+    { path: "/kuran-cirilica", priority: 0.8, changefreq: "monthly" },
     { path: "/privatnost", priority: 0.1, changefreq: "yearly" },
     { path: "/uslovi", priority: 0.1, changefreq: "yearly" },
     { path: "/kolacici", priority: 0.1, changefreq: "yearly" },

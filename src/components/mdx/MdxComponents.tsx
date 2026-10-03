@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { isValidElement, useState } from "react";
 import type {
   HTMLAttributes,
   ImgHTMLAttributes,
@@ -16,9 +16,11 @@ import {
   BookMarked,
   ScrollText,
   BookText,
+  Maximize2,
   Image as ImageIcon,
 } from "lucide-react";
 import ArticleLightbox from "../ArticleLightbox";
+import { IMAGE_SIZES } from "../../lib/generated/imageSizes";
 import { Ref } from "./Footnotes";
 
 export { Ref, FootnoteList, FootnoteProvider } from "./Footnotes";
@@ -51,7 +53,7 @@ export function MdxH2({ className = "", children, ...props }: HeadingProps) {
         <div className="h-px flex-1 bg-gradient-to-l from-transparent to-brand-dim/50" />
       </div>
       <h2
-        className={`scroll-mt-32 break-words font-serif text-2xl font-bold text-brand-heading sm:text-3xl [overflow-wrap:anywhere] ${className}`}
+        className={`scroll-mt-32 break-words font-serif text-[2rem] font-semibold tracking-[-0.03em] leading-[1.1] text-brand-heading sm:text-[2.6rem] [overflow-wrap:anywhere] ${className}`}
         {...props}
       >
         {children}
@@ -63,7 +65,7 @@ export function MdxH2({ className = "", children, ...props }: HeadingProps) {
 export function MdxH3({ className = "", children, ...props }: HeadingProps) {
   return (
     <h3
-      className={`scroll-mt-32 flex items-center gap-3 break-words font-serif text-xl font-bold text-brand-heading sm:text-2xl [overflow-wrap:anywhere] ${className}`}
+      className={`scroll-mt-32 flex items-center gap-3 break-words font-serif text-[1.7rem] font-semibold leading-[1.2] tracking-[-0.025em] text-brand-heading sm:text-[2.05rem] [overflow-wrap:anywhere] ${className}`}
       {...props}
     >
       <span
@@ -78,7 +80,7 @@ export function MdxH3({ className = "", children, ...props }: HeadingProps) {
 export function MdxH4({ className = "", children, ...props }: HeadingProps) {
   return (
     <h4
-      className={`scroll-mt-32 break-words font-serif text-lg font-semibold text-brand-heading sm:text-xl [overflow-wrap:anywhere] ${className}`}
+      className={`scroll-mt-32 break-words font-serif text-[1.45rem] font-semibold leading-[1.2] tracking-[-0.02em] text-brand-heading sm:text-[1.7rem] [overflow-wrap:anywhere] ${className}`}
       {...props}
     >
       {children}
@@ -89,7 +91,7 @@ export function MdxH4({ className = "", children, ...props }: HeadingProps) {
 export function MdxP({ className = "", children, ...props }: ParagraphProps) {
   return (
     <p
-      className={`font-lexend text-lg leading-relaxed text-brand-text ${className}`}
+      className={`font-lexend text-[1.1rem] leading-[1.9] tracking-[0.005em] text-brand-text ${className}`}
       {...props}
     >
       {children}
@@ -257,6 +259,67 @@ export function OpisSlike({ className = "", children, ...props }: DivProps) {
   );
 }
 
+/** 1 single sweep, 2 two passes, 3 three scribbles, 4 a marker running dry. */
+const MARKER_VARIANTS = ["1", "2", "3", "4"] as const;
+
+type MarkerVariant = (typeof MARKER_VARIANTS)[number];
+
+/** Flattens children to their text, so nested markup still seeds a stroke. */
+function markerText(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(markerText).join("");
+  if (isValidElement(node)) {
+    return markerText((node.props as { children?: ReactNode }).children);
+  }
+  return "";
+}
+
+/** FNV-1a. Any cheap avalanche would do - this one is four lines. */
+function hash(text: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < text.length; i += 1) {
+    h = Math.imul(h ^ text.charCodeAt(i), 0x01000193);
+  }
+  return h >>> 0;
+}
+
+interface MarkerProps extends HTMLAttributes<HTMLElement> {
+  /**
+   * Pins the stroke, as `variant="2"` or `variant={2}` - MDX makes both easy
+   * to reach for, so both are accepted. Omit it and the phrase picks its own.
+   */
+  variant?: MarkerVariant | 1 | 2 | 3 | 4;
+  children: ReactNode;
+}
+
+/**
+ * Marker highlight for a phrase worth stopping on.
+ *
+ * The stroke is picked by hashing the marked text, not at random: articles are
+ * prerendered, so Math.random would draw one stroke into the HTML and a
+ * different one the moment React hydrated, swapping it under the reader. A
+ * hash gives the same variety between phrases while staying identical across
+ * prerender, hydration and rebuilds. The cost is that repeating a phrase
+ * verbatim repeats its stroke - pass `variant` on one of them if that shows.
+ */
+export function Marker({
+  variant,
+  className = "",
+  children,
+  ...props
+}: MarkerProps) {
+  const stroke =
+    variant === undefined
+      ? MARKER_VARIANTS[hash(markerText(children)) % MARKER_VARIANTS.length]
+      : String(variant);
+
+  return (
+    <mark className={`marker marker-${stroke} ${className}`} {...props}>
+      {children}
+    </mark>
+  );
+}
+
 export function MdxOL({
   className = "",
   children,
@@ -303,7 +366,7 @@ export function MdxBlockquote({
 }: BlockquoteHTMLAttributes<HTMLQuoteElement>) {
   return (
     <blockquote
-      className={`border-l-2 border-brand-border-strong pl-5 font-lexend text-lg italic leading-relaxed text-brand-dim ${className}`}
+      className={`border-l-4 border-brand-accent pl-5 font-lexend text-lg italic leading-relaxed text-brand-dim ${className}`}
       {...props}
     >
       {children}
@@ -341,7 +404,10 @@ export function MdxPre({
   );
 }
 
-export function MdxHr({ className = "", ...props }: HTMLAttributes<HTMLHRElement>) {
+export function MdxHr({
+  className = "",
+  ...props
+}: HTMLAttributes<HTMLHRElement>) {
   return <hr className={`border-brand-border ${className}`} {...props} />;
 }
 
@@ -392,7 +458,10 @@ export function Table({ children }: { children: ReactNode }) {
 
 export function Th({ children }: { children: ReactNode }) {
   return (
-    <th className="border-b border-brand-border px-5 py-3 text-left text-sm font-semibold tracking-wide text-brand-accent">
+    <th
+      scope="col"
+      className="border-b border-brand-border px-5 py-3 text-left text-sm font-semibold tracking-wide text-brand-accent"
+    >
       {children}
     </th>
   );
@@ -438,6 +507,21 @@ interface ArticleImageProps extends ImageProps {
   caption?: string;
 }
 
+/**
+ * Intrinsic size of a scan, for the width/height attributes.
+ *
+ * The manifest is keyed by the path under public/, while MDX writes the full
+ * request path including the deploy base ("/ADAM-Wiki/images/..."), so the base
+ * is trimmed before the lookup.
+ */
+function intrinsicSize(src: string): [number, number] | undefined {
+  const base = import.meta.env.BASE_URL;
+  const relative =
+    base !== "/" && src.startsWith(base) ? src.slice(base.length - 1) : src;
+
+  return IMAGE_SIZES[relative];
+}
+
 export function ArticleImage({
   src = "",
   alt = "",
@@ -446,27 +530,57 @@ export function ArticleImage({
   ...props
 }: ArticleImageProps) {
   const [open, setOpen] = useState(false);
-  const finalCaption =
-    caption ||
-    alt ||
-    src
-      .split("/")
-      .pop()
-      ?.replace(/\.[^.]+$/, "") ||
-    "";
+  // Only a real caption or a real alt is worth printing. The filename fallback
+  // this used to have put strings like "1" and "sahih-3" under the scans, and
+  // fed the same thing to alt.
+  const finalCaption = caption || alt;
+  const size = intrinsicSize(src);
 
   return (
     <>
       <div className="my-4">
-        <img
-          src={src}
-          alt={alt || finalCaption || "slika"}
-          loading="lazy"
-          decoding="async"
+        {/* A button, not a bare <img> with onClick: opening the lightbox is an
+            action, and as a div-alike it was unreachable by keyboard and
+            invisible to assistive tech. */}
+        <button
+          type="button"
           onClick={() => setOpen(true)}
-          className={`w-full cursor-pointer rounded-lg transition-opacity hover:opacity-90 ${className}`}
-          {...props}
-        />
+          // With alt text present the image already names the button; a label
+          // here as well would have it announced twice. Only a decorative scan
+          // needs one supplied.
+          aria-label={alt ? undefined : "Uvećaj sliku"}
+          // zoom-in, and stated explicitly: Tailwind v4 gives buttons
+          // `cursor: default`, so wrapping the scan in one silently took away
+          // the only hint that it opens full size.
+          className="group/img relative block w-full cursor-zoom-in overflow-hidden rounded-lg"
+        >
+          <img
+            src={src}
+            alt={alt}
+            // Reserves the box before the bytes arrive, so a page of scans
+            // stops reflowing under the reader as it loads.
+            width={size?.[0]}
+            height={size?.[1]}
+            loading="lazy"
+            decoding="async"
+            className={`h-auto w-full rounded-lg transition-opacity group-hover/img:opacity-90 ${className}`}
+            {...props}
+          />
+
+          {/* A cursor is no affordance at all on a phone, which is where these
+              scans are least readable inline. The badge is always visible so
+              touch readers can see the page opens larger; it only brightens on
+              hover. Manuscript scans are the evidence the site rests on, so it
+              matters that they look openable. */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute right-2 top-2 flex items-center gap-1.5 rounded-md bg-brand-overlay px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-brand-text opacity-80 backdrop-blur-sm transition-opacity group-hover/img:opacity-100"
+          >
+            <Maximize2 className="h-3 w-3 shrink-0" />
+            Uvećaj
+          </span>
+        </button>
+
         {finalCaption && (
           <p className="mt-2 text-center text-xs text-brand-dim">
             {finalCaption}
@@ -540,7 +654,7 @@ export function Izvori({
 }: IzvoriProps) {
   return (
     <div
-      className={`border-l-4 border-brand-border-strong px-5 py-4 ${className}`}
+      className={`mdx-izvori border-l-4 border-brand-border-strong px-5 py-4 ${className}`}
       {...props}
     >
       <div className="mb-3 flex items-center gap-2">
@@ -589,6 +703,7 @@ export const mdxComponents = {
   th: Th,
   td: Td,
   Ref,
+  Marker,
   Important,
   QuoteBox,
   Warning,

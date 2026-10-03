@@ -1,74 +1,65 @@
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
-import StaticNavbar from "./StaticNavbar";
-import Footer from "./Footer";
-import BackToTop from "./BackToTop";
-import { SITE_NAME } from "../utils/siteConfig";
+import LegalPage from "./LegalPage";
+
+const LINK_CLASS =
+  "text-brand-accent underline decoration-brand-accent/40 underline-offset-4 transition-colors hover:decoration-brand-accent";
 
 export default function PrivatnostPage() {
-  const year = new Date().getFullYear();
-
   return (
-    <div className="min-h-screen bg-brand-bg">
-      <Helmet>
-        <title>{`Privatnost | ${SITE_NAME}`}</title>
-      </Helmet>
-      <StaticNavbar />
-      <main className="pt-20">
-        <section className="py-20">
-          <div className="max-w-3xl mx-auto px-6">
-
-            <div className="flex items-center gap-4 mb-10">
-              <span className="text-xs font-mono text-brand-dim">LEGALNO</span>
-              <h1 className="text-3xl font-serif font-medium">Politika Privatnosti</h1>
-            </div>
-
-            <div className="space-y-8 text-brand-dim leading-relaxed">
-              <div>
-                <h2 className="text-brand-heading font-medium mb-3">Prikupljanje podataka</h2>
-                <p>
-                  Ova stranica ne prikuplja lične podatke posetilaca.
-                  Ne koristimo forme za registraciju niti čuvamo korisničke podatke.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-brand-heading font-medium mb-3">Kolačići</h2>
-                <p>
-                  Koristimo isključivo tehničke kolačiće potrebne za funkcionisanje sajta.
-                  Ne koristimo kolačiće za praćenje.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-brand-heading font-medium mb-3">Analitika</h2>
-                <p>
-                  Možemo koristiti anonimne analitičke podatke isključivo
-                  u svrhu poboljšanja sadržaja.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-brand-heading font-medium mb-3">Kontakt</h2>
-                <p>
-                  Za sva pitanja vezana za privatnost,{" "}
-                  <Link to="/kontakt" className="underline hover:text-brand-heading transition-colors">
-                    kontaktirajte nas
-                  </Link>
-                  .
-                </p>
-              </div>
-
-              <p className="text-xs text-brand-border-strong pt-4 border-t border-brand-border">
-                Posljednje ažuriranje: {year}
-              </p>
-            </div>
-
-          </div>
-        </section>
-      </main>
-      <BackToTop />
-      <Footer />
-    </div>
+    <LegalPage
+      title="Politika Privatnosti"
+      description="Koje podatke ovaj sajt prikuplja, gde odlaze i šta ostaje na vašem uređaju."
+      path="/privatnost"
+      sections={[
+        {
+          title: "Prikupljanje podataka",
+          body: "Ova stranica ne prikuplja lične podatke automatski. Nema registracije, korisničkih naloga ni profila posetilaca.",
+        },
+        {
+          title: "Kontakt forma",
+          body: (
+            <>
+              Jedini podaci koje nam šaljete su oni koje sami unesete u{" "}
+              <Link to="/kontakt" className={LINK_CLASS}>
+                kontakt formu
+              </Link>{" "}
+              — ime, email adresa i tekst poruke. Formu obrađuje servis
+              Formspree, koji nam poruku prosleđuje na email. Te podatke
+              koristimo isključivo da bismo vam odgovorili.
+            </>
+          ),
+        },
+        {
+          title: "Kolačići i lokalno skladište",
+          body: (
+            <>
+              Ne postavljamo sopstvene kolačiće. Vaš pretraživač lokalno pamti
+              izabranu temu i nedavne pretrage, i ti podaci ostaju na vašem
+              uređaju. Detaljnije u{" "}
+              <Link to="/kolacici" className={LINK_CLASS}>
+                Politici kolačića
+              </Link>
+              .
+            </>
+          ),
+        },
+        {
+          title: "Analitika",
+          body: "Trenutno ne koristimo nikakve analitičke alate. Ako se to promeni, koristili bismo isključivo anonimne podatke, i to u svrhu poboljšanja sadržaja.",
+        },
+        {
+          title: "Pitanja o privatnosti",
+          body: (
+            <>
+              Za sva pitanja vezana za privatnost,{" "}
+              <Link to="/kontakt" className={LINK_CLASS}>
+                kontaktirajte nas
+              </Link>
+              .
+            </>
+          ),
+        },
+      ]}
+    />
   );
 }

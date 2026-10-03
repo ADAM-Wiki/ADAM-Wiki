@@ -125,6 +125,26 @@ function RefPopover({
 }) {
   const [style, setStyle] = useState<React.CSSProperties | null>(null);
   const boxRef = useRef<HTMLDivElement | null>(null);
+  const restoreRef = useRef<HTMLElement | null>(null);
+
+  // Placement happens in an effect, so on the first commit the box is still
+  // visibility:hidden - and a hidden element cannot take focus.
+  const placed = style !== null;
+
+  useEffect(() => {
+    restoreRef.current = document.activeElement as HTMLElement | null;
+
+    return () => {
+      // Back to the marker in the text, rather than dropping the reader at the
+      // top of the document.
+      if (restoreRef.current?.isConnected) restoreRef.current.focus();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!placed) return;
+    boxRef.current?.querySelector<HTMLElement>("button")?.focus();
+  }, [placed]);
 
   useEffect(() => {
     const place = () => {
@@ -148,13 +168,26 @@ function RefPopover({
       });
     };
 
-    place();
     // Reposition rather than close, so the box tracks the text while reading.
-    window.addEventListener("scroll", place, { passive: true, capture: true });
-    window.addEventListener("resize", place);
+    // Coalesced into one rAF: place() reads getBoundingClientRect and
+    // offsetHeight, and running that on every scroll event of a capture-phase
+    // listener forces a layout many times per frame.
+    let frame = 0;
+    const schedule = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        place();
+      });
+    };
+
+    place();
+    window.addEventListener("scroll", schedule, { passive: true, capture: true });
+    window.addEventListener("resize", schedule);
     return () => {
-      window.removeEventListener("scroll", place, { capture: true });
-      window.removeEventListener("resize", place);
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule, { capture: true });
+      window.removeEventListener("resize", schedule);
     };
   }, [anchor]);
 
@@ -167,12 +200,22 @@ function RefPopover({
       if (boxRef.current?.contains(target) || anchor.contains(target)) return;
       onClose();
     };
+    // This is a popover, not a modal, so focus is not trapped - tabbing past
+    // the last control dismisses it instead, the way it dismisses on a click
+    // outside. Trapping would strand a keyboard reader in a two-button box.
+    const onFocusIn = (e: FocusEvent) => {
+      const target = e.target as Node;
+      if (boxRef.current?.contains(target) || anchor.contains(target)) return;
+      onClose();
+    };
 
     document.addEventListener("keydown", onKey);
     document.addEventListener("mousedown", onPointer);
+    document.addEventListener("focusin", onFocusIn);
     return () => {
       document.removeEventListener("keydown", onKey);
       document.removeEventListener("mousedown", onPointer);
+      document.removeEventListener("focusin", onFocusIn);
     };
   }, [anchor, onClose]);
 
@@ -244,7 +287,12 @@ export function Ref({ children }: { children: ReactNode }) {
         aria-label={`Izvor ${number}`}
         // No align-super here - the <sup> already raises it, and both together
         // lifted the marker clear of the line.
-        className="mx-0.5 rounded px-1 font-mono text-[0.75em] leading-none text-brand-accent transition-colors hover:bg-brand-surface-hover hover:underline"
+        //
+        // The marker itself measures about 10x25px, which is a hard thing to
+        // hit with a thumb for something that opens a popover. The ::after
+        // enlarges the hit area to roughly 34x41 without occupying any space -
+        // padding would have pushed the surrounding words apart mid-sentence.
+        className="relative mx-0.5 rounded px-1 font-mono text-[0.75em] leading-none text-brand-accent transition-colors after:absolute after:-inset-x-2 after:-inset-y-3 after:content-[''] hover:bg-brand-surface-hover hover:underline"
       >
         [{number}]
       </button>

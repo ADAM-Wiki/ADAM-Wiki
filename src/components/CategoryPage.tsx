@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 
 import Navbar from "./Navbar";
@@ -19,7 +19,9 @@ const ARTICLES_PER_PAGE = 6;
  */
 export default function CategoryPage() {
   const { categoryId = "" } = useParams<{ categoryId: string }>();
-  const [currentPage, setCurrentPage] = useState(1);
+  // Paging lives in the URL: page 3 of a category is a real address that can be
+  // linked and returned to with the back button.
+  const [searchParams, setSearchParams] = useSearchParams();
   // Items land one after another rather than all at once. The same .page-rise
   // the category grid on /categories uses, so arriving at a category reads as
   // a continuation of the page you came from. See index.css for why it is CSS
@@ -38,17 +40,19 @@ export default function CategoryPage() {
     window.scrollTo(0, 0);
   }, []);
 
-  // Reset paging when navigating straight from one category to another.
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [categoryId]);
+  // Paging no longer needs resetting between categories: the page number is a
+  // query param, and navigating to another category leaves it behind.
 
   if (!category) {
     return <NotFoundPage />;
   }
 
   const articles = getCategoryListing(categoryId);
-  const totalPages = Math.ceil(articles.length / ARTICLES_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(articles.length / ARTICLES_PER_PAGE));
+
+  // Clamped, because ?page= is user-editable and arrives from bookmarks.
+  const requested = Number(searchParams.get("page")) || 1;
+  const currentPage = Math.min(Math.max(1, Math.trunc(requested)), totalPages);
 
   const paginatedArticles = articles.slice(
     (currentPage - 1) * ARTICLES_PER_PAGE,
@@ -56,7 +60,9 @@ export default function CategoryPage() {
   );
 
   const handlePageClick = (page: number) => {
-    setCurrentPage(page);
+    // Page 1 is the bare URL rather than ?page=1, so a category keeps one
+    // canonical address instead of two that render identically.
+    setSearchParams(page === 1 ? {} : { page: String(page) });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -73,7 +79,7 @@ export default function CategoryPage() {
         <meta property="og:url" content={`${SITE_URL}${category.url}`} />
         <meta
           property="og:image"
-          content={`${SITE_URL}/images/og-default.png`}
+          content={`${SITE_URL}/images/og-default.jpg`}
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={pageTitle} />
@@ -82,7 +88,7 @@ export default function CategoryPage() {
 
       <Navbar />
 
-      <main className="pt-20">
+      <main id="glavni-sadrzaj" tabIndex={-1} className="pt-20">
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
             <div {...rise(0, "flex items-center gap-4")}>
@@ -112,13 +118,23 @@ export default function CategoryPage() {
                       <div key={article.slug} {...rise(index + 1)}>
                         <Link
                           to={`${category.url}/article/${article.slug}`}
-                          className="block h-full p-6 border border-brand-border bg-brand-surface rounded-lg hover:border-brand-border-strong transition-colors cursor-pointer group"
+                          className="flex h-full flex-col p-6 border border-brand-border bg-brand-surface rounded-lg hover:border-brand-border-strong transition-colors group"
                         >
                           <h2 className="text-lg font-medium mb-3 text-brand-heading group-hover:text-brand-accent transition-colors leading-snug">
                             {article.title}
                           </h2>
 
-                          <div className="flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-widest text-brand-dim font-medium">
+                          {/* The listing is where an article is chosen, and it
+                              was offering a title and a word count to choose
+                              on. The home page cards have carried the excerpt
+                              all along. */}
+                          {article.description && (
+                            <p className="mb-4 line-clamp-3 text-sm leading-relaxed text-brand-dim">
+                              {article.description}
+                            </p>
+                          )}
+
+                          <div className="mt-auto flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-widest text-brand-dim font-medium">
                             <span>{formatArticleDate(article.date)}</span>
                             {hasWordCount && (
                               <>
@@ -157,7 +173,7 @@ export default function CategoryPage() {
             </div>
 
             {totalPages > 1 && (
-              <div key={currentPage} {...rise(paginatedArticles.length + 1)}>
+              <div key={currentPage}>
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}

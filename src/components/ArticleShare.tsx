@@ -74,7 +74,7 @@ export default function ArticleShare({ url, title }: ArticleShareProps) {
   ];
 
   return (
-    <div className="mt-16 flex flex-wrap items-center gap-3 border-t border-brand-border pt-8">
+    <div className="mt-16 flex flex-wrap items-center gap-3 border-t border-brand-border pt-8 print:hidden">
       <span className="font-mono text-xs uppercase tracking-widest text-brand-dim">
         Podeli
       </span>

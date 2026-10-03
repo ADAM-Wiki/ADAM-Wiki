@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { FileText, ArrowRight, Clock } from "lucide-react";
+import { BookOpenText, ArrowRight, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   getLatestArticles,
@@ -11,12 +11,50 @@ import {
 // previously surfaced the "Test članak" scaffolding from empty categories.
 const latestArticles = getLatestArticles(6, 1);
 
-/**
- * Card surfaces use explicit opaque sRGB rather than a white/1% overlay:
- * Tailwind v4 composites alpha in oklab, and a near-black grey only a few
- * levels above the page background picks up a colour cast on wide-gamut and
- * OLED displays.
- */
+function FeaturedArticleCard({ article }: { article: ArticleCardData }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.35 }}
+    >
+      <Link
+        to={article.url}
+        className="group block rounded-lg border border-brand-border bg-brand-surface p-5 transition-colors hover:border-brand-border-strong sm:p-8"
+      >
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <span className="font-mono text-[10px] uppercase tracking-widest text-brand-note-fg">
+            Najnoviji tekst
+          </span>
+          <span aria-hidden className="h-px min-w-6 flex-1 bg-brand-border" />
+          <span className="font-mono text-xs uppercase tracking-widest text-brand-accent">
+            {article.categoryTitle}
+          </span>
+        </div>
+
+        <h3 className="mt-5 max-w-5xl font-serif text-3xl leading-tight text-brand-heading transition-colors group-hover:text-brand-accent sm:text-4xl">
+          {article.title}
+        </h3>
+        {article.description && (
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-brand-dim sm:text-base">
+            {article.description}
+          </p>
+        )}
+
+        <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[10px] uppercase tracking-widest text-brand-dim sm:text-[11px]">
+          <span>{formatArticleDate(article.date)}</span>
+          <span className="flex items-center gap-1.5">
+            <Clock aria-hidden className="h-3 w-3" />
+            {article.readingTimeMinutes} min čitanja
+          </span>
+          <span>{article.wordCount} reči</span>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
+
 function LastArticleCard({
   article,
   index,
@@ -33,34 +71,28 @@ function LastArticleCard({
     >
       <Link
         to={article.url}
-        className="group block h-full rounded-lg border border-brand-border bg-brand-surface p-8 transition-colors hover:border-brand-border-strong hover:bg-brand-surface-hover"
+        className="group flex min-h-24 h-full items-start gap-3 rounded-lg border border-brand-border bg-brand-surface p-4 transition-colors hover:border-brand-border-strong hover:bg-brand-surface-hover sm:p-5"
       >
-        <div className="flex items-start gap-4">
-          <FileText className="mt-1 h-6 w-6 flex-shrink-0 text-brand-dim transition-colors group-hover:text-brand-accent" />
+        <BookOpenText
+          aria-hidden
+          className="mt-1 h-5 w-5 shrink-0 text-brand-dim"
+        />
 
-          <div className="min-w-0 flex-1">
-            <span className="mb-2 block font-mono text-xs uppercase tracking-widest text-brand-dim">
-              {article.categoryTitle}
+        <div className="min-w-0 flex-1">
+          <span className="mb-1 block font-mono text-[10px] uppercase tracking-widest text-brand-dim">
+            {article.categoryTitle}
+          </span>
+
+          <h3 className="text-sm font-medium leading-snug transition-colors group-hover:text-brand-accent sm:text-base">
+            {article.title}
+          </h3>
+
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-widest text-brand-dim">
+            <span>{formatArticleDate(article.date)}</span>
+            <span className="flex items-center gap-1">
+              <Clock aria-hidden className="h-3 w-3" />
+              {article.readingTimeMinutes} min
             </span>
-
-            <h3 className="text-xl font-medium leading-tight transition-colors group-hover:text-brand-accent">
-              {article.title}
-            </h3>
-
-            {article.description && (
-              <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-brand-dim">
-                {article.description}
-              </p>
-            )}
-
-            <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] uppercase tracking-widest text-brand-dim transition-colors group-hover:text-brand-accent">
-              <span>{formatArticleDate(article.date)}</span>
-              <span className="flex items-center gap-1.5">
-                <Clock className="h-3 w-3" />
-                {article.readingTimeMinutes} min
-              </span>
-              <span>{article.wordCount} reči</span>
-            </div>
           </div>
         </div>
       </Link>
@@ -91,8 +123,9 @@ export default function ArticleSection() {
           </Link>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-2">
-          {latestArticles.map((article, index) => (
+        <FeaturedArticleCard article={latestArticles[0]} />
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+          {latestArticles.slice(1).map((article, index) => (
             <LastArticleCard
               key={`${article.categoryId}-${article.slug}`}
               article={article}

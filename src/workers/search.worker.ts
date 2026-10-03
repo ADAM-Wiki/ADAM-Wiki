@@ -12,6 +12,7 @@ import { naukaMeta } from "../lib/generated/naukaMeta";
 import { odgovoriMeta } from "../lib/generated/odgovoriMeta";
 import { opovrgavanjeMeta } from "../lib/generated/opovrgavanjeMeta";
 import { spisiMeta } from "../lib/generated/spisiMeta";
+import { kuranMeta } from "../lib/generated/kuranMeta";
 import { hadisSearch } from "../lib/generated/hadisSearch";
 import { hriscanstvoSearch } from "../lib/generated/hriscanstvoSearch";
 import { ahmedijeSearch } from "../lib/generated/ahmedijeSearch";
@@ -24,6 +25,7 @@ import { naukaSearch } from "../lib/generated/naukaSearch";
 import { odgovoriSearch } from "../lib/generated/odgovoriSearch";
 import { opovrgavanjeSearch } from "../lib/generated/opovrgavanjeSearch";
 import { spisiSearch } from "../lib/generated/spisiSearch";
+import { kuranSearch } from "../lib/generated/kuranSearch";
 import {
   normalizeForSearch,
   getQueryTokens,
@@ -94,6 +96,7 @@ const ARTICLE_SOURCES: ReadonlyArray<{
     basePath: "/categories/opovrgavanje/article",
   },
   { meta: spisiMeta, search: spisiSearch, basePath: "/categories/spisi/article" },
+  { meta: kuranMeta, search: kuranSearch, basePath: "/categories/kuran/article" },
 ];
 
 interface SearchDocument {
@@ -348,7 +351,9 @@ function buildSnippets(
     }
 
     const snippet = text.slice(from, to).trim();
-    return `${from > 0 ? "..." : ""}${snippet}${to < text.length ? "..." : ""}`;
+    // Ellipsis character, not three periods - these strings are rendered
+    // straight into the result preview.
+    return `${from > 0 ? "…" : ""}${snippet}${to < text.length ? "…" : ""}`;
   });
 }
 
@@ -474,19 +479,24 @@ self.onmessage = (
     },
   );
 
-  const articleResults = scored
+  const matchingArticles = scored
     .filter((r) => r.type === "article")
-    .sort((a, b) => b.relevance - a.relevance)
-    .slice(0, limit);
+    .sort((a, b) => b.relevance - a.relevance);
+
+  const articleResults = matchingArticles.slice(0, limit);
 
   const otherResults = scored
     .filter((r) => r.type !== "article")
     .sort((a, b) => b.relevance - a.relevance)
     .slice(0, 3);
 
+  // totalArticles is what matched, not what fits: the list is capped at `limit`
+  // and the page used to label the capped length as the result count, so a term
+  // in eighty articles reported "20 rezultata" as though that were all of them.
   self.postMessage({
     type: "RESULTS",
     requestId,
     results: [...articleResults, ...otherResults],
+    totalArticles: matchingArticles.length,
   });
 };

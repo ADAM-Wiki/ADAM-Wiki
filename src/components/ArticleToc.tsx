@@ -50,10 +50,10 @@ export default function ArticleToc({
 
   if (tocItems.length === 0) return null;
 
-  const truncateText = (text: string, maxLength = 32) => {
-    if (text.length <= maxLength) return text;
-    return `${text.slice(0, maxLength).trimEnd()}...`;
-  };
+  // Headings are clamped by CSS (line-clamp-2) rather than cut at a character
+  // count. A fixed 32 characters cut "Prvo - Ebu Bekr je samo postupio…" while
+  // the 300px sidebar had room to spare, and it guessed at a width only the
+  // browser actually knows. The full text stays on the title attribute.
 
   const handleClick = (id: string) => {
     const el = document.getElementById(id);
@@ -68,7 +68,7 @@ export default function ArticleToc({
   };
 
   return (
-    <aside className="hidden lg:block self-start sticky top-28">
+    <aside className="article-toc hidden lg:block self-start sticky top-28">
       <div className="border-y border-[var(--color-brand-muted)] bg-[var(--color-brand-bg)] p-4">
         <nav
           ref={navRef}
@@ -93,9 +93,11 @@ export default function ArticleToc({
                 }}
                 type="button"
                 title={item.text}
-                aria-current={isActive ? "true" : undefined}
+                // "location" rather than "true": this marks where in the
+                // document the reader is, not the current page in a set.
+                aria-current={isActive ? "location" : undefined}
                 onClick={() => handleClick(item.id)}
-                className={`toc-item group relative flex w-full items-center rounded-lg py-1.5 text-left transition-all duration-200 ${
+                className={`toc-item group relative flex w-full items-center rounded-lg py-1.5 text-left transition-[background-color,color,transform] duration-200 ${
                   item.level === 3 ? "pl-8 pr-3" : "px-3"
                 } ${
                   isActive
@@ -117,8 +119,8 @@ export default function ArticleToc({
                       {arabicNumber.format(h2Index)}
                     </span>
 
-                    <span className="min-w-0 flex-1 truncate text-[12px] leading-none">
-                      {truncateText(item.text, 32)}
+                    <span className="min-w-0 flex-1 line-clamp-2 text-[12px] leading-snug">
+                      {item.text}
                     </span>
                   </>
                 ) : (
@@ -135,13 +137,13 @@ export default function ArticleToc({
                     />
 
                     <span
-                      className={`min-w-0 flex-1 truncate text-[12px] leading-none transition-colors ${
+                      className={`min-w-0 flex-1 line-clamp-2 text-[12px] leading-snug transition-colors ${
                         isActive
                           ? "text-[var(--color-brand-accent)]"
                           : "text-[var(--color-brand-text)] group-hover:text-[var(--color-brand-accent)]"
                       }`}
                     >
-                      {truncateText(item.text, 34)}
+                      {item.text}
                     </span>
                   </div>
                 )}

@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { motion } from "motion/react";
 import { Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { warmSearch } from "../hooks/useSearch";
 import { getTotalArticleCount, getCategoryStats } from "../utils/articleIndex";
 
 const totalArticles = getTotalArticleCount();
@@ -30,11 +31,9 @@ export default function Hero() {
     navigate(trimmed ? `/search?q=${encodeURIComponent(trimmed)}` : "/search");
   };
 
-  // On phones the hero fills the viewport so the divider below it lands on the
-  // fold instead of leaving dead space. 100svh (not 100vh) is the height with
-  // the browser toolbars showing, which is what the reader sees on first paint.
+  // Keep the category overview below the fold on the first viewport.
   return (
-    <section className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden pb-16 pt-20 sm:block sm:min-h-0 sm:pb-28 sm:pt-36">
+    <section className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden pb-16 pt-20 sm:pb-28 sm:pt-36">
       {/*
         Monogram. Sized against the viewport and centred on both axes so the
         section's overflow-hidden never shears its feet flat against the
@@ -44,8 +43,7 @@ export default function Hero() {
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none opacity-[0.07]"
         style={{
-          maskImage:
-            "radial-gradient(circle, black 50%, transparent 80%)",
+          maskImage: "radial-gradient(circle, black 50%, transparent 80%)",
           WebkitMaskImage:
             "radial-gradient(circle, black 50%, transparent 80%)",
         }}
@@ -61,10 +59,12 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h1 className="font-serif text-[clamp(2.5rem,7vw,6rem)] leading-[1.08] tracking-tight">
+          <h1 className="font-serif text-[2.7rem] leading-[0.94] sm:text-6xl lg:text-7xl">
             Uspostavljanje
             <br />
-            <span className="font-normal italic text-brand-accent">Istine</span>{" "}
+            <span className="font-normal italic text-brand-accent">
+              Istine
+            </span>{" "}
             kroz dokaze
           </h1>
 
@@ -76,7 +76,10 @@ export default function Hero() {
 
           {/* Search is what most visitors arrive wanting; the placeholder shows
               the kind of question the archive actually answers. */}
-          <form onSubmit={handleSubmit} className="mx-auto mt-6 max-w-2xl sm:mt-12">
+          <form
+            onSubmit={handleSubmit}
+            className="mx-auto mt-6 max-w-2xl sm:mt-12"
+          >
             <div className="relative">
               {/* The input keeps its own positioning context so the icon stays
                   centred against the field, not against the field plus the
@@ -87,10 +90,20 @@ export default function Hero() {
                   type="search"
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
+                  // Focusing here is the clearest intent to search on the whole
+                  // site, and it buys the index the longest head start - the
+                  // whole time the visitor spends typing their question.
+                  onFocus={warmSearch}
                   placeholder="Da li je Isus Bog?"
                   aria-label="Pretraga sadržaja"
                   // See SearchPage: under 16px iOS zooms the page on focus.
-                  className="w-full rounded-lg border border-brand-border bg-brand-field py-4 pl-12 pr-5 text-base text-brand-heading transition-colors placeholder:text-brand-dim focus:border-brand-accent focus:outline-none sm:pr-56 sm:text-sm"
+                  name="q"
+                  autoComplete="off"
+                  spellCheck={false}
+                  // No focus:outline-none - the border tint alone was the only
+                  // focus indicator, and it reads as decoration rather than as
+                  // "you are here". The global :focus-visible ring shows too.
+                  className="w-full rounded-lg border border-brand-border bg-brand-field py-4 pl-12 pr-5 text-base text-brand-heading transition-colors placeholder:text-brand-dim focus:border-brand-accent sm:pr-56 sm:text-sm"
                 />
               </div>
 

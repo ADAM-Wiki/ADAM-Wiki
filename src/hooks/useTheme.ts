@@ -4,6 +4,19 @@ export type Theme = "dark" | "light";
 
 export const THEME_STORAGE_KEY = "adam-theme";
 
+/** Must track --color-brand-bg for each theme in index.css. */
+const THEME_COLORS: Record<Theme, string> = {
+  dark: "#11100d",
+  light: "#f5f1e8",
+};
+
+/** Keeps the mobile browser chrome the same colour as the page. */
+function applyThemeColor(theme: Theme): void {
+  document
+    .querySelector('meta[name="theme-color"]')
+    ?.setAttribute("content", THEME_COLORS[theme]);
+}
+
 function readStoredTheme(): Theme {
   if (typeof document === "undefined") return "dark";
 
@@ -23,6 +36,7 @@ export function useTheme() {
       const next: Theme = event.newValue === "light" ? "light" : "dark";
       setTheme(next);
       document.documentElement.setAttribute("data-theme", next);
+      applyThemeColor(next);
     };
 
     window.addEventListener("storage", onStorage);
@@ -37,6 +51,7 @@ export function useTheme() {
     root.classList.add("theme-switching");
     root.setAttribute("data-theme", next);
     root.style.colorScheme = next;
+    applyThemeColor(next);
 
     try {
       localStorage.setItem(THEME_STORAGE_KEY, next);
