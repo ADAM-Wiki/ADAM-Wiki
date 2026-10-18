@@ -16,8 +16,7 @@ import {
 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence, MotionConfig } from "motion/react";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
+import PageShell from "./PageShell";
 import { SITE_NAME } from "../utils/siteConfig";
 import { useSearch } from "../hooks/useSearch";
 import { useRecentSearches } from "../hooks/useRecentSearches";
@@ -348,15 +347,12 @@ export default function SearchPage() {
     : mobileHighlightedSnippets.slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
+    <PageShell mainClassName="pt-24 pb-20">
       <Helmet>
         <title>{`Pretraga | ${SITE_NAME}`}</title>
         <meta name="description" content="Pretražite sve članke." />
       </Helmet>
 
-      <Navbar />
-
-      <main id="glavni-sadrzaj" tabIndex={-1} className="pt-24 pb-20">
         <div className="max-w-6xl mx-auto px-6">
           <div className="mb-8 text-center">
             <span className="text-xs font-mono text-brand-dim tracking-widest uppercase">
@@ -849,8 +845,6 @@ export default function SearchPage() {
             </div>
           )}
         </div>
-      </main>
-
       <AnimatePresence>
         {mobilePreview && activeMobilePreview && (
           <>
@@ -964,7 +958,6 @@ export default function SearchPage() {
         )}
       </AnimatePresence>
 
-      <Footer />
-    </div>
+    </PageShell>
   );
 }

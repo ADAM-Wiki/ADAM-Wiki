@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Youtube, Mail, ArrowUpRight } from "lucide-react";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
-import BackToTop from "./BackToTop";
+import PageShell from "./PageShell";
 import { SITE_NAME, SITE_URL } from "../utils/siteConfig";
 import { getTotalArticleCount, getCategoryStats } from "../utils/articleIndex";
 
@@ -31,7 +29,7 @@ export default function AboutPage() {
   const totalCategories = getCategoryStats().filter((c) => c.count > 0).length;
 
   return (
-    <div className="page-no-grid min-h-screen bg-brand-bg selection:bg-brand-accent selection:text-brand-on-accent">
+    <PageShell noGrid>
       <Helmet>
         <title>{`O Projektu | ${SITE_NAME}`}</title>
         <meta name="description" content={DESCRIPTION} />
@@ -40,9 +38,6 @@ export default function AboutPage() {
         <meta property="og:url" content={`${SITE_URL}/about`} />
       </Helmet>
 
-      <Navbar />
-
-      <main id="glavni-sadrzaj" tabIndex={-1} className="pt-24 pb-20">
         <div className="mx-auto max-w-3xl px-6">
           <header className="text-center">
             <span className="font-mono text-xs uppercase tracking-widest text-brand-dim">
@@ -143,10 +138,6 @@ export default function AboutPage() {
             </Link>
           </div>
         </div>
-      </main>
-
-      <BackToTop />
-      <Footer />
-    </div>
+    </PageShell>
   );
 }

@@ -1,9 +1,7 @@
 import { FolderOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
-import BackToTop from "./BackToTop";
+import PageShell from "./PageShell";
 import { SITE_NAME } from "../utils/siteConfig";
 import { getCategoryStats } from "../utils/articleIndex";
 
@@ -36,15 +34,12 @@ export default function CategoriesPage() {
   const pending = stats.filter((category) => category.count === 0);
 
   return (
-    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
+    <PageShell>
       <Helmet>
         <title>{`Kategorije | ${SITE_NAME}`}</title>
         <meta name="description" content={DESCRIPTION} />
       </Helmet>
 
-      <Navbar />
-
-      <main id="glavni-sadrzaj" tabIndex={-1} className="pt-20">
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
             <div className="page-rise flex items-center gap-4 mb-3">
@@ -129,10 +124,6 @@ export default function CategoriesPage() {
             )}
           </div>
         </section>
-      </main>
-
-      <BackToTop />
-      <Footer />
-    </div>
+    </PageShell>
   );
 }

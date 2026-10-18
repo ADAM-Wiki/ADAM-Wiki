@@ -4,9 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { MDXProvider } from "@mdx-js/react";
 import { FileDown } from "lucide-react";
 
-import Navbar from "./Navbar";
-import Footer from "./Footer";
-import BackToTop from "./BackToTop";
+import PageShell from "./PageShell";
 import NotFoundPage from "./NotFoundPage";
 import ArticleShare from "./ArticleShare";
 import ArticlePrevNext from "./ArticlePrevNext";
@@ -245,7 +243,7 @@ export default function ArticlePage({
   const relatedArticles = related.length > 0 ? related : others.slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
+    <PageShell>
       <Helmet>
         <title>{`${title} | ${SITE_NAME}`}</title>
         <meta name="description" content={metaDescription} />
@@ -263,9 +261,6 @@ export default function ArticlePage({
         <meta name="twitter:image" content={ogImage} />
       </Helmet>
 
-      <Navbar />
-
-      <main id="glavni-sadrzaj" tabIndex={-1} className="pt-20">
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
             <div className="article-layout grid lg:grid-cols-[300px_1fr] gap-12 items-start">
@@ -448,10 +443,6 @@ export default function ArticlePage({
             </div>
           </section>
         )}
-      </main>
-
-      <BackToTop />
-      <Footer />
-    </div>
+    </PageShell>
   );
 }

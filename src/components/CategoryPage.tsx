@@ -2,9 +2,7 @@ import { useEffect } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 
-import Navbar from "./Navbar";
-import Footer from "./Footer";
-import BackToTop from "./BackToTop";
+import PageShell from "./PageShell";
 import Pagination from "./Pagination";
 import NotFoundPage from "./NotFoundPage";
 import { SITE_NAME, SITE_URL } from "../utils/siteConfig";
@@ -69,7 +67,7 @@ export default function CategoryPage() {
   const pageTitle = `${category.label} | ${SITE_NAME}`;
 
   return (
-    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
+    <PageShell>
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={category.description} />
@@ -86,9 +84,6 @@ export default function CategoryPage() {
         <meta name="twitter:description" content={category.description} />
       </Helmet>
 
-      <Navbar />
-
-      <main id="glavni-sadrzaj" tabIndex={-1} className="pt-20">
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
             <div {...rise(0, "flex items-center gap-4")}>
@@ -183,10 +178,6 @@ export default function CategoryPage() {
             )}
           </div>
         </section>
-      </main>
-
-      <BackToTop />
-      <Footer />
-    </div>
+    </PageShell>
   );
 }

@@ -1,9 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
-import BackToTop from "./BackToTop";
+import PageShell from "./PageShell";
 import { SITE_NAME } from "../utils/siteConfig";
 import { getAllArticles } from "../utils/articleIndex";
 
@@ -227,7 +225,7 @@ export default function TagsPage() {
   }, [cloudWidth, scale]);
 
   return (
-    <div className="page-no-grid min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
+    <PageShell noGrid>
       <Helmet>
         <title>{`Tagovi | ${SITE_NAME}`}</title>
         <meta
@@ -236,9 +234,6 @@ export default function TagsPage() {
         />
       </Helmet>
 
-      <Navbar />
-
-      <main id="glavni-sadrzaj" tabIndex={-1} className="pt-24 pb-20">
         <div className="mx-auto max-w-5xl px-6">
           <div className="text-center">
             <span className="font-mono text-xs uppercase tracking-widest text-brand-dim">
@@ -349,10 +344,6 @@ export default function TagsPage() {
             </div>
           </div>
         </div>
-      </main>
-
-      <BackToTop />
-      <Footer />
-    </div>
+    </PageShell>
   );
 }

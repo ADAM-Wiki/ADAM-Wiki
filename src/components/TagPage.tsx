@@ -3,9 +3,7 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowLeft, Clock, FileText } from "lucide-react";
 
-import Navbar from "./Navbar";
-import Footer from "./Footer";
-import BackToTop from "./BackToTop";
+import PageShell from "./PageShell";
 import Pagination from "./Pagination";
 import { SITE_NAME, SITE_URL } from "../utils/siteConfig";
 import {
@@ -100,16 +98,13 @@ export default function TagPage() {
     const popular = getTagCounts().slice(0, 12);
 
     return (
-      <div className="page-no-grid min-h-screen bg-brand-bg selection:bg-brand-accent selection:text-brand-on-accent">
+      <PageShell noGrid mainClassName="pt-24 pb-20">
         <Helmet>
           <title>{pageTitle}</title>
           <meta name="description" content={description} />
           <meta name="robots" content="noindex" />
         </Helmet>
 
-        <Navbar />
-
-        <main id="glavni-sadrzaj" tabIndex={-1} className="pt-24 pb-20">
           <div className="mx-auto max-w-3xl px-6 text-center">
             <span className="font-mono text-xs uppercase tracking-widest text-brand-dim">
               TAG
@@ -150,15 +145,12 @@ export default function TagPage() {
               </Link>
             </div>
           </div>
-        </main>
-
-        <Footer />
-      </div>
+      </PageShell>
     );
   }
 
   return (
-    <div className="page-no-grid min-h-screen bg-brand-bg selection:bg-brand-accent selection:text-brand-on-accent">
+    <PageShell noGrid mainClassName="pt-24 pb-20">
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={description} />
@@ -171,9 +163,6 @@ export default function TagPage() {
         />
       </Helmet>
 
-      <Navbar />
-
-      <main id="glavni-sadrzaj" tabIndex={-1} className="pt-24 pb-20">
         <div className="mx-auto max-w-5xl px-6">
           <header className="text-center">
             <Link
@@ -265,10 +254,6 @@ export default function TagPage() {
             />
           )}
         </div>
-      </main>
-
-      <BackToTop />
-      <Footer />
-    </div>
+    </PageShell>
   );
 }

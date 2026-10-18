@@ -1,20 +1,16 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
+import PageShell from "./PageShell";
 import { SITE_NAME } from "../utils/siteConfig";
 
 export default function NotFoundPage() {
   return (
-    <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
+    <PageShell>
       <Helmet>
         <title>{`404 — Stranica nije pronađena | ${SITE_NAME}`}</title>
         <meta name="description" content="Tražena stranica ne postoji." />
       </Helmet>
 
-      <Navbar />
-
-      <main id="glavni-sadrzaj" tabIndex={-1} className="pt-20">
         <section className="py-32">
           <div className="max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
 
@@ -62,9 +58,6 @@ export default function NotFoundPage() {
 
           </div>
         </section>
-      </main>
-
-      <Footer />
-    </div>
+    </PageShell>
   );
 }

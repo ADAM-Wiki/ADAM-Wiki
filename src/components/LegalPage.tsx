@@ -1,8 +1,6 @@
 import type { ReactNode } from "react";
 import { Helmet } from "react-helmet-async";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
-import BackToTop from "./BackToTop";
+import PageShell from "./PageShell";
 import { SITE_NAME, SITE_URL } from "../utils/siteConfig";
 
 export interface LegalSection {
@@ -43,7 +41,7 @@ export default function LegalPage({
   const year = __BUILD_YEAR__;
 
   return (
-    <div className="min-h-screen bg-brand-bg selection:bg-brand-accent selection:text-brand-on-accent">
+    <PageShell mainClassName="pt-24 pb-20">
       <Helmet>
         <title>{`${title} | ${SITE_NAME}`}</title>
         <meta name="description" content={description} />
@@ -52,9 +50,6 @@ export default function LegalPage({
         <meta property="og:url" content={`${SITE_URL}${path}`} />
       </Helmet>
 
-      <Navbar />
-
-      <main id="glavni-sadrzaj" tabIndex={-1} className="pt-24 pb-20">
         <div className="mx-auto max-w-3xl px-6">
           <header className="page-rise text-center">
             <span className="font-mono text-xs uppercase tracking-widest text-brand-dim">
@@ -96,10 +91,6 @@ export default function LegalPage({
             Posljednje ažuriranje: {year}
           </p>
         </div>
-      </main>
-
-      <BackToTop />
-      <Footer />
-    </div>
+    </PageShell>
   );
 }
