@@ -66,3 +66,18 @@ any index/DOM id mismatch.
 The dedup rule (first occurrence keeps the bare id, repeats get `-1`, `-2`)
 is frozen: four `hriscanstvo` articles repeat headings up to three times and
 their existing anchors carry the suffixes.
+
+## Content seam
+
+Where `.mdx` content meets the app. The `.mdx` files are the single source
+of truth; `metaIndex.ts` (listings/tags/stats) and `searchIndex.ts` (search
+worker) are generated copies, kept in step by two mechanisms:
+
+- **dev** — the `devMetaWatcher` vite plugin (`apply: "serve"`) regenerates
+  the changed category plus both indexes on every content save, and once at
+  startup, so `npm run dev` never needs a manual `generate:meta`
+- **build** — the chain runs `generate:meta` then `check:registry` /
+  `check:anchors` before bundling
+
+Article pages bypass the seam: they read the live `import.meta.glob` modules
+directly, which is why listings used to go stale in dev while pages updated.
