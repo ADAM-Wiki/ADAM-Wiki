@@ -196,7 +196,12 @@ async function run(): Promise<void> {
   const shell = fs.readFileSync(path.join(DIST, "index.html"), "utf8");
 
   const server = await startServer(shell);
-  const browser = await puppeteer.launch({ headless: true });
+  // GitHub's runners (AppArmor on Ubuntu 23.10+) refuse Chrome's sandbox;
+  // CI is a disposable container, so skip it there only.
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: process.env.CI ? ["--no-sandbox"] : [],
+  });
 
   console.log(`Prerendering ${routes.length} routes...`);
 
