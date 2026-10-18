@@ -4,21 +4,10 @@ import { Youtube, Mail, ArrowUpRight } from "lucide-react";
 import PageShell from "./PageShell";
 import { SITE_NAME, SITE_URL } from "../utils/siteConfig";
 import { getTotalArticleCount, getCategoryStats } from "../utils/articleIndex";
+import { CLANAK, pluralForm } from "../utils/plurals";
 
 const DESCRIPTION =
   "Adam Research Database — projekat posvećen istraživanju i dokumentovanju naučnih, istorijskih i teoloških tema sa fokusom na islamsku tradiciju i komparativnu religiju.";
-
-function formatCount(
-  count: number,
-  forms: readonly [string, string, string],
-): string {
-  const lastTwo = count % 100;
-  if (lastTwo >= 11 && lastTwo <= 14) return `${count} ${forms[2]}`;
-  const last = count % 10;
-  if (last === 1) return `${count} ${forms[0]}`;
-  if (last >= 2 && last <= 4) return `${count} ${forms[1]}`;
-  return `${count} ${forms[2]}`;
-}
 
 /** Drawn from the project's own description of how articles are written. */
 const PRINCIPLES = [
@@ -80,9 +69,11 @@ export default function AboutPage() {
                 className="page-rise mb-8 font-mono text-xs uppercase tracking-widest text-brand-dim"
                 style={{ animationDelay: "60ms" }}
               >
-                {formatCount(totalArticles, ["članak", "članka", "članaka"])}
+                {totalArticles}{" "}
+                {pluralForm(totalArticles, CLANAK)}
                 <span className="px-2 text-brand-border-strong">·</span>
-                {formatCount(totalCategories, [
+                {totalCategories}{" "}
+                {pluralForm(totalCategories, [
                   "kategorija",
                   "kategorije",
                   "kategorija",

@@ -60,7 +60,7 @@ export default function CategoryPage() {
     (currentPage - 1) * ARTICLES_PER_PAGE,
     currentPage * ARTICLES_PER_PAGE,
   );
-  const isIndexStyle = category.id === "spisi";
+  const isIndexStyle = category.listingStyle === "index";
 
   const handlePageClick = (page: number) => {
     // Page 1 is the bare URL rather than ?page=1, so a category keeps one

@@ -9,6 +9,11 @@ export interface CategoryData {
   eyebrow: string;
   /** Meta/OG description for the category listing page. */
   description: string;
+  /**
+   * Listing presentation on the category page. Absent = the standard card
+   * grid; "index" = the numbered compact index with the article count line.
+   */
+  listingStyle?: "index";
 }
 
 /**
@@ -127,6 +132,7 @@ export const CATEGORIES: CategoryData[] = [
     eyebrow: "RANIJI SPISI",
     description:
       "Najave poslanika Muhammeda ﷺ u ranijim objavama - hebrejski tekst, rukopisi i jezička analiza.",
+    listingStyle: "index",
   },
   {
     id: "kuran",

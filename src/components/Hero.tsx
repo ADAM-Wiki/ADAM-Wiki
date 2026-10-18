@@ -4,21 +4,10 @@ import { Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { warmSearch } from "../hooks/useSearch";
 import { getTotalArticleCount, getCategoryStats } from "../utils/articleIndex";
+import { CLANAK, pluralForm } from "../utils/plurals";
 
 const totalArticles = getTotalArticleCount();
 const totalCategories = getCategoryStats().filter((c) => c.count > 0).length;
-
-function countNoun(
-  count: number,
-  forms: readonly [string, string, string],
-): string {
-  const lastTwo = count % 100;
-  if (lastTwo >= 11 && lastTwo <= 14) return forms[2];
-  const last = count % 10;
-  if (last === 1) return forms[0];
-  if (last >= 2 && last <= 4) return forms[1];
-  return forms[2];
-}
 
 export default function Hero() {
   const [query, setQuery] = useState("");
@@ -107,14 +96,14 @@ export default function Hero() {
           <div className="mt-7 flex flex-wrap items-center justify-center gap-x-3 font-mono text-xs uppercase tracking-widest text-brand-dim sm:mt-8">
             <span>
               {totalArticles}{" "}
-              {countNoun(totalArticles, ["članak", "članka", "članaka"])}
+              {pluralForm(totalArticles, CLANAK)}
             </span>
             <span aria-hidden className="text-brand-border-strong">
               ·
             </span>
             <span>
               {totalCategories}{" "}
-              {countNoun(totalCategories, [
+              {pluralForm(totalCategories, [
                 "kategorija",
                 "kategorije",
                 "kategorija",

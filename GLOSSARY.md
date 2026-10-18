@@ -18,6 +18,9 @@ Everything else derives from it:
   `import.meta.glob("./components/*ArticlePage.tsx")`
 - `scripts/lib/routes.ts` builds sitemap + prerender routes from
   `META_BY_CATEGORY`
+- `CategoryPage` reads each entry's `listingStyle` (`"index"` for spisi:
+  numbered compact cards + count line) - per-category presentation is a
+  registry fact, never a string compare on the id
 
 **Adding a category** = one registry entry + its content dir
 (`src/content/articles/<id>/`) + one
