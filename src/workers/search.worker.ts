@@ -1,31 +1,6 @@
 import MiniSearch from "minisearch";
 import { CATEGORIES } from "../utils/categoriesData";
-import { hadisMeta } from "../lib/generated/hadisMeta";
-import { hriscanstvoMeta } from "../lib/generated/hriscanstvoMeta";
-import { ahmedijeMeta } from "../lib/generated/ahmedijeMeta";
-import { ateizamMeta } from "../lib/generated/ateizamMeta";
-import { hinduizamMeta } from "../lib/generated/hinduizamMeta";
-import { islamMeta } from "../lib/generated/islamMeta";
-import { istorijaMeta } from "../lib/generated/istorijaMeta";
-import { muhammedMeta } from "../lib/generated/muhammedMeta";
-import { naukaMeta } from "../lib/generated/naukaMeta";
-import { odgovoriMeta } from "../lib/generated/odgovoriMeta";
-import { opovrgavanjeMeta } from "../lib/generated/opovrgavanjeMeta";
-import { spisiMeta } from "../lib/generated/spisiMeta";
-import { kuranMeta } from "../lib/generated/kuranMeta";
-import { hadisSearch } from "../lib/generated/hadisSearch";
-import { hriscanstvoSearch } from "../lib/generated/hriscanstvoSearch";
-import { ahmedijeSearch } from "../lib/generated/ahmedijeSearch";
-import { ateizamSearch } from "../lib/generated/ateizamSearch";
-import { hinduizamSearch } from "../lib/generated/hinduizamSearch";
-import { islamSearch } from "../lib/generated/islamSearch";
-import { istorijaSearch } from "../lib/generated/istorijaSearch";
-import { muhammedSearch } from "../lib/generated/muhammedSearch";
-import { naukaSearch } from "../lib/generated/naukaSearch";
-import { odgovoriSearch } from "../lib/generated/odgovoriSearch";
-import { opovrgavanjeSearch } from "../lib/generated/opovrgavanjeSearch";
-import { spisiSearch } from "../lib/generated/spisiSearch";
-import { kuranSearch } from "../lib/generated/kuranSearch";
+import { ARTICLE_SOURCES } from "../utils/searchCorpus";
 import {
   normalizeForSearch,
   getQueryTokens,
@@ -33,71 +8,13 @@ import {
   type SearchResult,
   type SearchSnippet,
 } from "../utils/searchShared";
+import {
+  getMiniSearchOptions,
+  filterHitsByRelevance,
+  groupHitsByArticle,
+  articleRelevance,
+} from "../utils/searchRanking";
 import { isPlaceholderArticle } from "../lib/categoryArticles";
-
-type ArticleListing = {
-  title: string;
-  slug: string;
-  description: string;
-  tags: string[];
-};
-
-type ArticleChunks = {
-  slug: string;
-  chunks: { text: string; headingId: string; headingText: string }[];
-};
-
-const ARTICLE_SOURCES: ReadonlyArray<{
-  meta: readonly ArticleListing[];
-  search: readonly ArticleChunks[];
-  basePath: string;
-}> = [
-  { meta: hadisMeta, search: hadisSearch, basePath: "/categories/hadis/article" },
-  {
-    meta: hriscanstvoMeta,
-    search: hriscanstvoSearch,
-    basePath: "/categories/hriscanstvo/article",
-  },
-  {
-    meta: ahmedijeMeta,
-    search: ahmedijeSearch,
-    basePath: "/categories/ahmedije/article",
-  },
-  {
-    meta: ateizamMeta,
-    search: ateizamSearch,
-    basePath: "/categories/ateizam/article",
-  },
-  {
-    meta: hinduizamMeta,
-    search: hinduizamSearch,
-    basePath: "/categories/hinduizam/article",
-  },
-  { meta: islamMeta, search: islamSearch, basePath: "/categories/islam/article" },
-  {
-    meta: istorijaMeta,
-    search: istorijaSearch,
-    basePath: "/categories/istorija/article",
-  },
-  {
-    meta: muhammedMeta,
-    search: muhammedSearch,
-    basePath: "/categories/muhammed/article",
-  },
-  { meta: naukaMeta, search: naukaSearch, basePath: "/categories/nauka/article" },
-  {
-    meta: odgovoriMeta,
-    search: odgovoriSearch,
-    basePath: "/categories/odgovori/article",
-  },
-  {
-    meta: opovrgavanjeMeta,
-    search: opovrgavanjeSearch,
-    basePath: "/categories/opovrgavanje/article",
-  },
-  { meta: spisiMeta, search: spisiSearch, basePath: "/categories/spisi/article" },
-  { meta: kuranMeta, search: kuranSearch, basePath: "/categories/kuran/article" },
-];
 
 interface SearchDocument {
   id: string;
@@ -230,18 +147,9 @@ searchDocuments.forEach((doc) => documentMap.set(doc.id, doc));
 
 const miniSearch = new MiniSearch<SearchDocument>({
   fields: ["title", "content", "tags"],
-  storeFields: [
-    "id",
-    "articleId",
-    "title",
-    "type",
-    "url",
-    "excerpt",
-    "content",
-    "chunkIndex",
-    "headingId",
-    "headingText",
-  ],
+  // "content" is deliberately not stored: snippets are built from documentMap,
+  // so keeping a second copy per chunk here only costs worker memory.
+  storeFields: ["id", "articleId", "title", "type", "url", "excerpt"],
   // Index-time tokenization only normalizes and splits. Query-side expansion
   // (getQueryTokens) is what bridges "albuhari" to "al buhari", so repeating it
   // here would bloat the index and produce false matches on ordinary words.
@@ -250,43 +158,30 @@ const miniSearch = new MiniSearch<SearchDocument>({
 
 miniSearch.addAll(searchDocuments);
 
-function getMiniSearchOptions(query: string) {
-  const normalized = normalizeForSearch(query);
-  const tokens = normalized.split(/\s+/).filter(Boolean);
-  const longest = tokens.reduce(
-    (max: number, t: string) => Math.max(max, t.length),
-    0,
-  );
-
-  if (longest <= 2)
-    return {
-      boost: { title: 5, tags: 3, content: 1 },
-      prefix: false,
-      fuzzy: false as const,
-    };
-  if (longest <= 4)
-    return {
-      boost: { title: 5, tags: 3, content: 1 },
-      prefix: true,
-      fuzzy: false as const,
-    };
-  return { boost: { title: 4, tags: 2, content: 1 }, prefix: true, fuzzy: 0.2 };
-}
-
-/**
- * MiniSearch scores scale with term count and IDF, so an absolute threshold
- * behaves completely differently for a one-word and a three-word query.
- * Cutting relative to the best hit keeps the filter meaningful either way.
- */
-const RELATIVE_SCORE_CUTOFF = 0.3;
-
-function getScoreCutoff(topScore: number): number {
-  return topScore * RELATIVE_SCORE_CUTOFF;
-}
-
 const SNIPPET_LEAD = 70;
 const SNIPPET_TRAIL = 130;
 const MAX_SNIPPETS_PER_RESULT = 12;
+
+// ponytail: this cache is unbounded - one Set of every token of every chunk
+// ever checked, on top of the index itself, so a long browsing session
+// converges toward holding a second tokenization of the whole corpus in
+// worker memory. Ceiling: memory grows with distinct chunks touched.
+// Upgrade path: cap it (simple LRU) or precompute token sets at index build.
+const exactTokenCache = new Map<string, Set<string>>();
+
+/** Worker-side provider for the shared relevance filter: lazy, cached token sets. */
+function getDocTokens(chunkId: string): ReadonlySet<string> | undefined {
+  let indexed = exactTokenCache.get(chunkId);
+  if (!indexed) {
+    const doc = documentMap.get(chunkId);
+    if (!doc) return undefined;
+    indexed = new Set(
+      getIndexTokens(`${doc.title} ${doc.content} ${doc.tags}`),
+    );
+    exactTokenCache.set(chunkId, indexed);
+  }
+  return indexed;
+}
 
 /**
  * Returns every distinct match window inside one chunk, not just the first.
@@ -302,6 +197,12 @@ function buildSnippets(
 
   // normalizeForSearch collapses whitespace but preserves character count for
   // everything else, so indices map closely enough for snippet windows.
+  // ponytail: apostrophe deletion and bracket-stripping shift the normalized
+  // offsets against the original text, so apostrophe-heavy chunks ("Kur'an",
+  // quotes) can cut a snippet window late or early by a few characters.
+  // Ceiling: misplaced window edges on such chunks; the match itself is still
+  // found because search is substring-based. Upgrade path: build the normalized
+  // string with an index map (same trick as src/utils/highlight.tsx).
   const normalizedText = normalizeForSearch(text);
 
   const windows: Array<{ start: number; end: number }> = [];
@@ -369,6 +270,15 @@ self.onmessage = (
 ) => {
   const { type, query, limit = 20, requestId = 0 } = e.data;
 
+  // READY is posted once at startup; a worker warmed from the landing page
+  // fires it before any listener exists and the message is lost. Re-announce
+  // readiness to whoever asks. (Asking early is safe: the message queue holds
+  // it until evaluation completes, same as SEARCH.)
+  if (type === "PING") {
+    self.postMessage({ type: "READY" });
+    return;
+  }
+
   if (type !== "SEARCH") return;
 
   if (!query.trim() || normalizeForSearch(query).length < 2) {
@@ -384,19 +294,16 @@ self.onmessage = (
 
   // Unified list of fully normalized and expanded search terms
   const searchString = tokens.join(" ");
-  const options = {
-    ...(getMiniSearchOptions(query) as any),
-    limit: Math.max(limit * 10, 100),
-  } as any;
-  const hits = miniSearch.search(searchString, options);
+  const rankOptions = getMiniSearchOptions(query);
+  // No result limit is passed: MiniSearch v7 removed the `limit` option (it
+  // was silently ignored here). Ranking the true top-N needs every hit anyway
+  // - truncating raw chunk hits before grouping would drop articles whose
+  // matches sit beyond the cut - and the cost is bounded elsewhere: the
+  // relative cutoff plus the exact-token bypass prune the hit list, and
+  // snippets are only built for the top `limit` articles below.
+  const hits = miniSearch.search(searchString, rankOptions);
 
-  if (!hits.length) {
-    self.postMessage({ type: "RESULTS", requestId, results: [] });
-    return;
-  }
-
-  const cutoff = getScoreCutoff(hits[0].score);
-  const filteredHits = hits.filter((hit) => hit.score >= cutoff);
+  const filteredHits = filterHitsByRelevance(hits, tokens, rankOptions, getDocTokens);
 
   if (!filteredHits.length) {
     self.postMessage({ type: "RESULTS", requestId, results: [] });
@@ -404,91 +311,89 @@ self.onmessage = (
   }
 
   // Accumulate per article: the best-scoring chunk plus how many chunks matched.
-  const grouped = new Map<
-    string,
-    { result: SearchResult; bestScore: number; chunkHits: number }
-  >();
+  // Snippets are NOT built here: only the top articles (after ranking) pay for
+  // them below, which skips ~90% of snippet work on broad queries.
+  const grouped = groupHitsByArticle(filteredHits, (hit) =>
+    documentMap.get(String(hit.id))?.articleId,
+  );
 
-  for (const hit of filteredHits) {
-    const doc = documentMap.get(String(hit.id));
-    if (!doc) continue;
+  const scored = Array.from(grouped.entries()).flatMap(
+    ([articleId, group]) => {
+      const base = baseDataMap.get(articleId);
+      if (!base) return [];
 
-    const base = baseDataMap.get(doc.articleId);
-    if (!base) continue;
-
-    const existing = grouped.get(base.id);
-    const remainingSlots =
-      MAX_SNIPPETS_PER_RESULT - (existing?.result.snippets?.length ?? 0);
-
-    // Each snippet carries the anchor of the section it came from, so a result
-    // can link straight to that heading rather than the top of the article.
-    const snippets: SearchSnippet[] =
-      base.type === "article"
-        ? buildSnippets(doc.content, tokens, remainingSlots).map((text) => ({
-            text,
-            headingId: doc.headingId,
-            headingText: doc.headingText,
-          }))
-        : base.excerpt
+      const result: SearchResult = {
+        id: base.id,
+        title: base.title,
+        type: base.type,
+        url: base.url,
+        excerpt: base.excerpt,
+        relevance: articleRelevance(group.bestScore, group.chunkHits),
+        matchCount: group.chunkHits,
+      };
+      if (base.type !== "article") {
+        result.snippets = base.excerpt
           ? [{ text: base.excerpt, headingId: "", headingText: "" }]
           : [];
-
-    if (!existing) {
-      grouped.set(base.id, {
-        bestScore: hit.score,
-        chunkHits: 1,
-        result: {
-          id: base.id,
-          title: base.title,
-          type: base.type,
-          url: base.url,
-          excerpt: base.excerpt,
-          snippet: snippets[0]?.text,
-          snippets,
-          relevance: hit.score,
-          matchCount: 1,
-        },
-      });
-      continue;
-    }
-
-    existing.chunkHits += 1;
-    existing.bestScore = Math.max(existing.bestScore, hit.score);
-    existing.result.matchCount = existing.chunkHits;
-
-    if (base.type === "article" && existing.result.snippets) {
-      const seen = new Set(existing.result.snippets.map((s) => s.text));
-
-      for (const snippet of snippets) {
-        if (existing.result.snippets.length >= MAX_SNIPPETS_PER_RESULT) break;
-        if (seen.has(snippet.text)) continue;
-        seen.add(snippet.text);
-        existing.result.snippets.push(snippet);
+        result.snippet = result.snippets[0]?.text;
+      } else {
+        result.snippets = [];
       }
-      existing.result.snippet ??= existing.result.snippets[0]?.text;
-    }
-  }
-
-  // An article discussing the term across many chunks is more relevant than one
-  // that mentions it once in a short chunk, but the strength of the best match
-  // should still dominate - hence a logarithmic rather than linear bonus.
-  const scored = Array.from(grouped.values()).map(
-    ({ result, bestScore, chunkHits }) => {
-      result.relevance = bestScore + Math.log1p(chunkHits);
-      return result;
+      const docs = group.hits
+        .map((hit) => documentMap.get(String(hit.id)))
+        .filter((doc): doc is SearchDocument => Boolean(doc));
+      return [{ result, docs }];
     },
   );
 
   const matchingArticles = scored
-    .filter((r) => r.type === "article")
-    .sort((a, b) => b.relevance - a.relevance);
+    .filter((e) => e.result.type === "article")
+    .sort((a, b) => b.result.relevance - a.result.relevance);
 
-  const articleResults = matchingArticles.slice(0, limit);
+  // Snippets only for what is actually sent. Each snippet carries the anchor
+  // of the section it came from, so a result can link straight to that
+  // heading rather than the top of the article.
+  const topArticles = matchingArticles.slice(0, limit);
+  for (const { result, docs } of topArticles) {
+    const snippets: SearchSnippet[] = [];
+    const seen = new Set<string>();
+    for (const doc of docs) {
+      if (snippets.length >= MAX_SNIPPETS_PER_RESULT) break;
+      const texts = buildSnippets(
+        doc.content,
+        tokens,
+        MAX_SNIPPETS_PER_RESULT - snippets.length,
+      );
+      for (const text of texts) {
+        if (seen.has(text)) continue;
+        seen.add(text);
+        snippets.push({
+          text,
+          headingId: doc.headingId,
+          headingText: doc.headingText,
+        });
+        if (snippets.length >= MAX_SNIPPETS_PER_RESULT) break;
+      }
+    }
+    result.snippets = snippets;
+    result.snippet = snippets[0]?.text;
+  }
+  const articleResults = topArticles.map((e) => e.result);
 
   const otherResults = scored
-    .filter((r) => r.type !== "article")
-    .sort((a, b) => b.relevance - a.relevance)
-    .slice(0, 3);
+    .filter((e) => e.result.type !== "article")
+    .sort((a, b) => b.result.relevance - a.result.relevance)
+    .slice(0, 3)
+    .map((e) => e.result);
+
+  // Per-category matched-article totals, so the results page can report
+  // honest counts (and honest "Prikaži još" remainders) while a category
+  // filter is active. Computed over ALL matches, not the capped list.
+  const categoryCounts: Record<string, number> = {};
+  for (const { result } of matchingArticles) {
+    const segment = result.url.split("/")[2];
+    if (segment) categoryCounts[segment] = (categoryCounts[segment] ?? 0) + 1;
+  }
 
   // totalArticles is what matched, not what fits: the list is capped at `limit`
   // and the page used to label the capped length as the result count, so a term
@@ -498,5 +403,6 @@ self.onmessage = (
     requestId,
     results: [...articleResults, ...otherResults],
     totalArticles: matchingArticles.length,
+    categoryCounts,
   });
 };

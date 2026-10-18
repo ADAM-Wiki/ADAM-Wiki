@@ -45,6 +45,12 @@ export function normalizeForSearch(str: string): string {
     // punctuation rule leaves them sitting inside the token.
     .replace(/['‘’ʻʼʽʾʿ`´]/g, "")
     .replace(/[-/_]/g, " ")
+    // Transliteration variants of the same name must be one token on both
+    // sides of the index: "Bukhari" (English spelling, used in our own
+    // references like "Sahih al-Bukhari 114") only matched "buhari" fuzzily
+    // and scored below the relative cutoff. Canonicalize it instead, so both
+    // spellings are exact matches with identical scores.
+    .replace(/\bbukhari/g, "buhari")
     .replace(/dž/gi, "dz")
     .replace(/đ/gi, "d")
     .replace(/dj/gi, "d")
@@ -140,16 +146,43 @@ const SURAH_ALIAS_GROUPS: string[][] = [
 ];
 
 /**
- * Query-time only: maps a surah name onto its common transliteration variants
- * so that "zilzal" also finds articles spelling it "zalzalah".
+ * Common transliteration variants of high-traffic names and terms, in
+ * normalized form (post normalizeForSearch). Bosnian text and English
+ * references spell the same name several ways ("Muhammed"/"Muhammad",
+ * "Kur'an"/"Quran"), and without this a query only ever matched the spelling
+ * that happened to appear in the corpus - fuzzily, which scored below the
+ * relative cutoff. Query-side only: the index keeps the corpus' own spelling.
+ *
+ * Keep this a curated list, not a system: every entry must be a term readers
+ * actually type. Asserted in scripts/check-search.ts.
  */
-function expandSurahAliases(tokens: string[]): string[] {
+const NAME_ALIAS_GROUPS: string[][] = [
+  ["muhammed", "muhammad", "mohamed", "muhamed", "muhammet"],
+  ["kuran", "quran", "koran"],
+  ["meka", "mecca"],
+  ["ibrahim", "abraham"],
+  ["isus", "jesus"],
+  ["hadis", "hadith"],
+  ["sunna", "sunnet", "sunnah"],
+  ["ajet", "ajat", "ayah"],
+  ["tevhid", "tawhid", "tewhid"],
+  ["kijamet", "qijamet", "qiyamah"],
+  ["zekat", "zakah"],
+  ["hadz", "hadj", "hajj"],
+  ["darwin", "darvin"],
+];
+
+/**
+ * Query-time only: maps a token onto its common transliteration variants so
+ * that "zilzal" also finds articles spelling it "zalzalah".
+ */
+function expandAliases(tokens: string[]): string[] {
   const extra: string[] = [];
 
   for (const token of tokens) {
     const stripped = token.replace(/^(al|el|ez|az)/, "");
 
-    for (const group of SURAH_ALIAS_GROUPS) {
+    for (const group of [...SURAH_ALIAS_GROUPS, ...NAME_ALIAS_GROUPS]) {
       if (group.includes(token) || group.includes(stripped)) {
         extra.push(...group);
       }
@@ -173,7 +206,7 @@ function tokenizeForSearch(query: string): string[] {
     extra.push(...stripPrefixes(token));
   }
 
-  const aliasTokens = expandSurahAliases([...base, ...extra]);
+  const aliasTokens = expandAliases([...base, ...extra]);
 
   const all = [
     ...new Set([...referenceTokens, ...base, ...extra, ...aliasTokens]),

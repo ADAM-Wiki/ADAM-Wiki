@@ -13,6 +13,12 @@ export interface MatchRange {
  */
 function normalizeChar(char: string): string {
   const lowered = char.toLowerCase();
+
+  // The single-codepoint digraph letter "dž" (U+01C4..01C6 family) - the
+  // index side folds it to "dz" via the dž rule + diacritic stripping, so it
+  // must fold here too or text using the single character never highlights.
+  if (lowered === "\u01c6") return "dz";
+
   const deDigraph = lowered === "đ" ? "d" : lowered;
 
   const stripped = deDigraph
@@ -40,6 +46,27 @@ function buildNormalizedMap(text: string): NormalizedMap {
   const sourceIndex: number[] = [];
 
   for (let i = 0; i < text.length; i++) {
+    // "dj" and "dž" are two characters for one Bosnian sound; the index side
+    // folds them (normalizeForSearch: dž->dz, dj->d), so the map has to fold
+    // identically or a match found in normalized space can never be drawn:
+    // "dječak" matched the index but rendered zero <mark>s.
+    const lowered = text[i].toLowerCase();
+    const next = i + 1 < text.length ? text[i + 1].toLowerCase() : "";
+    if (lowered === "d" && next === "j") {
+      compact += "d";
+      sourceIndex.push(i);
+      i++;
+      continue;
+    }
+    if (lowered === "d" && (next === "ž" || next === "\u01c6")) {
+      // Two compact chars over two source chars, so the highlight covers the
+      // whole digraph rather than cutting after the "d".
+      compact += "dz";
+      sourceIndex.push(i, i + 1);
+      i++;
+      continue;
+    }
+
     const normalized = normalizeChar(text[i]);
     for (let k = 0; k < normalized.length; k++) {
       compact += normalized[k];

@@ -12,9 +12,10 @@ import {
   Clock,
   Hash,
   Trash2,
+  Eye,
 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, MotionConfig } from "motion/react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { SITE_NAME } from "../utils/siteConfig";
@@ -22,29 +23,16 @@ import { useSearch } from "../hooks/useSearch";
 import { useRecentSearches } from "../hooks/useRecentSearches";
 import { useFocusTrap } from "../hooks/useFocusTrap";
 import { getTotalArticleCount, getTagCounts } from "../utils/articleIndex";
+import { getCategoryById } from "../utils/categoriesData";
 
 const totalArticleCount = getTotalArticleCount();
 
 /** Computed once at module load; the tag list is static per build. */
 const popularTags = getTagCounts().slice(0, 12);
 
-const CATEGORY_LABELS: Record<string, string> = {
-  hadis: "Hadiske nauke",
-  hriscanstvo: "Hrišćanstvo",
-  ahmedije: "Ahmedije",
-  ateizam: "Ateizam",
-  hinduizam: "Hinduizam",
-  islam: "Islam",
-  istorija: "Istorija",
-  muhammed: "Muhammed",
-  nauka: "Nauka",
-  odgovori: "Odgovori",
-  opovrgavanje: "Opovrgavanje",
-};
-
 function getCategoryLabel(url: string): string {
   const segment = url.split("/")[2];
-  return CATEGORY_LABELS[segment] ?? segment;
+  return getCategoryById(segment)?.label ?? segment;
 }
 
 /** Serbian counts: 1 rezultat, 2-4 rezultata, 5+ rezultata. */
@@ -59,21 +47,37 @@ function resultNoun(n: number): string {
 
 export default function SearchPage() {
   // Seeded from ?q= so the home page search box can hand off a query.
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const initialQuery = searchParams.get("q") ?? "";
 
   const [query, setQuery] = useState(initialQuery);
   const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [mobilePreview, setMobilePreview] = useState<SearchResult | null>(null);
+  const [resultLimit, setResultLimit] = useState(20);
+  const [activeCategory, setActiveCategory] = useState("sve");
+  const [snippetsExpanded, setSnippetsExpanded] = useState(false);
+  const [mobileSnippetsExpanded, setMobileSnippetsExpanded] = useState(false);
+  // First Escape while typing only blurs; a second one clears. A stray Escape
+  // must not destroy a carefully typed transliteration.
+  const escArmedRef = useRef(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const { results, totalArticles, search, clear, isReady, isSearching } =
-    useSearch();
+  const {
+    results,
+    totalArticles,
+    categoryCounts,
+    search,
+    clear,
+    isReady,
+    isSearching,
+    loadError,
+    retry,
+  } = useSearch();
   const { recent, remember, clearRecent } = useRecentSearches();
 
   useFocusTrap(Boolean(mobilePreview), sheetRef);
@@ -134,14 +138,34 @@ export default function SearchPage() {
       return;
     }
 
-    search(trimmed);
-  }, [debouncedQuery, search, clear]);
+    search(trimmed, resultLimit);
+  }, [debouncedQuery, resultLimit, search, clear]);
+
+  // Keep ?q= in sync so a search is shareable and bookmarkable. Replace, so
+  // every keystroke pause does not fill the history with prefixes.
+  useEffect(() => {
+    const trimmed = debouncedQuery.trim();
+    const current = searchParams.get("q") ?? "";
+    if (trimmed === current) return;
+    setSearchParams(trimmed ? { q: trimmed } : {}, { replace: true });
+  }, [debouncedQuery, searchParams, setSearchParams]);
+
+  // Back/forward restores the query, unless the visitor is mid-typing.
+  const urlQuery = searchParams.get("q") ?? "";
+  useEffect(() => {
+    if (urlQuery !== debouncedQuery && document.activeElement !== inputRef.current) {
+      setQuery(urlQuery);
+    }
+  }, [urlQuery, debouncedQuery]);
 
   const handleClear = useCallback(() => {
     setQuery("");
     setDebouncedQuery("");
     clear();
     setMobilePreview(null);
+    setActiveCategory("sve");
+    setResultLimit(20);
+    escArmedRef.current = false;
     inputRef.current?.focus();
   }, [clear]);
 
@@ -154,18 +178,46 @@ export default function SearchPage() {
     [results],
   );
 
-  const isLoading = query.trim().length > 0 && (!isReady || isSearching);
-  const hasQuery = query.trim().length > 0;
-  const isCapped = totalArticles > articleResults.length;
+  const availableCategories = useMemo(() => {
+    const seen = new Map<string, string>();
+    for (const r of articleResults) {
+      const segment = r.url.split("/")[2];
+      if (segment && !seen.has(segment)) seen.set(segment, getCategoryLabel(r.url));
+    }
+    return [...seen.entries()];
+  }, [articleResults]);
 
-  // A new result set invalidates the old selection.
+  const filteredArticles = useMemo(
+    () =>
+      activeCategory === "sve"
+        ? articleResults
+        : articleResults.filter((r) => r.url.split("/")[2] === activeCategory),
+    [articleResults, activeCategory],
+  );
+
+  const isLoading = query.trim().length > 0 && (!isReady || isSearching) && !loadError;
+  const hasQuery = query.trim().length > 0;
+  // Counts are honest behind a filter: the worker sends matched totals per
+  // category, so "Prikaži još" and the cap message count what the filter can
+  // actually reach, not the unfiltered list.
+  const categoryTotal =
+    activeCategory === "sve"
+      ? totalArticles
+      : (categoryCounts[activeCategory] ?? filteredArticles.length);
+  const isCapped = categoryTotal > filteredArticles.length;
+
+  // A new result set or a changed filter invalidates the old selection.
   useEffect(() => {
     setSelectedIndex(0);
-  }, [results]);
+  }, [results, activeCategory]);
 
   const previewResult =
-    articleResults[selectedIndex] ?? articleResults[0] ?? null;
+    filteredArticles[selectedIndex] ?? filteredArticles[0] ?? null;
   const activeMobilePreview = mobilePreview;
+
+  const handleShowMore = useCallback(() => {
+    setResultLimit((prev) => prev + 20);
+  }, []);
 
   // Opening something is what marks a query as worth remembering. Storing the
   // debounced query instead would fill the history with every prefix typed on
@@ -181,27 +233,38 @@ export default function SearchPage() {
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === "Escape") {
+        // First press while typing just leaves the field; only a deliberate
+        // second press wipes the query.
+        if (query && document.activeElement === event.currentTarget && !escArmedRef.current) {
+          escArmedRef.current = true;
+          event.currentTarget.blur();
+          window.setTimeout(() => {
+            escArmedRef.current = false;
+          }, 2000);
+          return;
+        }
+        escArmedRef.current = false;
         handleClear();
         return;
       }
 
-      if (!articleResults.length) return;
+      if (!filteredArticles.length) return;
 
       if (event.key === "ArrowDown") {
         event.preventDefault();
-        setSelectedIndex((prev) => (prev + 1) % articleResults.length);
+        setSelectedIndex((prev) => (prev + 1) % filteredArticles.length);
       } else if (event.key === "ArrowUp") {
         event.preventDefault();
         setSelectedIndex(
-          (prev) => (prev - 1 + articleResults.length) % articleResults.length,
+          (prev) => (prev - 1 + filteredArticles.length) % filteredArticles.length,
         );
       } else if (event.key === "Enter") {
         event.preventDefault();
-        const target = articleResults[selectedIndex];
+        const target = filteredArticles[selectedIndex];
         if (target) openResult(target);
       }
     },
-    [articleResults, selectedIndex, openResult, handleClear],
+    [filteredArticles, selectedIndex, openResult, handleClear, query],
   );
 
   // Keep the keyboard selection inside the scrollable result list.
@@ -222,6 +285,17 @@ export default function SearchPage() {
 
   const displaySnippets = toSnippets(previewResult);
 
+  // A new preview starts collapsed; the visitor expands what interests them.
+  useEffect(() => {
+    setSnippetsExpanded(false);
+  }, [previewResult?.id]);
+
+  useEffect(() => {
+    setMobileSnippetsExpanded(false);
+  }, [activeMobilePreview?.id]);
+
+  const visibleSnippets = snippetsExpanded ? displaySnippets : displaySnippets.slice(0, 3);
+
   const displayMatchCount =
     previewResult?.matchCount && previewResult.matchCount > 0
       ? previewResult.matchCount
@@ -239,6 +313,10 @@ export default function SearchPage() {
     [displaySnippets, query],
   );
 
+  const visibleHighlightedSnippets = snippetsExpanded
+    ? highlightedSnippets
+    : highlightedSnippets.slice(0, 3);
+
   /** Opens the article at the heading the snippet was found under. */
   const openSnippet = useCallback(
     (result: SearchResult, snippet: SearchSnippet) => {
@@ -250,6 +328,10 @@ export default function SearchPage() {
 
   const mobileDisplaySnippets = toSnippets(activeMobilePreview);
 
+  const visibleMobileSnippets = mobileSnippetsExpanded
+    ? mobileDisplaySnippets
+    : mobileDisplaySnippets.slice(0, 3);
+
   const mobileDisplayMatchCount =
     activeMobilePreview?.matchCount && activeMobilePreview.matchCount > 0
       ? activeMobilePreview.matchCount
@@ -260,6 +342,10 @@ export default function SearchPage() {
       mobileDisplaySnippets.map((snippet) => highlightText(snippet.text, query)),
     [mobileDisplaySnippets, query],
   );
+
+  const visibleMobileHighlighted = mobileSnippetsExpanded
+    ? mobileHighlightedSnippets
+    : mobileHighlightedSnippets.slice(0, 3);
 
   return (
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-accent selection:text-brand-on-accent">
@@ -302,7 +388,11 @@ export default function SearchPage() {
               autoComplete="off"
               spellCheck={false}
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setResultLimit(20);
+                setActiveCategory("sve");
+              }}
               onKeyDown={handleKeyDown}
               placeholder="Pretraži arhivu…"
               aria-label="Pretraga sadržaja"
@@ -331,13 +421,15 @@ export default function SearchPage() {
           <p role="status" aria-live="polite" className="sr-only">
             {!hasQuery
               ? ""
-              : isLoading
-                ? "Pretraga u toku…"
-                : articleResults.length === 0
+              : loadError
+                ? loadError
+                : isLoading
+                  ? "Pretraga u toku…"
+                  : filteredArticles.length === 0
                   ? `Nema rezultata za ${query}`
                   : isCapped
-                    ? `Prikazano prvih ${articleResults.length} od ${totalArticles} ${resultNoun(totalArticles)}`
-                    : `${articleResults.length} ${resultNoun(articleResults.length)}`}
+                    ? `Prikazano prvih ${filteredArticles.length} od ${categoryTotal} ${resultNoun(categoryTotal)}${activeCategory !== "sve" ? " u izabranoj kategoriji" : ""}`
+                    : `${filteredArticles.length} ${resultNoun(filteredArticles.length)}${activeCategory !== "sve" ? " u izabranoj kategoriji" : ""}`}
           </p>
 
           {hasQuery && !isLoading && (
@@ -349,17 +441,47 @@ export default function SearchPage() {
                 aria-hidden
                 className="text-xs text-brand-dim font-mono uppercase tracking-widest"
               >
-                {isCapped ? (
+                {activeCategory !== "sve" ? (
+                  isCapped ? (
+                    <>
+                      Prvih {filteredArticles.length} od{" "}
+                      <span className="text-brand-accent">{categoryTotal}</span>{" "}
+                      {resultNoun(categoryTotal)} u izabranoj kategoriji
+                    </>
+                  ) : (
+                    <>
+                      {filteredArticles.length}{" "}
+                      {resultNoun(filteredArticles.length)} u izabranoj kategoriji
+                    </>
+                  )
+                ) : isCapped ? (
                   <>
-                    Prvih {articleResults.length} od{" "}
-                    <span className="text-brand-accent">{totalArticles}</span>{" "}
-                    {resultNoun(totalArticles)}
+                    Prvih {filteredArticles.length} od{" "}
+                    <span className="text-brand-accent">{categoryTotal}</span>{" "}
+                    {resultNoun(categoryTotal)}
                   </>
                 ) : (
-                  `${articleResults.length} ${resultNoun(articleResults.length)}`
+                  `${filteredArticles.length} ${resultNoun(filteredArticles.length)}`
                 )}
               </p>
-              {articleResults.length > 0 && (
+              {availableCategories.length > 1 && (
+                <label className="flex items-center gap-2 text-[10px] text-brand-dim/70 font-mono uppercase tracking-widest">
+                  Kategorija
+                  <select
+                    value={activeCategory}
+                    onChange={(e) => setActiveCategory(e.target.value)}
+                    className="bg-brand-surface border border-brand-border rounded-md px-2 py-1 text-xs text-brand-heading font-sans normal-case tracking-normal"
+                  >
+                    <option value="sve">Sve</option>
+                    {availableCategories.map(([segment, label]) => (
+                      <option key={segment} value={segment}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+              {filteredArticles.length > 0 && (
                 <p className="hidden md:block text-[10px] text-brand-dim/70 font-mono uppercase tracking-widest">
                   ↑↓ kretanje · ↵ otvori · esc poništi
                 </p>
@@ -455,7 +577,7 @@ export default function SearchPage() {
           )}
 
           {isLoading && (
-            <div className="text-center py-24 text-brand-dim">
+            <div className="mx-auto max-w-sm text-center py-24 text-brand-dim">
               <Loader2
                 aria-hidden
                 className="w-8 h-8 mx-auto mb-4 opacity-30 animate-spin"
@@ -463,17 +585,37 @@ export default function SearchPage() {
               <p className="text-sm">
                 {!isReady ? "Učitavanje pretrage…" : "Pretražujem…"}
               </p>
+              {!isReady && (
+                <p className="mt-2 text-xs leading-relaxed">
+                  Na sporoj vezi preuzimanje potraje, ali se kešira za sledeću
+                  posetu.
+                </p>
+              )}
             </div>
           )}
 
-          {!isLoading && hasQuery && articleResults.length > 0 && (
+          {loadError && hasQuery && (
+            <div className="mx-auto max-w-sm text-center py-24 text-brand-dim">
+              <p className="text-sm text-brand-heading">{loadError}</p>
+              <button
+                type="button"
+                onClick={retry}
+                className="mt-6 px-6 py-2.5 text-xs font-medium uppercase tracking-widest bg-brand-accent text-brand-on-accent rounded-lg transition-opacity hover:opacity-90"
+              >
+                Pokušajte ponovo
+              </button>
+            </div>
+          )}
+
+          {!isLoading && hasQuery && filteredArticles.length > 0 && (
+            <MotionConfig reducedMotion="user">
             <div className="grid md:grid-cols-[1fr_400px] gap-0 border border-brand-border rounded-xl overflow-hidden">
               <div
                 ref={listRef}
                 className="toc-scroll divide-y divide-brand-border overflow-y-auto max-h-[600px]"
               >
                 <AnimatePresence>
-                  {articleResults.map((result, index) => {
+                  {filteredArticles.map((result, index) => {
                     const isActive = index === selectedIndex;
 
                     return (
@@ -489,28 +631,22 @@ export default function SearchPage() {
                         transition={{ delay: Math.min(index, 15) * 0.02 }}
                       >
                         {/* A real link, so results are reachable by Tab and
-                            open in a new tab on Cmd/middle-click. On a phone a
-                            plain click opens the preview sheet instead, but the
-                            href stays live for every other way in. */}
-                        <Link
-                          to={result.url}
-                          onMouseEnter={() => setSelectedIndex(index)}
-                          onFocus={() => setSelectedIndex(index)}
-                          onClick={(event) => {
-                            if (
-                              window.matchMedia("(max-width: 767px)").matches
-                            ) {
-                              event.preventDefault();
-                              setMobilePreview(result);
-                              return;
-                            }
-                            remember(query);
-                          }}
-                          className={`block px-5 py-4 transition-colors group ${
+                            open in a new tab on Cmd/middle-click. The tap
+                            navigates everywhere now; on a phone the preview
+                            sheet opens from the eye button beside it. */}
+                        <div
+                          className={`flex items-stretch transition-colors group ${
                             isActive
                               ? "bg-brand-surface"
                               : "hover:bg-brand-surface-hover"
                           }`}
+                        >
+                        <Link
+                          to={result.url}
+                          onMouseEnter={() => setSelectedIndex(index)}
+                          onFocus={() => setSelectedIndex(index)}
+                          onClick={() => remember(query)}
+                          className="flex-1 block min-w-0 px-5 py-4"
                         >
                         <div className="flex items-start gap-3">
                           <FileText
@@ -522,7 +658,7 @@ export default function SearchPage() {
                           />
                           <div className="min-w-0">
                             <p
-                              className={`text-sm font-medium leading-snug truncate transition-colors ${
+                              className={`text-sm font-medium leading-snug line-clamp-2 transition-colors ${
                                 isActive
                                   ? "text-brand-accent"
                                   : "text-brand-heading group-hover:text-brand-accent"
@@ -536,6 +672,15 @@ export default function SearchPage() {
                           </div>
                         </div>
                         </Link>
+                        <button
+                          type="button"
+                          onClick={() => setMobilePreview(result)}
+                          aria-label={`Pregled: ${result.title}`}
+                          className="md:hidden flex items-center px-4 -my-0 text-brand-dim hover:text-brand-accent transition-colors min-w-[44px] min-h-[44px] justify-center"
+                        >
+                          <Eye aria-hidden className="w-4 h-4" />
+                        </button>
+                        </div>
                       </motion.div>
                     );
                   })}
@@ -580,8 +725,8 @@ export default function SearchPage() {
                           </p>
 
                           <div className="toc-scroll flex-1 overflow-y-auto max-h-[320px] pr-1.5 flex flex-col gap-2.5">
-                            {highlightedSnippets.map((snippet, i) => {
-                              const source = displaySnippets[i];
+                            {visibleHighlightedSnippets.map((snippet, i) => {
+                              const source = visibleSnippets[i];
                               return (
                                 <button
                                   key={i}
@@ -608,6 +753,17 @@ export default function SearchPage() {
                                 </button>
                               );
                             })}
+                            {displaySnippets.length > 3 && (
+                              <button
+                                type="button"
+                                onClick={() => setSnippetsExpanded((prev) => !prev)}
+                                className="w-full py-2 text-[10px] font-mono uppercase tracking-widest text-brand-dim hover:text-brand-accent transition-colors"
+                              >
+                                {snippetsExpanded
+                                  ? "Prikaži manje"
+                                  : `Prikaži još (${displaySnippets.length - 3})`}
+                              </button>
+                            )}
                           </div>
                         </div>
                       )}
@@ -624,15 +780,72 @@ export default function SearchPage() {
                 </AnimatePresence>
               </div>
             </div>
+            </MotionConfig>
           )}
 
-          {!isLoading && hasQuery && articleResults.length === 0 && (
-            <div className="text-center py-24 text-brand-dim">
+          {!isLoading && hasQuery && isCapped && (
+            <div className="mt-6 text-center">
+              <button
+                type="button"
+                onClick={handleShowMore}
+                className="px-6 py-2.5 text-xs font-medium uppercase tracking-widest border border-brand-border text-brand-dim hover:border-brand-accent hover:text-brand-accent rounded-lg transition-colors"
+              >
+                Prikaži još ({categoryTotal - filteredArticles.length} preostalo)
+              </button>
+            </div>
+          )}
+
+          {!isLoading && hasQuery && filteredArticles.length === 0 && (
+            <div className="text-center py-16 text-brand-dim max-w-2xl mx-auto">
               <Search aria-hidden className="w-8 h-8 mx-auto mb-4 opacity-30" />
               <p className="text-sm">
                 Nema rezultata za{" "}
                 <span className="text-brand-heading">„{query}“</span>
+                {activeCategory !== "sve" && " u izabranoj kategoriji"}
               </p>
+              <p className="mt-2 text-xs leading-relaxed">
+                Proverite pravopis ili probajte bez dijakritika — pretraga
+                toleriše „dz/đ/dj“ i „Kur'an“.
+              </p>
+              <p className="mt-6 font-mono text-[10px] uppercase tracking-widest">
+                Ili počnite od najčešćih tema
+              </p>
+              <div className="mt-3 flex flex-wrap justify-center gap-2">
+                {popularTags.slice(0, 3).map(({ tag, count }) => (
+                  <Link
+                    key={tag}
+                    to={`/tags/${encodeURIComponent(tag)}`}
+                    className="group flex items-center gap-2 rounded-full border border-brand-border bg-brand-surface px-3 py-1.5 text-xs text-brand-dim transition-colors hover:border-brand-accent hover:text-brand-accent"
+                  >
+                    <Hash aria-hidden className="h-3 w-3 shrink-0" />
+                    {tag}
+                    <span className="font-mono text-[10px] text-brand-dim/70">
+                      {count}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuery("hadis");
+                    setResultLimit(20);
+                    setActiveCategory("sve");
+                    inputRef.current?.focus();
+                  }}
+                  className="px-5 py-2.5 text-xs font-medium uppercase tracking-widest bg-brand-accent text-brand-on-accent rounded-lg transition-opacity hover:opacity-90"
+                >
+                  Probajte: hadis
+                </button>
+                <button
+                  type="button"
+                  onClick={handleClear}
+                  className="px-5 py-2.5 text-xs font-medium uppercase tracking-widest border border-brand-border text-brand-dim hover:border-brand-accent hover:text-brand-accent rounded-lg transition-colors"
+                >
+                  Počnite ispočetka
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -697,8 +910,8 @@ export default function SearchPage() {
                   </p>
 
                   <div className="toc-scroll flex flex-col gap-2.5 overflow-y-auto overscroll-contain pr-1">
-                    {mobileHighlightedSnippets.map((snippet, i) => {
-                      const source = mobileDisplaySnippets[i];
+                    {visibleMobileHighlighted.map((snippet, i) => {
+                      const source = visibleMobileSnippets[i];
                       return (
                         <button
                           key={i}
@@ -721,6 +934,17 @@ export default function SearchPage() {
                         </button>
                       );
                     })}
+                    {mobileDisplaySnippets.length > 3 && (
+                      <button
+                        type="button"
+                        onClick={() => setMobileSnippetsExpanded((prev) => !prev)}
+                        className="w-full py-2 text-[10px] font-mono uppercase tracking-widest text-brand-dim"
+                      >
+                        {mobileSnippetsExpanded
+                          ? "Prikaži manje"
+                          : `Prikaži još (${mobileDisplaySnippets.length - 3})`}
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
