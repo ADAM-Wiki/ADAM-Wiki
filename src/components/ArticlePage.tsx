@@ -17,13 +17,8 @@ import { SITE_NAME, SITE_URL } from "../utils/siteConfig";
 import { getOgImage } from "../utils/ogImage";
 import { getCategoryById } from "../utils/categoriesData";
 import { createHeadingIdAllocator } from "../utils/headingIds";
+import type { TocItem } from "../utils/articleTypes";
 import type { CategoryArticles } from "../lib/categoryArticles";
-
-type TocItem = {
-  id: string;
-  text: string;
-  level: 2 | 3;
-};
 
 interface ArticlePageProps {
   categoryId: string;

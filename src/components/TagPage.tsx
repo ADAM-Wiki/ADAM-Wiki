@@ -14,16 +14,9 @@ import {
 
 const ARTICLES_PER_PAGE = 12;
 
-/** Serbian counts: 1 članak, 2-4 članka, 5+ članaka. */
-function articleCount(n: number): string {
-  const lastTwo = n % 100;
-  const last = n % 10;
+import { CLANAK, pluralForm } from "../utils/plurals";
 
-  if (lastTwo >= 11 && lastTwo <= 14) return `${n} članaka`;
-  if (last === 1) return `${n} članak`;
-  if (last >= 2 && last <= 4) return `${n} članka`;
-  return `${n} članaka`;
-}
+const articleCount = (n: number): string => `${n} ${pluralForm(n, CLANAK)}`;
 
 /**
  * Everything filed under one tag.
@@ -181,7 +174,7 @@ export default function TagPage() {
               <span className="font-serif text-2xl tracking-normal text-brand-accent">
                 {articles.length}
               </span>
-              {articleCount(articles.length).replace(/^\d+\s/, "")}
+              {pluralForm(articles.length, CLANAK)}
             </p>
           </header>
 

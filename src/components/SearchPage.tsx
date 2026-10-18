@@ -23,6 +23,7 @@ import { useRecentSearches } from "../hooks/useRecentSearches";
 import { useFocusTrap } from "../hooks/useFocusTrap";
 import { getTotalArticleCount, getTagCounts } from "../utils/articleIndex";
 import { getCategoryById } from "../utils/categoriesData";
+import { pluralForm } from "../utils/plurals";
 
 const totalArticleCount = getTotalArticleCount();
 
@@ -35,14 +36,9 @@ function getCategoryLabel(categoryId?: string): string {
 }
 
 /** Serbian counts: 1 rezultat, 2-4 rezultata, 5+ rezultata. */
-function resultNoun(n: number): string {
-  const lastTwo = n % 100;
-  if (lastTwo >= 11 && lastTwo <= 14) return "rezultata";
-  const last = n % 10;
-  if (last === 1) return "rezultat";
-  if (last >= 2 && last <= 4) return "rezultata";
-  return "rezultata";
-}
+/** Serbian plural forms; the rule lives in utils/plurals. */
+const resultNoun = (n: number): string =>
+  pluralForm(n, ["rezultat", "rezultata", "rezultata"]);
 
 export default function SearchPage() {
   // Seeded from ?q= so the home page search box can hand off a query.

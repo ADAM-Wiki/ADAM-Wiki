@@ -4,19 +4,13 @@ import { Helmet } from "react-helmet-async";
 import PageShell from "./PageShell";
 import { SITE_NAME } from "../utils/siteConfig";
 import { getCategoryStats } from "../utils/articleIndex";
+import { CLANAK, pluralForm } from "../utils/plurals";
 
 const DESCRIPTION =
   "Sve kategorije na Adam-Wiki, sa brojem članaka i kratkim opisom svake.";
 
-/** Serbian counts: 1 članak, 2-4 članka, 5+ članaka. */
-function articleCount(n: number): string {
-  const lastTwo = n % 100;
-  if (lastTwo >= 11 && lastTwo <= 14) return `${n} članaka`;
-  const last = n % 10;
-  if (last === 1) return `${n} članak`;
-  if (last >= 2 && last <= 4) return `${n} članka`;
-  return `${n} članaka`;
-}
+/** Serbian plural forms; the rule lives in utils/plurals. */
+const articleCount = (n: number): string => `${n} ${pluralForm(n, CLANAK)}`;
 
 /**
  * The category index.
