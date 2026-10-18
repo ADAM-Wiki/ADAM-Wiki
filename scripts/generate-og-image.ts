@@ -2,7 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import puppeteer, { type Page } from "puppeteer";
-import { CATEGORIES } from "./lib/categories";
+import {
+  CATEGORIES,
+  getCategoryById,
+} from "../src/utils/categoriesData";
 
 /**
  * Renders Open Graph cards to public/images/og/.
@@ -45,24 +48,6 @@ const BRAND = {
   heading: "#f4efe6",
   text: "#e7dfd4",
   dim: "#b7ac98",
-};
-
-const CATEGORY_LABELS: Record<string, string> = {
-  hadis: "Hadiske nauke",
-  ateizam: "Ateizam",
-  hriscanstvo: "Hrišćanstvo",
-  hinduizam: "Hinduizam",
-  islam: "Islam",
-  istorija: "Istorija",
-  ahmedije: "Ahmedije",
-  odgovori: "Odgovori na sumnje",
-  opovrgavanje: "Opovrgavanje šija",
-  nauka: "Nauka i islam",
-  muhammed: "Muhammed",
-  // Both were missing, so their cards printed the raw slug - "spisi", "kuran" -
-  // where every other category printed a label.
-  spisi: "Muhammed ﷺ u ranijim spisima",
-  kuran: "Očuvanje Kur'ana",
 };
 
 /**
@@ -260,9 +245,9 @@ type ArticleEntry = {
 async function loadArticles(): Promise<ArticleEntry[]> {
   const entries: ArticleEntry[] = [];
 
-  for (const { key } of CATEGORIES) {
-    const module = await import(`../src/lib/generated/${key}Meta.ts`);
-    const articles = module[`${key}Meta`] as Array<{
+  for (const { id } of CATEGORIES) {
+    const module = await import(`../src/lib/generated/${id}Meta.ts`);
+    const articles = module[`${id}Meta`] as Array<{
       slug: string;
       title: string;
     }>;
@@ -270,12 +255,12 @@ async function loadArticles(): Promise<ArticleEntry[]> {
     for (const article of articles) {
       const hash = crypto
         .createHash("sha1")
-        .update(`v${DESIGN_VERSION}|${key}|${article.slug}|${article.title}`)
+        .update(`v${DESIGN_VERSION}|${id}|${article.slug}|${article.title}`)
         .digest("hex")
         .slice(0, 12);
 
       entries.push({
-        category: key,
+        category: id,
         slug: article.slug,
         title: article.title,
         hash,
@@ -326,7 +311,7 @@ async function run(): Promise<void> {
       page,
       card({
         title: article.title,
-        eyebrow: CATEGORY_LABELS[article.category] ?? article.category,
+        eyebrow: getCategoryById(article.category)?.label ?? article.category,
       }),
       output,
     );

@@ -1,17 +1,5 @@
-import { hadisMeta } from "../lib/generated/hadisMeta";
-import { ateizamMeta } from "../lib/generated/ateizamMeta";
-import { hriscanstvoMeta } from "../lib/generated/hriscanstvoMeta";
-import { hinduizamMeta } from "../lib/generated/hinduizamMeta";
-import { islamMeta } from "../lib/generated/islamMeta";
-import { istorijaMeta } from "../lib/generated/istorijaMeta";
-import { ahmedijeMeta } from "../lib/generated/ahmedijeMeta";
-import { odgovoriMeta } from "../lib/generated/odgovoriMeta";
-import { opovrgavanjeMeta } from "../lib/generated/opovrgavanjeMeta";
-import { naukaMeta } from "../lib/generated/naukaMeta";
-import { muhammedMeta } from "../lib/generated/muhammedMeta";
-import { spisiMeta } from "../lib/generated/spisiMeta";
-import { kuranMeta } from "../lib/generated/kuranMeta";
-import { CATEGORIES, type CategoryData } from "./categoriesData";
+import { META_BY_CATEGORY } from "../lib/generated/metaIndex";
+import { CATEGORIES, type CategoryData, articleBasePath } from "./categoriesData";
 import { isPlaceholderArticle } from "../lib/categoryArticles";
 
 export interface ArticleListing {
@@ -36,22 +24,6 @@ export interface CategoryStats extends CategoryData {
   latest?: ArticleCardData;
 }
 
-const META_BY_CATEGORY: Record<string, readonly ArticleListing[]> = {
-  hadis: hadisMeta,
-  ateizam: ateizamMeta,
-  hriscanstvo: hriscanstvoMeta,
-  hinduizam: hinduizamMeta,
-  islam: islamMeta,
-  istorija: istorijaMeta,
-  ahmedije: ahmedijeMeta,
-  odgovori: odgovoriMeta,
-  opovrgavanje: opovrgavanjeMeta,
-  nauka: naukaMeta,
-  muhammed: muhammedMeta,
-  spisi: spisiMeta,
-  kuran: kuranMeta,
-};
-
 const isPlaceholder = isPlaceholderArticle;
 
 function toCardData(
@@ -62,7 +34,7 @@ function toCardData(
     ...article,
     categoryId: category.id,
     categoryTitle: category.title,
-    url: `/categories/${category.id}/article/${article.slug}`,
+    url: `${articleBasePath(category.id)}/${article.slug}`,
   };
 }
 

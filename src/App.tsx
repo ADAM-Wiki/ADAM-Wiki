@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, type ComponentType } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { MotionConfig } from "motion/react";
 
@@ -19,6 +19,7 @@ import ScrollToTop from "./components/ScrollToTop";
 // across the archive, and it decides for itself where to stay quiet.
 import KuranPromo from "./components/KuranPromo";
 import { KURAN_PATH } from "./utils/kuranPromo";
+import { CATEGORIES } from "./utils/categoriesData";
 
 const SearchPage = lazy(() => import("./components/SearchPage"));
 
@@ -26,35 +27,32 @@ const SearchPage = lazy(() => import("./components/SearchPage"));
 // is category-specific, so those stay as separate lazily-loaded chunks.
 const CategoryPage = lazy(() => import("./components/CategoryPage"));
 
-const HadisArticlePage = lazy(() => import("./components/HadisArticlePage"));
-const AteizamArticlePage = lazy(
-  () => import("./components/AteizamArticlePage"),
-);
-const HriscanstvoArticlePage = lazy(
-  () => import("./components/HriscanstvoArticlePage"),
-);
-const HinduizamArticlePage = lazy(
-  () => import("./components/HinduizamArticlePage"),
-);
-const IslamArticlePage = lazy(() => import("./components/IslamArticlePage"));
-const IstorijaArticlePage = lazy(
-  () => import("./components/IstorijaArticlePage"),
-);
-const AhmedijeArticlePage = lazy(
-  () => import("./components/AhmedijeArticlePage"),
-);
-const OdgovoriArticlePage = lazy(
-  () => import("./components/OdgovoriArticlePage"),
-);
-const OpovrgavanjeArticlePage = lazy(
-  () => import("./components/OpovrgavanjeArticlePage"),
-);
-const NaukaArticlePage = lazy(() => import("./components/NaukaArticlePage"));
-const MuhammedArticlePage = lazy(
-  () => import("./components/MuhammedArticlePage"),
-);
-const SpisiArticlePage = lazy(() => import("./components/SpisiArticlePage"));
-const KuranArticlePage = lazy(() => import("./components/KuranArticlePage"));
+// The 13 per-category article pages, keyed by the registry. Naming convention
+// is <PascalCase(categoryId)>ArticlePage.tsx - check:registry fails the build
+// if a registry entry has no matching component. The generic ArticlePage.tsx
+// matches the glob too but is never looked up, since no category id is empty.
+const articlePageModules = import.meta.glob("./components/*ArticlePage.tsx");
+
+const CATEGORY_ARTICLE_ROUTES = CATEGORIES.map(({ id }) => {
+  const fileName = `${id.charAt(0).toUpperCase()}${id.slice(1)}ArticlePage`;
+  const load = articlePageModules[`./components/${fileName}.tsx`];
+  if (!load) {
+    // check:registry gates the build, so this only fires in dev when a
+    // category was added without its component - better a loud error than a
+    // silently 404-ing route.
+    throw new Error(
+      `Missing src/components/${fileName}.tsx for category "${id}"`,
+    );
+  }
+  const ArticlePage = lazy(load as () => Promise<{ default: ComponentType }>);
+  return (
+    <Route
+      key={id}
+      path={`/categories/${id}/article/:slug`}
+      element={<ArticlePage />}
+    />
+  );
+});
 
 const CategoriesPage = lazy(() => import("./components/CategoriesPage"));
 const NotFoundPage = lazy(() => import("./components/NotFoundPage"));
@@ -110,59 +108,8 @@ export default function App() {
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/categories/:categoryId" element={<CategoryPage />} />
 
-            {/* ARTICLE PAGES */}
-            <Route
-              path="/categories/hadis/article/:slug"
-              element={<HadisArticlePage />}
-            />
-            <Route
-              path="/categories/ateizam/article/:slug"
-              element={<AteizamArticlePage />}
-            />
-            <Route
-              path="/categories/hriscanstvo/article/:slug"
-              element={<HriscanstvoArticlePage />}
-            />
-            <Route
-              path="/categories/hinduizam/article/:slug"
-              element={<HinduizamArticlePage />}
-            />
-            <Route
-              path="/categories/islam/article/:slug"
-              element={<IslamArticlePage />}
-            />
-            <Route
-              path="/categories/istorija/article/:slug"
-              element={<IstorijaArticlePage />}
-            />
-            <Route
-              path="/categories/ahmedije/article/:slug"
-              element={<AhmedijeArticlePage />}
-            />
-            <Route
-              path="/categories/odgovori/article/:slug"
-              element={<OdgovoriArticlePage />}
-            />
-            <Route
-              path="/categories/opovrgavanje/article/:slug"
-              element={<OpovrgavanjeArticlePage />}
-            />
-            <Route
-              path="/categories/nauka/article/:slug"
-              element={<NaukaArticlePage />}
-            />
-            <Route
-              path="/categories/muhammed/article/:slug"
-              element={<MuhammedArticlePage />}
-            />
-            <Route
-              path="/categories/spisi/article/:slug"
-              element={<SpisiArticlePage />}
-            />
-            <Route
-              path="/categories/kuran/article/:slug"
-              element={<KuranArticlePage />}
-            />
+            {/* ARTICLE PAGES - one route per registry entry, from the glob above */}
+            {CATEGORY_ARTICLE_ROUTES}
 
             {/* UTILITY PAGES */}
             <Route path="/tags" element={<TagsPage />} />

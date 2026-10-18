@@ -1,17 +1,6 @@
-import { hadisMeta } from "../../src/lib/generated/hadisMeta";
-import { ateizamMeta } from "../../src/lib/generated/ateizamMeta";
-import { hriscanstvoMeta } from "../../src/lib/generated/hriscanstvoMeta";
-import { hinduizamMeta } from "../../src/lib/generated/hinduizamMeta";
-import { islamMeta } from "../../src/lib/generated/islamMeta";
-import { istorijaMeta } from "../../src/lib/generated/istorijaMeta";
-import { ahmedijeMeta } from "../../src/lib/generated/ahmedijeMeta";
-import { odgovoriMeta } from "../../src/lib/generated/odgovoriMeta";
-import { opovrgavanjeMeta } from "../../src/lib/generated/opovrgavanjeMeta";
-import { naukaMeta } from "../../src/lib/generated/naukaMeta";
-import { muhammedMeta } from "../../src/lib/generated/muhammedMeta";
-import { spisiMeta } from "../../src/lib/generated/spisiMeta";
-import { kuranMeta } from "../../src/lib/generated/kuranMeta";
+import { META_BY_CATEGORY } from "../../src/lib/generated/metaIndex";
 import { isPlaceholderArticle } from "../../src/lib/categoryArticles";
+import { articleBasePath } from "../../src/utils/categoriesData";
 
 export type Route = {
   /** Path relative to the site root, always starting with "/". */
@@ -24,23 +13,12 @@ export type Route = {
   noIndex?: boolean;
 };
 
-const CATEGORY_META = [
-  { key: "hadis", articles: hadisMeta },
-  { key: "ateizam", articles: ateizamMeta },
-  { key: "hriscanstvo", articles: hriscanstvoMeta },
-  { key: "hinduizam", articles: hinduizamMeta },
-  { key: "islam", articles: islamMeta },
-  { key: "istorija", articles: istorijaMeta },
-  { key: "ahmedije", articles: ahmedijeMeta },
-  { key: "odgovori", articles: odgovoriMeta },
-  { key: "opovrgavanje", articles: opovrgavanjeMeta },
-  { key: "nauka", articles: naukaMeta },
-  { key: "muhammed", articles: muhammedMeta },
-  // Both were live routes in App.tsx but absent here, so their articles were
-  // neither prerendered nor listed in the sitemap - kuran alone is 55 of them.
-  { key: "spisi", articles: spisiMeta },
-  { key: "kuran", articles: kuranMeta },
-];
+// Straight from the generated registry index - no hand-maintained list here.
+// This used to be one, and spisi/kuran were missing from it: their articles
+// were neither prerendered nor listed in the sitemap (kuran alone is 55).
+const CATEGORY_META = Object.entries(META_BY_CATEGORY).map(
+  ([key, articles]) => ({ key, articles }),
+);
 
 function newestDate(dates: string[]): string | undefined {
   const valid = dates
@@ -90,7 +68,7 @@ export function getAllRoutes(): Route[] {
   for (const { key, articles } of CATEGORY_META) {
     for (const article of articles) {
       articleRoutes.push({
-        path: `/categories/${key}/article/${article.slug}`,
+        path: `${articleBasePath(key)}/${article.slug}`,
         lastmod: newestDate([article.date]),
         priority: 0.8,
         changefreq: "monthly",

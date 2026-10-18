@@ -12,8 +12,16 @@ export interface CategoryData {
 }
 
 /**
- * The canonical category list. Kept free of any article/search imports so that
- * components rendering the category grid stay cheap.
+ * THE category registry - the only hand-written list of categories.
+ *
+ * Everything else derives from it: the build scripts iterate CATEGORIES to
+ * generate meta/search files and emit the META_BY_CATEGORY / SEARCH_BY_CATEGORY
+ * indexes, App.tsx builds article routes from it, and check:registry fails the
+ * build if any derived artifact misses an entry. Adding a category means one
+ * entry here + its content dir + one <Pascal(id)>ArticlePage.tsx component.
+ *
+ * Kept free of any article/search imports so that components rendering the
+ * category grid stay cheap.
  */
 export const CATEGORIES: CategoryData[] = [
   {
@@ -132,6 +140,14 @@ export const CATEGORIES: CategoryData[] = [
 ];
 
 export const topics: string[] = CATEGORIES.map((category) => category.title);
+
+/**
+ * Every article in a category lives at `${articleBasePath(id)}/<slug>`.
+ * The one place the URL shape is written down - search worker, routes and the
+ * article index all used to spell it out separately.
+ */
+export const articleBasePath = (id: string): string =>
+  `/categories/${id}/article`;
 
 const BY_ID = new Map(CATEGORIES.map((category) => [category.id, category]));
 
