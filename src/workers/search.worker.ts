@@ -35,6 +35,8 @@ interface BaseSearchData {
   title: string;
   type: "category" | "article" | "page";
   url: string;
+  /** Registry id of the owning category; absent for type "page" entries. */
+  categoryId?: string;
   excerpt?: string;
   _tags?: string;
 }
@@ -47,6 +49,7 @@ const CATEGORY_DOCS: BaseSearchData[] = CATEGORIES.map((category) => ({
   title: category.title,
   type: "category" as const,
   url: category.url,
+  categoryId: category.id,
   excerpt: `${category.title} articles and discussions`,
 }));
 
@@ -99,7 +102,7 @@ const searchDocuments: SearchDocument[] = [
       headingText: "",
     };
   }),
-  ...ARTICLE_SOURCES.flatMap(({ meta, search, basePath }) => {
+  ...ARTICLE_SOURCES.flatMap(({ meta, search, categoryId, basePath }) => {
     const chunksBySlug = new Map(
       search.map((entry) => [entry.slug, entry.chunks]),
     );
@@ -118,6 +121,7 @@ const searchDocuments: SearchDocument[] = [
         title: article.title,
         type: "article",
         url: `${basePath}/${article.slug}`,
+        categoryId,
         excerpt: article.description,
         _tags: article.tags?.join(" ") ?? "",
       };
@@ -327,6 +331,7 @@ self.onmessage = (
         title: base.title,
         type: base.type,
         url: base.url,
+        categoryId: base.categoryId,
         excerpt: base.excerpt,
         relevance: articleRelevance(group.bestScore, group.chunkHits),
         matchCount: group.chunkHits,
@@ -391,8 +396,10 @@ self.onmessage = (
   // filter is active. Computed over ALL matches, not the capped list.
   const categoryCounts: Record<string, number> = {};
   for (const { result } of matchingArticles) {
-    const segment = result.url.split("/")[2];
-    if (segment) categoryCounts[segment] = (categoryCounts[segment] ?? 0) + 1;
+    if (result.categoryId) {
+      categoryCounts[result.categoryId] =
+        (categoryCounts[result.categoryId] ?? 0) + 1;
+    }
   }
 
   // totalArticles is what matched, not what fits: the list is capped at `limit`

@@ -29,9 +29,9 @@ const totalArticleCount = getTotalArticleCount();
 /** Computed once at module load; the tag list is static per build. */
 const popularTags = getTagCounts().slice(0, 12);
 
-function getCategoryLabel(url: string): string {
-  const segment = url.split("/")[2];
-  return getCategoryById(segment)?.label ?? segment;
+function getCategoryLabel(categoryId?: string): string {
+  if (!categoryId) return "";
+  return getCategoryById(categoryId)?.label ?? categoryId;
 }
 
 /** Serbian counts: 1 rezultat, 2-4 rezultata, 5+ rezultata. */
@@ -180,8 +180,8 @@ export default function SearchPage() {
   const availableCategories = useMemo(() => {
     const seen = new Map<string, string>();
     for (const r of articleResults) {
-      const segment = r.url.split("/")[2];
-      if (segment && !seen.has(segment)) seen.set(segment, getCategoryLabel(r.url));
+      if (r.categoryId && !seen.has(r.categoryId))
+        seen.set(r.categoryId, getCategoryLabel(r.categoryId));
     }
     return [...seen.entries()];
   }, [articleResults]);
@@ -190,7 +190,7 @@ export default function SearchPage() {
     () =>
       activeCategory === "sve"
         ? articleResults
-        : articleResults.filter((r) => r.url.split("/")[2] === activeCategory),
+        : articleResults.filter((r) => r.categoryId === activeCategory),
     [articleResults, activeCategory],
   );
 
@@ -663,7 +663,7 @@ export default function SearchPage() {
                               {result.title}
                             </p>
                             <p className="text-[10px] font-mono uppercase tracking-widest text-brand-dim mt-1">
-                              {getCategoryLabel(result.url)}
+                              {getCategoryLabel(result.categoryId)}
                             </p>
                           </div>
                         </div>
@@ -703,7 +703,7 @@ export default function SearchPage() {
                       <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-2 text-xs text-brand-dim">
                           <FolderOpen className="w-3.5 h-3.5 shrink-0" />
-                          <span>{getCategoryLabel(previewResult.url)}</span>
+                          <span>{getCategoryLabel(previewResult.categoryId)}</span>
                         </div>
                       </div>
 
@@ -878,7 +878,7 @@ export default function SearchPage() {
                     {highlightText(activeMobilePreview.title, query)}
                   </h2>
                   <p className="text-[10px] font-mono uppercase tracking-widest text-brand-dim mt-2">
-                    {getCategoryLabel(activeMobilePreview.url)}
+                    {getCategoryLabel(activeMobilePreview.categoryId)}
                   </p>
                 </div>
 

@@ -10,6 +10,8 @@ export interface SearchResult {
   title: string;
   type: "category" | "article" | "page";
   url: string;
+  /** Registry id of the owning category; absent for type "page" results. */
+  categoryId?: string;
   excerpt?: string;
   snippet?: string;
   snippets?: SearchSnippet[];
