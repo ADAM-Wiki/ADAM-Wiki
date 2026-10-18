@@ -280,7 +280,12 @@ async function run(): Promise<void> {
 
   fs.mkdirSync(OG_DIR, { recursive: true });
 
-  const browser = await puppeteer.launch({ headless: true });
+  // GitHub's runners (AppArmor on Ubuntu 23.10+) refuse Chrome's sandbox;
+  // CI is a disposable container, so skip it there only.
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: process.env.CI ? ["--no-sandbox"] : [],
+  });
   const page = await browser.newPage();
   await page.setViewport({ width: 1200, height: 630, deviceScaleFactor: 1 });
 
