@@ -128,6 +128,10 @@ function extractMeta(source: string, filePath: string): ArticleMeta {
 }
 
 function getMdxFiles(dir: string): string[] {
+  // A registry category may have no content directory at all - git does not
+  // track empty dirs, so a fresh checkout lacks the placeholder folders a
+  // working tree happens to have. No directory simply means no articles.
+  if (!fs.existsSync(dir)) return [];
   return fs
     .readdirSync(dir)
     .filter((file) => file.endsWith(".mdx"))
