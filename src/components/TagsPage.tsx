@@ -23,6 +23,7 @@ const TIER_STYLES = [
 /** Font size at full width, in px, from rarest to most used. */
 const TIER_PX_BASE = [14, 16, 20, 30, 48];
 const REFERENCE_WIDTH = 900;
+const CLOUD_GLOW_SIZE = 220;
 
 /**
  * The whole disc scales with its container so a phone gets the same shape at a
@@ -81,6 +82,7 @@ function centreWeighted<T extends TagCount>(tags: T[]): T[] {
 
 const AVG_GLYPH_RATIO = 0.55;
 const ROW_GAP_PX = 20;
+const TOP_TAGS_IN_CLOUD = 12;
 
 function estimateWidth(tag: string, tier: number, scale: number): number {
   return (
@@ -201,6 +203,10 @@ export default function TagsPage() {
     const min = counts.length ? Math.min(...counts) : 0;
     const max = counts.length ? Math.max(...counts) : 1;
 
+    const topTags = [...tags]
+      .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag, "sr"))
+      .slice(0, TOP_TAGS_IN_CLOUD);
+
     const alphabetical = [...tags].sort((a, b) =>
       a.tag.localeCompare(b.tag, "sr"),
     );
@@ -212,7 +218,7 @@ export default function TagsPage() {
       byLetter.get(letter)!.push(entry);
     }
 
-    const weighted = tags.map((entry) => ({
+    const weighted = topTags.map((entry) => ({
       ...entry,
       tier: tierFor(entry.count, min, max),
     }));
@@ -234,116 +240,140 @@ export default function TagsPage() {
         />
       </Helmet>
 
-        <div className="mx-auto max-w-5xl px-6">
-          <div className="text-center">
-            <span className="font-mono text-xs uppercase tracking-widest text-brand-dim">
-              TAGOVI
-            </span>
-            <h1 className="mt-2 font-serif text-3xl font-medium text-brand-heading">
-              Svi tagovi
-            </h1>
-            <p className="mt-4 flex flex-wrap items-baseline justify-center gap-x-3 font-mono text-xs uppercase tracking-widest text-brand-dim">
-              <span className="font-serif text-2xl tracking-normal text-brand-accent">
-                {total}
-              </span>
-              tagova
-              <span className="text-brand-border-strong">·</span>
-              veći znači češći
-            </p>
-          </div>
-
-          {/* Weighted cloud: size and colour both track how often a tag is used. */}
-          <div className="relative mt-14">
-            <div
-              aria-hidden
-              className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.07]"
-              style={{
-                background:
-                  "radial-gradient(circle, var(--color-brand-accent) 0%, transparent 70%)",
-              }}
-            />
-
-            <div
-              ref={cloudRef}
-              className="relative mx-auto flex w-full max-w-[940px] flex-col items-center"
-              style={{ rowGap: `${Math.round(10 * scale)}px` }}
-            >
-              {cloud.map((row, rowIndex) => (
-                <div
-                  key={rowIndex}
-                  className="flex flex-nowrap items-center justify-center"
-                  style={{ columnGap: `${Math.round(ROW_GAP_PX * scale)}px` }}
-                >
-                  {row.map(({ tag, count, tier }) => (
-                    <Link
-                      key={tag}
-                      to={tagHref(tag)}
-                      title={`${tag} — ${count} ${count === 1 ? "članak" : "članaka"}`}
-                      style={{ fontSize: `${tierPx(tier, scale)}px` }}
-                      // motion-safe on the scale only: MotionConfig covers the
-                      // Motion components, but this hover is plain CSS and
-                      // would keep zooming under a reduced-motion setting.
-                      // min-w-0/max-w-full: rows are packed from an *estimated*
-                      // glyph width and a row always takes at least one tag, so
-                      // a single very long name could be wider than the disc and
-                      // bleed out of it. Clipped with an ellipsis instead - the
-                      // full name is on the title attribute either way.
-                      //
-                      // Vertical padding only, and only where it is needed: it
-                      // lifts a small tag to a ~31px hit area without touching
-                      // the width, which estimateWidth budgets the rows on.
-                      // Horizontal padding here would desync the packing from
-                      // the rendered size and wrap the rows flat.
-                      className={`inline-block max-w-full min-w-0 overflow-hidden text-ellipsis whitespace-nowrap py-2 leading-none decoration-2 underline-offset-4 transition-transform duration-200 motion-safe:hover:scale-110 hover:text-brand-accent hover:underline sm:py-1 ${TIER_STYLES[tier]}`}
-                    >
-                      {tag}
-                    </Link>
-                  ))}
-                </div>
-              ))}
+        <section className="py-20">
+          <div className="mx-auto max-w-7xl px-6">
+            <div>
+              <div className="page-rise mb-4 flex items-center gap-4">
+                <h1 className="text-3xl font-serif font-medium text-brand-heading">
+                  Svi tagovi
+                </h1>
+              </div>
+              <p
+                className="page-rise mb-8 max-w-2xl text-sm leading-relaxed text-brand-dim"
+                style={{ animationDelay: "40ms" }}
+              >
+                Veći tagovi označavaju češće teme u arhivi. Klikni na bilo koji
+                pojam da otvoriš odgovarajuću stranicu s povezanim člancima.
+              </p>
+              <p
+                className="page-rise mb-10 font-mono text-xs uppercase tracking-widest text-brand-dim"
+                style={{ animationDelay: "60ms" }}
+              >
+                {total} tagova
+              </p>
             </div>
-          </div>
 
-          {/* Alphabetical index: names only, no article listings. */}
-          <div className="mt-24 border-t border-brand-border pt-12">
-            <h2 className="mb-8 text-center font-mono text-xs uppercase tracking-widest text-brand-dim">
-              Abecedno
-            </h2>
+            {/* Weighted cloud: size and colour both track how often a tag is used. */}
+            <div className="relative">
+              <h2 className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-brand-dim">
+                Najčešći tagovi
+              </h2>
+              <div
+                aria-hidden
+                className="pointer-events-none absolute left-1/2 top-1/2 rounded-full opacity-[0.05]"
+                style={{
+                  width: `${CLOUD_GLOW_SIZE}px`,
+                  height: `${CLOUD_GLOW_SIZE}px`,
+                  transform: "translate(-50%, -50%)",
+                  background:
+                    "radial-gradient(circle, var(--color-brand-accent) 0%, transparent 70%)",
+                }}
+              />
 
-            <div className="space-y-10">
-              {grouped.map(([letter, entries]) => (
-                <div key={letter}>
-                  {/* Letter, then a rule across the remaining width, so each
-                      group reads as its own band rather than one long list. */}
-                  <div className="mb-4 flex items-center gap-4">
-                    <span className="font-serif text-2xl leading-none text-brand-accent">
-                      {letter}
-                    </span>
-                    <span aria-hidden className="h-px flex-1 bg-brand-border" />
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-brand-dim">
-                      {entries.length}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {entries.map(({ tag, count }) => (
+              <div
+                ref={cloudRef}
+                className="relative mx-auto flex w-full max-w-[900px] flex-col items-center"
+                style={{ rowGap: `${Math.round(5 * scale)}px` }}
+              >
+                {cloud.map((row, rowIndex) => (
+                  <div
+                    key={rowIndex}
+                    className="flex flex-nowrap items-center justify-center"
+                    style={{ columnGap: `${Math.round(ROW_GAP_PX * scale)}px` }}
+                  >
+                    {row.map(({ tag, count, tier }) => (
                       <Link
                         key={tag}
                         to={tagHref(tag)}
-                        className="group flex items-center gap-2 rounded-lg border border-brand-border bg-brand-surface px-3 py-1.5 text-sm text-brand-text transition-colors hover:border-brand-border-strong hover:text-brand-heading"
+                        title={`${tag} — ${count} ${count === 1 ? "članak" : "članaka"}`}
+                        style={{
+                          fontSize: `${Math.max(12, tierPx(tier, scale))}px`,
+                        }}
+                        // motion-safe on the scale only: MotionConfig covers the
+                        // Motion components, but this hover is plain CSS and
+                        // would keep zooming under a reduced-motion setting.
+                        // min-w-0/max-w-full: rows are packed from an *estimated*
+                        // glyph width and a row always takes at least one tag, so
+                        // a single very long name could be wider than the disc and
+                        // bleed out of it. Clipped with an ellipsis instead - the
+                        // full name is on the title attribute either way.
+                        //
+                        // Vertical padding only, and only where it is needed: it
+                        // lifts a small tag to a ~31px hit area without touching
+                        // the width, which estimateWidth budgets the rows on.
+                        // Horizontal padding here would desync the packing from
+                        // the rendered size and wrap the rows flat.
+                        className={`inline-block max-w-full min-w-0 overflow-hidden text-ellipsis whitespace-nowrap py-0.5 leading-none decoration-2 underline-offset-4 transition-transform duration-200 motion-safe:hover:scale-100 hover:text-brand-accent hover:underline ${TIER_STYLES[tier]}`}
                       >
                         {tag}
-                        <span className="font-mono text-[10px] text-brand-dim transition-colors group-hover:text-brand-accent">
-                          {count}
-                        </span>
                       </Link>
                     ))}
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            </div>
+
+            {/* Alphabetical index: names only, no article listings. */}
+            <div
+              id="abecedno"
+              className="mt-16 border-t border-brand-border pt-8"
+            >
+              <h2 className="mb-8 font-mono text-[10px] uppercase tracking-widest text-brand-dim">
+                Abecedno
+              </h2>
+
+              <div className="space-y-10">
+                {grouped.map(([letter, entries]) => (
+                  <div key={letter}>
+                    {/* Letter, then a rule across the remaining width, so each
+                      group reads as its own band rather than one long list. */}
+                    <div className="mb-4 flex items-center gap-4">
+                      <span className="font-serif text-2xl leading-none text-brand-accent">
+                        {letter}
+                      </span>
+                      <span
+                        aria-hidden
+                        className="h-px flex-1 bg-brand-border"
+                      />
+                      <span className="font-mono text-[10px] uppercase tracking-widest text-brand-dim">
+                        {entries.length}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {entries.map(({ tag, count }) => (
+                        <Link
+                          key={tag}
+                          to={tagHref(tag)}
+                          className={`group flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm transition-colors hover:border-brand-border-strong hover:bg-brand-surface-hover ${
+                            count >= 25
+                              ? "border-brand-accent/40 bg-brand-surface text-brand-heading"
+                              : "border-brand-border bg-brand-surface/80 text-brand-text"
+                          }`}
+                        >
+                          {tag}
+                          <span className="font-mono text-[10px] text-brand-dim transition-colors group-hover:text-brand-accent">
+                            {count}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        </section>
     </PageShell>
   );
 }

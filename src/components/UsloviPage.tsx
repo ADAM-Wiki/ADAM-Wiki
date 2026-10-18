@@ -3,7 +3,7 @@ import LegalPage from "./LegalPage";
 export default function UsloviPage() {
   return (
     <LegalPage
-      title="Uslovi Korišćenja"
+      title="Uslovi Korištenja"
       description="Pod kojim uslovima možete koristiti i deliti sadržaj sa ovog sajta."
       path="/uslovi"
       sections={[

@@ -120,7 +120,9 @@ export default function Navbar() {
               to="/search"
               // Builds the index while the pointer is still travelling to the
               // link, so /search usually opens ready instead of loading.
+              // Pointer-down covers the tap itself, where hover never fires.
               onPointerEnter={warmSearch}
+              onPointerDown={warmSearch}
               onFocus={warmSearch}
               aria-label="Pretraga"
               className="flex items-center gap-3 rounded-full border border-brand-border bg-brand-surface px-2.5 py-2.5 text-xs uppercase tracking-widest text-brand-heading hover:bg-brand-surface-hover transition-colors whitespace-nowrap"
@@ -205,6 +207,7 @@ export default function Navbar() {
               <Link
                 to="/search"
                 onPointerEnter={warmSearch}
+                onPointerDown={warmSearch}
                 onFocus={warmSearch}
                 className="flex items-center justify-center gap-2.5 rounded-lg border border-brand-border bg-brand-surface py-3.5 text-xs font-medium uppercase tracking-widest text-brand-heading transition-colors hover:border-brand-accent hover:text-brand-accent"
               >

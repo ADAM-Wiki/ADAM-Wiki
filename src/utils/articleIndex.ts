@@ -145,12 +145,28 @@ export function getTagCounts(): Array<{ tag: string; count: number }> {
 }
 
 /** "12. jun 2026." - matches the formatting used on article pages. */
+const MESECI = [
+  "januar",
+  "februar",
+  "mart",
+  "april",
+  "maj",
+  "jun",
+  "jul",
+  "avgust",
+  "septembar",
+  "oktobar",
+  "novembar",
+  "decembar",
+];
+
 export function formatArticleDate(date: string): string {
-  const parsed = new Date(date);
-  if (Number.isNaN(parsed.getTime())) return date;
-  return parsed.toLocaleDateString("sr-Latn-RS", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  // Parsed by hand: `new Date("2026-08-06")` is UTC midnight, so timezones
+  // behind UTC render the previous day, and Intl month names depend on which
+  // locale data the browser ships (bs-Latn-BA renders "2026 M08 6" in some).
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(date);
+  if (!match) return date;
+  const month = Number(match[2]);
+  if (month < 1 || month > 12) return date;
+  return `${Number(match[3])}. ${MESECI[month - 1]} ${match[1]}.`;
 }

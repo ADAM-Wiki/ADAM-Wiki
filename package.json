@@ -18,6 +18,7 @@
     "generate:sitemap": "tsx scripts/generate-sitemap.ts",
     "generate:og-image": "tsx scripts/generate-og-image.ts",
     "generate:image-sizes": "tsx scripts/generate-image-sizes.ts",
+    "images:webp": "tsx scripts/convert-to-webp.ts",
     "prerender": "tsx scripts/prerender.ts",
     "build": "npm run generate:meta && npm run check:registry && npm run check:anchors && npm run generate:og-image && npm run generate:image-sizes && npm run generate:sitemap && vite build && npm run prerender"
   },
@@ -49,6 +50,7 @@
     "autoprefixer": "^10.4.21",
     "gh-pages": "^6.3.0",
     "puppeteer": "^25.5.0",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4.1.14",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",

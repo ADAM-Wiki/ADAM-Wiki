@@ -32,7 +32,7 @@ type ImageProps = ImgHTMLAttributes<HTMLImageElement>;
 type AnchorProps = AnchorHTMLAttributes<HTMLAnchorElement>;
 
 /**
- * Type scale: h1 36 > h2 30 > h3 24 > h4 20 > body 18.
+ * Type scale: h1 36 > h2 30 > h3 24 > h4 20 > body 17.6.
  *
  * h2 used to be 36px against a 30px article title, so section headings
  * outranked the title they sat under.
@@ -53,7 +53,7 @@ export function MdxH2({ className = "", children, ...props }: HeadingProps) {
         <div className="h-px flex-1 bg-gradient-to-l from-transparent to-brand-dim/50" />
       </div>
       <h2
-        className={`scroll-mt-32 break-words font-serif text-[2rem] font-semibold tracking-[-0.03em] leading-[1.1] text-brand-heading sm:text-[2.6rem] [overflow-wrap:anywhere] ${className}`}
+        className={`scroll-mt-32 break-words font-serif text-2xl font-semibold tracking-[-0.03em] leading-[1.1] text-brand-heading sm:text-[1.875rem] [overflow-wrap:anywhere] ${className}`}
         {...props}
       >
         {children}
@@ -65,7 +65,7 @@ export function MdxH2({ className = "", children, ...props }: HeadingProps) {
 export function MdxH3({ className = "", children, ...props }: HeadingProps) {
   return (
     <h3
-      className={`scroll-mt-32 flex items-center gap-3 break-words font-serif text-[1.7rem] font-semibold leading-[1.2] tracking-[-0.025em] text-brand-heading sm:text-[2.05rem] [overflow-wrap:anywhere] ${className}`}
+      className={`scroll-mt-32 flex items-center gap-3 break-words font-serif text-xl font-semibold leading-[1.2] tracking-[-0.025em] text-brand-heading sm:text-2xl [overflow-wrap:anywhere] ${className}`}
       {...props}
     >
       <span
@@ -80,7 +80,7 @@ export function MdxH3({ className = "", children, ...props }: HeadingProps) {
 export function MdxH4({ className = "", children, ...props }: HeadingProps) {
   return (
     <h4
-      className={`scroll-mt-32 break-words font-serif text-[1.45rem] font-semibold leading-[1.2] tracking-[-0.02em] text-brand-heading sm:text-[1.7rem] [overflow-wrap:anywhere] ${className}`}
+      className={`scroll-mt-32 break-words font-serif text-lg font-semibold leading-[1.2] tracking-[-0.02em] text-brand-heading sm:text-xl [overflow-wrap:anywhere] ${className}`}
       {...props}
     >
       {children}
@@ -440,11 +440,10 @@ export function MdxA({
 
 export function Table({ children }: { children: ReactNode }) {
   return (
-    // A long table scrolls inside its own box rather than down the page, which
-    // is what lets the header stay pinned: `overflow-x: auto` for the mobile
-    // case forces this element to be a scroll container on both axes anyway,
-    // so sticky can only ever resolve against this box, never the page.
-    <div className="mdx-table-wrap my-6 max-h-[32rem] overflow-auto rounded-lg border border-brand-border font-lexend">
+    // Full height: the table grows with the page instead of scrolling
+    // inside its own box. `overflow-x: auto` keeps wide tables usable
+    // on mobile without capping vertical height.
+    <div className="mdx-table-wrap my-6 overflow-x-auto rounded-lg border border-brand-border font-lexend">
       {/* border-separate, not collapse: a collapsed border is shared between
           rows, so the sticky header cannot paint over it and a sliver of the
           scrolling row bleeds through underneath. Cells only carry a bottom

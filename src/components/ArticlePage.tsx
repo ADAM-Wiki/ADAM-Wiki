@@ -16,6 +16,7 @@ import { isSmoothScrolling } from "../utils/smoothScroll";
 import { SITE_NAME, SITE_URL } from "../utils/siteConfig";
 import { getOgImage } from "../utils/ogImage";
 import { getCategoryById } from "../utils/categoriesData";
+import { formatArticleDate } from "../utils/articleIndex";
 import { createHeadingIdAllocator } from "../utils/headingIds";
 import type { TocItem } from "../utils/articleTypes";
 import type { CategoryArticles } from "../lib/categoryArticles";
@@ -26,24 +27,16 @@ interface ArticlePageProps {
 }
 
 const calculateReadingTime = (words: number): string => {
-  const minutes = Math.max(1, Math.ceil(words / 200));
+  // 165wpm: theological prose with Arabic insertions reads slower than the
+  // 200wpm generic-English default.
+  const minutes = Math.max(1, Math.ceil(words / 165));
   return `${minutes} min čitanja`;
-};
-
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("sr-Latn-RS", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(date);
 };
 
 const truncateDescription = (text: string, maxLength = 155): string => {
   if (text.length <= maxLength) return text;
   return `${text.slice(0, maxLength).trimEnd()}…`;
 };
-
 
 /**
  * One article view, shared by every category.
@@ -161,8 +154,26 @@ export default function ArticlePage({
    * watches for the dialog actually opening. Chrome and Firefox announce it
    * with `beforeprint`; Safari instead flips the `print` media query. If
    * neither has happened shortly after the call, nothing opened.
+   *
+   * Scans stay lazy on screen, but the print preview snapshots whatever is
+   * already fetched - hitting the button on arrival printed an article with
+   * most photos blank (15 of 52 embedded on one real save). So every
+   * not-yet-loaded image is flipped to eager and awaited first, with a 5s cap
+   * so a slow network can delay the dialog but never hang the button.
    */
-  const handlePrint = () => {
+  const handlePrint = async () => {
+    const pending = Array.from(
+      articleRef.current?.querySelectorAll("img") ?? [],
+    ).filter((img) => !img.complete || img.naturalWidth === 0);
+
+    if (pending.length > 0) {
+      for (const img of pending) img.loading = "eager";
+      await Promise.race([
+        Promise.allSettled(pending.map((img) => img.decode())),
+        new Promise((resolve) => window.setTimeout(resolve, 5000)),
+      ]);
+    }
+
     let opened = false;
     const markOpened = () => {
       opened = true;
@@ -267,28 +278,38 @@ export default function ArticlePage({
 
               <div className="article-body min-w-0 lg:col-start-2 max-w-prose">
                 <header className="mb-12">
-                  <div className="flex items-center gap-4 mb-6">
-                    <Link
-                      to={categoryUrl}
-                      className="text-xs font-mono text-brand-dim transition-colors hover:text-brand-accent print:hidden"
-                    >
-                      {eyebrow}
-                    </Link>
-                    <h1 className="text-3xl font-serif font-bold text-brand-heading sm:text-4xl">
-                      {title}
-                    </h1>
-                  </div>
+                  {/* Its own line: sharing the title's row pushed the title
+                      ~60px right of every other block in the column, cut its
+                      measure (an extra wrapped line on a phone), and left the
+                      label vertically centred against a multi-line title. */}
+                  <Link
+                    to={categoryUrl}
+                    className="mb-3 block text-xs font-mono text-brand-dim transition-colors hover:text-brand-accent print:hidden"
+                  >
+                    {eyebrow}
+                  </Link>
+                  <h1 className="mb-6 text-3xl font-serif font-bold text-brand-heading sm:text-4xl">
+                    {title}
+                  </h1>
 
+                  {/* Provenance only: date + reading time. The raw word count
+                      lives on the reading-time tooltip, and saving moved into
+                      the share row where "save" naturally sits. */}
                   <div className="flex flex-wrap items-center gap-3 mb-8">
                     <span className="text-[11px] uppercase tracking-widest text-brand-dim font-medium">
-                      {formatDate(date)}
+                      {formatArticleDate(date)}
                     </span>
 
-                    <span className="text-brand-border print:hidden">·</span>
-
-                    <span className="print:hidden flex items-center gap-1.5 px-3 py-1 bg-brand-surface border border-brand-border rounded-full text-xs font-medium text-brand-heading">
+                    {/* Same treatment as the date and the word count: with a
+                        border and a filled surface it shared the exact chrome
+                        of the print button beside it and read as a second
+                        control nobody could click. */}
+                    <span
+                      title={`${wordCount} reči`}
+                      className="flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-brand-dim font-medium"
+                    >
                       <svg
-                        className="w-3.5 h-3.5 opacity-60"
+                        className="w-3.5 h-3.5"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -299,32 +320,6 @@ export default function ArticlePage({
                       </svg>
                       {calculateReadingTime(wordCount)}
                     </span>
-
-                    <span className="text-brand-border print:hidden">·</span>
-
-                    <span className="text-[11px] uppercase tracking-widest text-brand-dim font-medium print:hidden">
-                      {wordCount} REČI
-                    </span>
-
-                    {/* The browser's own print pipeline, not a PDF library:
-                        every browser offers "Sačuvaj kao PDF" as a print
-                        destination, and going through it keeps the text real
-                        text - selectable, searchable, with our diacritics and
-                        the Arabic intact. Rasterising the page to a canvas
-                        would lose all of that. The printed layout itself lives
-                        in @media print in index.css. */}
-                    <button
-                      type="button"
-                      onClick={handlePrint}
-                      title="Otvara prozor za štampu - izaberi „Sačuvaj kao PDF“ kao odredište"
-                      // min-h-11 below sm: at 26px tall this was under half the
-                      // 44px a thumb needs, and it is the only thing in this row
-                      // anyone taps.
-                      className="print:hidden flex min-h-11 items-center gap-1.5 rounded-full border border-brand-border bg-brand-surface px-3 text-xs font-medium text-brand-dim transition-colors hover:border-brand-border-strong hover:text-brand-heading sm:min-h-0 sm:py-1"
-                    >
-                      <FileDown aria-hidden className="w-3.5 h-3.5 shrink-0" />
-                      Sačuvaj kao PDF
-                    </button>
                   </div>
 
                   {/* Only appears when the browser declined to open the print
@@ -359,6 +354,49 @@ export default function ArticlePage({
                       ))}
                     </div>
                   )}
+
+                  {/* Print-only TOC: screen TOC is display:none on paper, so a
+                      long article prints a compact static outline instead. */}
+                  {tocItems.length > 0 && (
+                    <nav
+                      aria-label="Sadržaj"
+                      className="mt-6 hidden print:block"
+                    >
+                      <p className="mb-2 font-mono text-xs uppercase tracking-widest text-brand-dim">
+                        Sadržaj
+                      </p>
+                      <ol className="list-decimal space-y-1 pl-5 text-sm text-brand-text">
+                        {tocItems.map((item) => (
+                          <li
+                            key={item.id}
+                            className={item.level === 3 ? "ml-4" : undefined}
+                          >
+                            {item.text}
+                          </li>
+                        ))}
+                      </ol>
+                    </nav>
+                  )}
+
+                  {/* No H2/H3 means no TOC and no mini-map. Fall back to the
+                      description as the diamond-marked summary block so short
+                      dense articles still open with orientation. */}
+                  {tocItems.length === 0 && description && (
+                    <div className="mt-8 border-l-4 border-brand-accent px-5 py-1">
+                      <div className="mb-2 flex items-center gap-2">
+                        <span
+                          aria-hidden
+                          className="h-1.5 w-1.5 rotate-45 bg-brand-accent"
+                        />
+                        <span className="font-mono text-xs uppercase tracking-widest text-brand-dim">
+                          Sažetak
+                        </span>
+                      </div>
+                      <p className="font-lexend leading-relaxed text-brand-text">
+                        {description}
+                      </p>
+                    </div>
+                  )}
                 </header>
 
                 {/* Keyed by slug: footnote numbering is per article and the
@@ -373,12 +411,28 @@ export default function ArticlePage({
                   <FootnoteList />
                 </FootnoteProvider>
 
-                <ArticleShare url={articleUrl} title={title} />
+                {/* The browser's own print pipeline, not a PDF library:
+                    every browser offers "Sačuvaj kao PDF" as a print
+                    destination, and going through it keeps the text real
+                    text - selectable, searchable, with our diacritics and
+                    the Arabic intact. Rasterising the page to a canvas
+                    would lose all of that. The printed layout itself lives
+                    in @media print in index.css. */}
+                <ArticleShare
+                  url={articleUrl}
+                  title={title}
+                  onPrint={handlePrint}
+                />
 
                 <ArticlePrevNext
                   basePath={`${categoryUrl}/article`}
                   previous={previousArticle}
                   next={nextArticle}
+                  categoryName={category?.label ?? categoryId}
+                  position={{
+                    index: neighbourIndex + 1,
+                    total: orderedArticles.length,
+                  }}
                 />
               </div>
             </div>
@@ -388,42 +442,43 @@ export default function ArticlePage({
         {relatedArticles.length > 0 && (
           <section className="py-12 border-t border-brand-border print:hidden">
             <div className="max-w-7xl mx-auto px-6">
-              <div className="grid lg:grid-cols-[240px_minmax(0,1fr)] gap-12">
+              <div className="grid lg:grid-cols-[300px_minmax(0,1fr)] gap-12">
                 <div className="hidden lg:block" />
 
                 <div>
-                  <div className="flex items-center gap-4 mb-8">
-                    <Link
-                      to={categoryUrl}
-                      className="text-xs font-mono text-brand-dim transition-colors hover:text-brand-accent"
-                    >
-                      SLIČNO
-                    </Link>
-                    <h2 className="text-lg font-serif font-medium text-brand-heading">
-                      Povezani članci
-                    </h2>
-                  </div>
+                  {/* One voice: the rubric sits above the title, never beside
+                      it as a competing second heading. */}
+                  <p className="mb-3 font-mono text-xs uppercase tracking-widest text-brand-dim">
+                    Nastavi čitanje
+                  </p>
+                  <h2 className="mb-8 text-lg font-serif font-medium text-brand-heading">
+                    Povezani članci
+                  </h2>
 
                   <div className="grid md:grid-cols-3 gap-4">
-                    {relatedArticles.map((rel) => (
+                    {relatedArticles.map((rel, index) => (
                       <Link
                         key={rel.slug}
                         to={`${categoryUrl}/article/${rel.slug}`}
-                        onClick={() =>
-                          window.scrollTo({ top: 0, behavior: "smooth" })
-                        }
                         className="block p-5 border border-brand-border bg-brand-surface rounded-lg hover:border-brand-border-strong transition-colors group"
                       >
+                        {/* Tag-match ranking is otherwise invisible: the top
+                            hit carries the single primary recommendation. */}
+                        {index === 0 && (
+                          <span className="mb-3 inline-block rounded-full bg-brand-accent px-2.5 py-0.5 font-mono text-xs uppercase tracking-widest text-brand-on-accent">
+                            Najsličniji
+                          </span>
+                        )}
                         <h3 className="text-sm font-medium text-brand-heading group-hover:text-brand-accent transition-colors leading-snug mb-2">
                           {rel.title}
                         </h3>
 
                         {rel.tags && (
-                          <div className="flex flex-wrap gap-1 mt-3">
+                          <div className="flex flex-wrap gap-x-2 mt-3">
                             {rel.tags.slice(0, 3).map((tag) => (
                               <span
                                 key={tag}
-                                className="text-[10px] text-brand-dim border border-brand-border px-2 py-0.5 rounded-full"
+                                className="text-xs text-brand-dim"
                               >
                                 #{tag}
                               </span>

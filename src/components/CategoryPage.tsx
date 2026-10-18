@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { FileText } from "lucide-react";
 
 import PageShell from "./PageShell";
 import Pagination from "./Pagination";
@@ -46,7 +47,10 @@ export default function CategoryPage() {
   }
 
   const articles = getCategoryListing(categoryId);
-  const totalPages = Math.max(1, Math.ceil(articles.length / ARTICLES_PER_PAGE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(articles.length / ARTICLES_PER_PAGE),
+  );
 
   // Clamped, because ?page= is user-editable and arrives from bookmarks.
   const requested = Number(searchParams.get("page")) || 1;
@@ -56,6 +60,7 @@ export default function CategoryPage() {
     (currentPage - 1) * ARTICLES_PER_PAGE,
     currentPage * ARTICLES_PER_PAGE,
   );
+  const isIndexStyle = category.id === "spisi";
 
   const handlePageClick = (page: number) => {
     // Page 1 is the bare URL rather than ?page=1, so a category keeps one
@@ -86,67 +91,149 @@ export default function CategoryPage() {
 
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
-            <div {...rise(0, "flex items-center gap-4")}>
-              <span className="text-xs font-mono text-brand-dim">
+            {/* Label above, not beside: beside it indented the title by the
+                label's width and let it sit between the title's lines when it
+                wrapped - the same row /article used before it moved up. */}
+            <div {...rise(0, "mb-4")}>
+              <span className="mb-3 block text-xs font-mono text-brand-dim">
                 {category.eyebrow}
               </span>
-              <h1 className="text-3xl font-serif font-medium">
-                Kategorija: {category.label}
+              <h1 className="text-3xl font-serif font-medium text-brand-heading">
+                {category.label}
               </h1>
             </div>
+            <p
+              {...rise(
+                1,
+                "mb-8 max-w-2xl text-sm leading-relaxed text-brand-dim",
+              )}
+            >
+              {category.description}
+            </p>
 
-            <div className="pt-12">
+            {isIndexStyle && (
+              <p
+                {...rise(
+                  2,
+                  "mb-12 font-mono text-xs uppercase tracking-widest text-brand-dim",
+                )}
+              >
+                {articles.length} članaka
+              </p>
+            )}
+
+            <div className={isIndexStyle ? "" : "pt-12"}>
               {paginatedArticles.length > 0 ? (
-                // Keyed by page so the stagger replays when you paginate,
-                // which is the only signal that the list changed - the grid
-                // otherwise looks identical after the scroll to top.
-                <div
-                  key={currentPage}
-                  className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-                >
-                  {paginatedArticles.map((article, index) => {
-                    const hasWordCount =
-                      typeof article.wordCount === "number" &&
-                      article.wordCount > 0;
+                isIndexStyle ? (
+                  <div
+                    key={currentPage}
+                    className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+                  >
+                    {paginatedArticles.map((article, index) => {
+                      const hasWordCount =
+                        typeof article.wordCount === "number" &&
+                        article.wordCount > 0;
 
-                    return (
-                      <div key={article.slug} {...rise(index + 1)}>
-                        <Link
-                          to={`${category.url}/article/${article.slug}`}
-                          className="flex h-full flex-col p-6 border border-brand-border bg-brand-surface rounded-lg hover:border-brand-border-strong transition-colors group"
-                        >
-                          <h2 className="text-lg font-medium mb-3 text-brand-heading group-hover:text-brand-accent transition-colors leading-snug">
-                            {article.title}
-                          </h2>
+                      return (
+                        <div key={article.slug} {...rise(index + 1)}>
+                          <Link
+                            to={`${category.url}/article/${article.slug}`}
+                            className={`group flex h-full flex-col rounded-xl border p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-border-strong hover:bg-brand-surface-hover ${
+                              index === 0
+                                ? "border-brand-accent/40 bg-brand-surface"
+                                : "border-brand-border bg-brand-surface/80"
+                            }`}
+                          >
+                            <div className="flex items-start gap-4">
+                              <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-md border border-brand-border bg-brand-bg/60 text-brand-dim transition-colors group-hover:border-brand-border-strong group-hover:text-brand-accent">
+                                <FileText aria-hidden className="h-4 w-4" />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center justify-between gap-3">
+                                  <h2 className="min-w-0 text-xs font-medium uppercase tracking-widest text-brand-heading transition-colors group-hover:text-brand-accent">
+                                    {article.title}
+                                  </h2>
+                                  <span className="shrink-0 font-mono text-[11px] text-brand-dim">
+                                    {String(index + 1).padStart(2, "0")}
+                                  </span>
+                                </div>
+                                <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-brand-dim">
+                                  {index === 0 ? "Najnovije" : "Članak"}
+                                </p>
+                              </div>
+                            </div>
 
-                          {/* The listing is where an article is chosen, and it
-                              was offering a title and a word count to choose
-                              on. The home page cards have carried the excerpt
-                              all along. */}
-                          {article.description && (
-                            <p className="mb-4 line-clamp-3 text-sm leading-relaxed text-brand-dim">
-                              {article.description}
-                            </p>
-                          )}
-
-                          <div className="mt-auto flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-widest text-brand-dim font-medium">
-                            <span>{formatArticleDate(article.date)}</span>
-                            {hasWordCount && (
-                              <>
-                                <span className="text-brand-border">·</span>
-                                <span>{article.wordCount} REČI</span>
-                                <span className="text-brand-border">·</span>
-                                <span>
-                                  {article.readingTimeMinutes} MIN ČITANJA
-                                </span>
-                              </>
+                            {article.description && (
+                              <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-brand-dim">
+                                {article.description}
+                              </p>
                             )}
-                          </div>
-                        </Link>
-                      </div>
-                    );
-                  })}
-                </div>
+
+                            <div className="mt-auto flex flex-wrap items-center gap-3 pt-4 text-[10px] font-medium uppercase tracking-widest text-brand-dim">
+                              <span>{formatArticleDate(article.date)}</span>
+                              {hasWordCount && (
+                                <>
+                                  <span className="text-brand-border">·</span>
+                                  <span>{article.wordCount} REČI</span>
+                                  <span className="text-brand-border">·</span>
+                                  <span>
+                                    {article.readingTimeMinutes} MIN ČITANJA
+                                  </span>
+                                </>
+                              )}
+                            </div>
+                          </Link>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div
+                    key={currentPage}
+                    className="grid md:grid-cols-2 lg:grid-cols-3 gap-4"
+                  >
+                    {paginatedArticles.map((article, index) => {
+                      const hasWordCount =
+                        typeof article.wordCount === "number" &&
+                        article.wordCount > 0;
+
+                      return (
+                        <div key={article.slug} {...rise(index + 1)}>
+                          <Link
+                            to={`${category.url}/article/${article.slug}`}
+                            className="group flex h-full flex-col rounded-xl border border-brand-border bg-brand-surface/90 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-accent/35 hover:bg-brand-surface"
+                          >
+                            <div className="mb-3 flex items-center justify-between gap-3 text-[10px] font-mono uppercase tracking-[0.22em] text-brand-dim">
+                              <span>{formatArticleDate(article.date)}</span>
+                              <span>{String(index + 1).padStart(2, "0")}</span>
+                            </div>
+
+                            <h2 className="text-lg font-medium mb-3 text-brand-heading group-hover:text-brand-accent transition-colors leading-snug">
+                              {article.title}
+                            </h2>
+
+                            {article.description && (
+                              <p className="mb-4 line-clamp-3 text-sm leading-relaxed text-brand-dim">
+                                {article.description}
+                              </p>
+                            )}
+
+                            <div className="mt-auto pt-3 border-t border-brand-border/80 text-[10px] uppercase tracking-[0.18em] text-brand-dim">
+                              {hasWordCount ? (
+                                <span>
+                                  {article.wordCount} REČI ·{" "}
+                                  {article.readingTimeMinutes} MIN
+                                </span>
+                              ) : (
+                                <span>Članak</span>
+                              )}
+                            </div>
+                          </Link>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )
               ) : (
                 <div
                   {...rise(

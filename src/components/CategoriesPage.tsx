@@ -36,12 +36,20 @@ export default function CategoriesPage() {
 
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="page-rise flex items-center gap-4 mb-3">
-              <span className="text-xs font-mono text-brand-dim">01</span>
-              <h1 className="text-3xl font-serif font-medium">
+            <div className="page-rise mb-4 flex items-center gap-4">
+              <h1 className="text-3xl font-serif font-medium text-brand-heading">
                 Sve kategorije
               </h1>
             </div>
+
+            <p
+              className="page-rise mb-8 max-w-2xl text-sm leading-relaxed text-brand-dim"
+              style={{ animationDelay: "40ms" }}
+            >
+              Odaberite temu koja vas zanima. Najjače zastupljene kategorije su
+              često i najkorisniji ulaz u arhivu, dok su manje teme dobra opcija
+              za fokusirano istraživanje.
+            </p>
 
             <p
               className="page-rise mb-12 font-mono text-xs uppercase tracking-widest text-brand-dim"
@@ -66,24 +74,33 @@ export default function CategoriesPage() {
                 >
                   <Link
                     to={category.url}
-                    className="group flex h-full flex-col rounded-lg border border-brand-border bg-brand-surface p-5 transition-colors hover:border-brand-border-strong hover:bg-brand-surface-hover"
+                    className={`group flex h-full flex-col rounded-xl border p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-border-strong hover:bg-brand-surface-hover ${
+                      category.count >= 25
+                        ? "border-brand-accent/40 bg-brand-surface"
+                        : "border-brand-border bg-brand-surface/80"
+                    }`}
                   >
                     <div className="flex items-start gap-4">
-                      <FolderOpen
-                        aria-hidden
-                        className="mt-0.5 h-5 w-5 shrink-0 text-brand-dim transition-colors group-hover:text-brand-accent"
-                      />
+                      <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-md border border-brand-border bg-brand-bg/60 text-brand-dim transition-colors group-hover:border-brand-border-strong group-hover:text-brand-accent">
+                        <FolderOpen aria-hidden className="h-4 w-4" />
+                      </div>
 
-                      <span className="min-w-0 flex-1 text-xs font-medium uppercase tracking-widest transition-colors group-hover:text-brand-heading">
-                        {category.title}
-                      </span>
-
-                      <span className="shrink-0 font-mono text-xs text-brand-dim transition-colors group-hover:text-brand-accent">
-                        {category.count}
-                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="min-w-0 text-xs font-medium uppercase tracking-widest text-brand-heading transition-colors group-hover:text-brand-accent">
+                            {category.title}
+                          </span>
+                          <span className="shrink-0 font-mono text-[11px] text-brand-dim transition-colors group-hover:text-brand-accent">
+                            {category.count}
+                          </span>
+                        </div>
+                        <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-brand-dim">
+                          {category.count >= 25 ? "Najčešće" : "Tema"}
+                        </p>
+                      </div>
                     </div>
 
-                    <p className="mt-3 text-sm leading-relaxed text-brand-dim">
+                    <p className="mt-4 text-sm leading-relaxed text-brand-dim">
                       {category.description}
                     </p>
                   </Link>

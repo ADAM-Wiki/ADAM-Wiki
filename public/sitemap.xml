@@ -13,8 +13,8 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis</loc>
-    <lastmod>2026-06-28</lastmod>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -25,13 +25,19 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hriscanstvo</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis</loc>
+    <lastmod>2026-06-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hinduizam</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hriscanstvo</loc>
+    <lastmod>2026-07-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -47,8 +53,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije</loc>
-    <lastmod>2026-08-05</lastmod>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/muhammed</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/nauka</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -60,16 +70,6 @@
   <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/opovrgavanje</loc>
     <lastmod>2026-08-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/nauka</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/muhammed</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -86,56 +86,68 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/sunnet-i-hadis-znacenje-važnost-i-ocuvanje</loc>
-    <lastmod>2026-06-28</lastmod>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Ahmedije-o-istini-Israa-i-Miradza</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/sahih-al-buhari-lanci-prenosa-istorija-rukopisa-metodologija-provere-autentičnosti-i-prenosioci-koji-su-bili-kritikovani</loc>
-    <lastmod>2026-06-22</lastmod>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Bogohulstvo-Mirze-Gulama-Kadijanija-njegovim-recima-Kufr-lazno-prorocanstvo-i-kadijanska-tvrdnja-razotkriveni</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/hadis-je-ostao-nenapisan-dve-stotine-godina</loc>
-    <lastmod>2026-06-18</lastmod>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Da-li-ce-Mirza-doci-ponovo</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/orijentalisti-i-njihovi-učenici-ponavljaju-iste-tvrdnje-i-sumnje-u-moderno-doba</loc>
-    <lastmod>2026-06-18</lastmod>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Da-li-je-Mirza-Kadijani-znao-ista-o-Allahovom-Poslaniku</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/sumnja-oko-naziva-sunnet-i-odgovor-na-nju</loc>
-    <lastmod>2026-06-18</lastmod>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Da-li-je-Mirza-sin-Merjemin</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/odgovor-na-klevete-koju-je-postavio-goldciher-i-oni-koji-ga-slede</loc>
-    <lastmod>2026-06-16</lastmod>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Karakter-Mirze-Gulama-Kadijanija</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/pitanje-za-kuranije</loc>
-    <lastmod>2026-06-16</lastmod>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Ko-je-poslednji-poslanik</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/autenticnost-hadisa-orijentalisti-priznaju-superiornost-islamske-nauke-o-isnadu</loc>
-    <lastmod>2026-06-07</lastmod>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Lazni-pecat-poslanika</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/zasto-sunnet-nije-sacuvan-kao-sto-je-sacuvan-kuran</loc>
-    <lastmod>2026-06-05</lastmod>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Mirzina-protivrecnost-o-Isau-zivom-na-nebu</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Neispunjena-prorocanstva-Mirze-Gulama-Kadijanija</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Protivrecnosti-Mirze-Gulama-Kadijanija</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -376,6 +388,60 @@
   <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ateizam/article/silovanje-je-legalno-u-feminizmu</loc>
     <lastmod>2026-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/sunnet-i-hadis-znacenje-važnost-i-ocuvanje</loc>
+    <lastmod>2026-06-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/sahih-al-buhari-lanci-prenosa-istorija-rukopisa-metodologija-provere-autentičnosti-i-prenosioci-koji-su-bili-kritikovani</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/hadis-je-ostao-nenapisan-dve-stotine-godina</loc>
+    <lastmod>2026-06-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/orijentalisti-i-njihovi-učenici-ponavljaju-iste-tvrdnje-i-sumnje-u-moderno-doba</loc>
+    <lastmod>2026-06-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/sumnja-oko-naziva-sunnet-i-odgovor-na-nju</loc>
+    <lastmod>2026-06-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/odgovor-na-klevete-koju-je-postavio-goldciher-i-oni-koji-ga-slede</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/pitanje-za-kuranije</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/autenticnost-hadisa-orijentalisti-priznaju-superiornost-islamske-nauke-o-isnadu</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/hadis/article/zasto-sunnet-nije-sacuvan-kao-sto-je-sacuvan-kuran</loc>
+    <lastmod>2026-06-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -662,72 +728,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Ahmedije-o-istini-Israa-i-Miradza</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Bogohulstvo-Mirze-Gulama-Kadijanija-njegovim-recima-Kufr-lazno-prorocanstvo-i-kadijanska-tvrdnja-razotkriveni</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Da-li-ce-Mirza-doci-ponovo</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Da-li-je-Mirza-Kadijani-znao-ista-o-Allahovom-Poslaniku</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Da-li-je-Mirza-sin-Merjemin</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Karakter-Mirze-Gulama-Kadijanija</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Ko-je-poslednji-poslanik</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Lazni-pecat-poslanika</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Mirzina-protivrecnost-o-Isau-zivom-na-nebu</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Neispunjena-prorocanstva-Mirze-Gulama-Kadijanija</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/ahmedije/article/Protivrecnosti-Mirze-Gulama-Kadijanija</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/opovrgavanje/article/Aisa-i-Salim-Sablan</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
@@ -944,8 +944,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/spisi/article/Ponovljeni-zakon-33-2-i-Paran</loc>
-    <lastmod>2026-08-06</lastmod>
+    <loc>https://adam-wiki.github.io/ADAM-Wiki/categories/spisi/article/Ponovljeni - zakon - 33 - 2 - i - Paran</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

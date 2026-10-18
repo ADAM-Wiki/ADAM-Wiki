@@ -158,11 +158,11 @@ export const spisiMeta: GeneratedSpisiMeta[] = [
       "grcki"
     ],
     "description": "Grčki oblici parakletos i periklitos, sirijski Munahhema, upotreba reči alos umesto heteros, i istorijski pretendenti na naziv Parakleta.",
-    "wordCount": 7237,
-    "readingTimeMinutes": 37
+    "wordCount": 7495,
+    "readingTimeMinutes": 38
   },
   {
-    "title": "Da li Ponovljeni zakon 18:18 najavljuje Muhammeda ﷺ? Poslanik poput Musaa",
+    "title": "Da li 5. Mojsijeva 18:18 najavljuje Muhammeda ﷺ? Poslanik poput Musaa",
     "date": "2026-08-06",
     "slug": "Ponovljeni-zakon-18-18",
     "category": "spisi",
@@ -173,8 +173,8 @@ export const spisiMeta: GeneratedSpisiMeta[] = [
       "poslanstvo"
     ],
     "description": "Četiri uslova iz proročanstva, pitanje izraza između braće njihove, i odsustvo ograničavajuće odredbe u Septuaginti, samarićanskom Petoknjižju i svicima sa Mrtvog mora.",
-    "wordCount": 412,
-    "readingTimeMinutes": 3
+    "wordCount": 5054,
+    "readingTimeMinutes": 26
   },
   {
     "title": "Ponovljeni zakon 18:20 - merilo za lažnog poslanika",
@@ -192,9 +192,9 @@ export const spisiMeta: GeneratedSpisiMeta[] = [
     "readingTimeMinutes": 2
   },
   {
-    "title": "Ponovljeni zakon 33:2 - Sinaj, Seir i Paran",
-    "date": "2026-08-06",
-    "slug": "Ponovljeni-zakon-33-2-i-Paran",
+    "title": "Ponovljeni zakon 33:2  -  Sinaj, Seir i Paran",
+    "date": "2026 - 08 - 06",
+    "slug": "Ponovljeni - zakon - 33 - 2 - i - Paran",
     "category": "spisi",
     "tags": [
       "spisi",
@@ -203,8 +203,8 @@ export const spisiMeta: GeneratedSpisiMeta[] = [
       "hebrejski"
     ],
     "description": "Tri mesta objave u jednom ajetu, razlika između masoretskog i drevnih tekstova, i jevrejska predanja koja Paran vezuju za sinove Ismailove.",
-    "wordCount": 411,
-    "readingTimeMinutes": 3
+    "wordCount": 7474,
+    "readingTimeMinutes": 38
   },
   {
     "title": "Psalam 120 i šatori Kedarovi",

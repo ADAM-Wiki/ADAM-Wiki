@@ -37,9 +37,9 @@ function FieldError({ name, message }: { name: string; message?: string }) {
   );
 }
 
-type FieldName = "ime" | "email" | "poruka";
+type FieldName = "ime" | "email" | "poruka" | "saglasnost";
 
-const FIELD_ORDER: FieldName[] = ["ime", "email", "poruka"];
+const FIELD_ORDER: FieldName[] = ["ime", "email", "poruka", "saglasnost"];
 
 /**
  * Serbian messages for the browser's own validity flags.
@@ -60,7 +60,9 @@ function describeValidity(
       ? "Unesite vaše ime."
       : field === "email"
         ? "Unesite email adresu da bismo mogli da odgovorimo."
-        : "Napišite poruku pre slanja.";
+        : field === "poruka"
+          ? "Napišite poruku pre slanja."
+          : "Potvrdite saglasnost sa obradom podataka.";
   }
 
   if (validity.typeMismatch && field === "email") {
@@ -72,6 +74,7 @@ function describeValidity(
 
 export default function KontaktPage() {
   const [status, setStatus] = useState<Status>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   const [dirty, setDirty] = useState(false);
 
@@ -123,6 +126,7 @@ export default function KontaktPage() {
     if (!validate(form)) return;
 
     setStatus("sending");
+    setErrorMessage("");
 
     try {
       const response = await fetch(FORM_ENDPOINT, {
@@ -132,7 +136,9 @@ export default function KontaktPage() {
       });
 
       if (!response.ok) {
-        // Previously a rejected submission left the form silently unchanged.
+        setErrorMessage(
+          "Servis nije prihvatio poruku. Tekst je sačuvan u formi — pokušajte ponovo.",
+        );
         setStatus("error");
         return;
       }
@@ -142,20 +148,31 @@ export default function KontaktPage() {
       setErrors({});
       setStatus("sent");
     } catch {
-      // Offline or blocked request: without this the button stayed on
-      // "Slanje…" forever because setLoading(false) never ran.
+      setErrorMessage(
+        "Veza sa servisom nije uspostavljena. Tekst je sačuvan u formi — proverite internet i pokušajte ponovo.",
+      );
       setStatus("error");
     }
   };
 
   /** Clears a field's error as soon as it becomes valid again. */
   const handleFieldInput = (
-    event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setDirty(true);
-
     const input = event.currentTarget;
     const name = input.name as FieldName;
+
+    setDirty(
+      FIELD_ORDER.some((fieldName) => {
+        if (fieldName === "saglasnost") return false;
+        const field = input.form?.elements.namedItem(fieldName) as
+          | HTMLInputElement
+          | HTMLTextAreaElement
+          | null;
+        return Boolean(field?.value.trim());
+      }),
+    );
+
     if (!errors[name] || !input.checkValidity()) return;
 
     setErrors((prev) => {
@@ -168,7 +185,7 @@ export default function KontaktPage() {
   const fieldProps = (name: FieldName) => ({
     name,
     id: name,
-    onInput: handleFieldInput,
+    onChange: handleFieldInput,
     "aria-invalid": errors[name] ? (true as const) : undefined,
     "aria-describedby": errors[name] ? `${name}-greska` : undefined,
   });
@@ -239,7 +256,12 @@ export default function KontaktPage() {
               // field, speaks the browser's language rather than the page's,
               // and disappears on the next click. Validation still uses the
               // native constraints - only the reporting is ours.
-              <form noValidate onSubmit={handleSubmit} className="space-y-5">
+              <form
+                noValidate
+                onSubmit={handleSubmit}
+                aria-busy={sending}
+                className="space-y-5"
+              >
                 <div>
                   <label
                     htmlFor="ime"
@@ -297,6 +319,34 @@ export default function KontaktPage() {
                   <FieldError name="poruka" message={errors.poruka} />
                 </div>
 
+                <div>
+                  <div className="flex items-start gap-3">
+                    <input
+                      required
+                      {...fieldProps("saglasnost")}
+                      type="checkbox"
+                      value="accepted"
+                      className="mt-1 h-4 w-4 shrink-0 accent-brand-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-accent"
+                    />
+                    <p className="text-xs leading-relaxed text-brand-dim">
+                      <label htmlFor="saglasnost" className="cursor-pointer">
+                        Saglasan/na sam da se ime, email i poruka proslede
+                        servisu Formspree radi odgovora, u skladu sa{" "}
+                      </label>
+                      <Link
+                        to="/privatnost"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-brand-accent underline decoration-brand-accent/40 underline-offset-4 transition-colors hover:decoration-brand-accent"
+                      >
+                        Politikom privatnosti
+                      </Link>
+                      .
+                    </p>
+                  </div>
+                  <FieldError name="saglasnost" message={errors.saglasnost} />
+                </div>
+
                 {/* Formspree honeypot: bots fill it, people never see it. */}
                 <input
                   type="text"
@@ -317,12 +367,14 @@ export default function KontaktPage() {
                       className="mt-0.5 h-4 w-4 shrink-0 text-brand-bible-fg"
                     />
                     <p className="text-sm leading-relaxed text-brand-text">
-                      Slanje nije uspelo. Proverite internet konekciju i
-                      pokušajte ponovo — ili nam pišite direktno preko YouTube
-                      kanala.
+                      {errorMessage}
                     </p>
                   </div>
                 )}
+
+                <p role="status" aria-live="polite" className="sr-only">
+                  {sending ? "Slanje poruke…" : ""}
+                </p>
 
                 <button
                   type="submit"
@@ -330,7 +382,11 @@ export default function KontaktPage() {
                   className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-accent py-3.5 text-xs font-medium uppercase tracking-widest text-brand-on-accent transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <Send aria-hidden className="h-4 w-4 shrink-0" />
-                  {sending ? "Slanje…" : "Pošalji poruku"}
+                  {sending
+                    ? "Slanje…"
+                    : status === "error"
+                      ? "Pokušaj ponovo"
+                      : "Pošalji poruku"}
                 </button>
               </form>
             )}

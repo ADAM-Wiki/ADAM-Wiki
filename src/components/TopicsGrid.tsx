@@ -9,46 +9,48 @@ const categories = getCategoryStats().filter((category) => category.count > 0);
 
 export default function TopicsGrid() {
   return (
-    <section className="py-20 border-t border-brand-border">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center justify-between mb-12">
+    <section className="border-t border-brand-border py-20">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="mb-12 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <span className="text-xs font-mono text-brand-dim">01</span>
-            <h2 className="text-lg uppercase tracking-widest font-medium">
+            <span className="font-mono text-xs uppercase tracking-[0.28em] text-brand-dim">
+              01
+            </span>
+            <h2 className="text-lg font-medium uppercase tracking-[0.22em] text-brand-heading">
               Pregledaj kategorije
             </h2>
           </div>
           <Link
             to="/categories"
-            className="flex items-center gap-2 text-sm text-brand-dim hover:text-brand-heading transition-colors group italic"
+            className="group flex items-center gap-2 text-sm italic text-brand-dim transition-colors hover:text-brand-heading"
           >
             SVE KATEGORIJE{" "}
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
 
-        {/* Single column below sm: two columns leave ~60px for the label, while
-            names like OPOVRGAVANJE SIJA need ~112px and cannot wrap further. */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {categories.map((category, index) => {
             return (
               <motion.div
                 key={category.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
+                transition={{ delay: index * 0.04, duration: 0.25 }}
               >
                 <Link
                   to={category.url}
-                  className="group flex h-full items-center gap-4 rounded-lg border border-brand-border bg-brand-surface p-4 transition-colors hover:border-brand-border-strong hover:bg-brand-surface-hover sm:p-5"
+                  className="group flex h-full items-center gap-4 rounded-2xl border border-brand-border bg-brand-surface/80 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-border-strong hover:bg-brand-surface-hover sm:p-5"
                 >
-                  <FolderOpen
-                    aria-hidden
-                    className="h-4 w-4 shrink-0 text-brand-dim"
-                  />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-brand-border bg-brand-bg/60">
+                    <FolderOpen
+                      aria-hidden
+                      className="h-4 w-4 shrink-0 text-brand-dim"
+                    />
+                  </div>
 
-                  <span className="min-w-0 flex-1 break-words text-xs font-medium uppercase tracking-widest transition-colors group-hover:text-brand-heading">
+                  <span className="min-w-0 flex-1 break-words text-xs font-medium uppercase tracking-[0.18em] text-brand-heading transition-colors group-hover:text-brand-accent">
                     {category.title}
                   </span>
 

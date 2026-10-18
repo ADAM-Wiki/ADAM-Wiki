@@ -130,6 +130,12 @@ pre code {
  * the text, so it keeps the shorter band and the deeper bottom padding that
  * buys it room below the descenders.
  */
+:root {
+  --marker-1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 20' preserveAspectRatio='none'%3E%3Cpath d='M2 10.8C50 7 120 7.8 198 6.4L198 10C120 16.4 50 15.8 2 14.4Z' fill='%23d08c12' opacity='.85'/%3E%3C/svg%3E");
+  --marker-2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 24' preserveAspectRatio='none'%3E%3Cpath d='M1 2.2C48 0.6 104 2.2 198 1.2L198 13C132 14.4 56 13 1 14.2Z' fill='%23e8a51c' opacity='.55'/%3E%3Cpath d='M3 9.6C56 8 118 9.8 197 8.6L197 22.4C126 23.6 52 22.4 3 23.4Z' fill='%23e8a51c' opacity='.55'/%3E%3C/svg%3E");
+  --marker-3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 24' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='p' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23e8a51c' stop-opacity='.55'/%3E%3Cstop offset='.55' stop-color='%23e8a51c' stop-opacity='.80'/%3E%3Cstop offset='1' stop-color='%23e8a51c' stop-opacity='.90'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M1 2C40 0.4 88 2 140 0.9C168 0.4 186 1.5 199 0.8L199 22.6C150 23.7 96 22.4 48 23.4C30 23.7 14 23 1 23.5Z' fill='url(%23p)'/%3E%3C/svg%3E");
+  --marker-4: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 24' preserveAspectRatio='none'%3E%3Cpath d='M1 2.6L10 1.2L22 2.4L34 1L46 2.2L58 1.2L70 2.6L82 1.2L94 2.4L106 1L118 2.2L130 1L142 2.4L154 1.2L166 2.6L178 1.4L190 2.4L199 1.2L199 21.6L188 23L176 21.8L164 23.2L152 22L140 23.4L128 22.2L116 23.4L104 22.2L92 23.6L80 22.4L68 23.4L56 22.2L44 23.6L32 22.4L20 23.4L8 22.2L1 23.4Z' fill='%23e8a51c' opacity='.75'/%3E%3C/svg%3E");
+}
 .marker {
   background-color: transparent;
   color: inherit;
@@ -697,7 +703,8 @@ html[data-theme="light"] body:has(.home-page)::before {
   }
 
   /* Fixed, so it would reprint over every single page. */
-  html[data-theme="light"] body::after {
+  html[data-theme="light"] body::after,
+  body::before {
     display: none !important;
   }
 
@@ -714,7 +721,7 @@ html[data-theme="light"] body:has(.home-page)::before {
   }
 
   .article-body {
-    max-width: none !important;
+    max-width: 65ch !important;
   }
 
   /* Screen padding that turns into blank paper: the navbar offset on main, and
@@ -739,9 +746,23 @@ html[data-theme="light"] body:has(.home-page)::before {
     position: static !important;
   }
 
+  thead {
+    display: table-header-group;
+  }
+
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
+  }
+
   /* Backgrounds are dropped by default when printing, which would silently
-     take every marker stroke with them. */
-  .marker {
+     take every marker stroke with them. Callout left-rules get the same
+     treatment so the 4px tone edge survives B&W/monochrome output. */
+  .marker,
+  .mdx-izvori,
+  section[aria-label="Izvori"],
+  blockquote {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
@@ -772,8 +793,10 @@ html[data-theme="light"] body:has(.home-page)::before {
 
   /* Nothing is clickable on paper, so an external reference has to carry its
      address. Restricted to the sources list - doing it for every inline link
-     litters the running text with URLs. */
-  .mdx-izvori a[href^="http"]::after {
+     litters the running text with URLs. Footnote bodies share the expansion
+     since they can also carry external references; internal # anchors stay. */
+  .mdx-izvori a[href^="http"]::after,
+  section[aria-label="Izvori"] a[href^="http"]::after {
     content: " (" attr(href) ")";
     font-size: 0.85em;
     word-break: break-all;
