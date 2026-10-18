@@ -1,0 +1,1191 @@
+<!doctype html>
+<html lang="sr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Adam-Wiki — brag</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Cormorant Garamond";
+        font-style: normal;
+        font-weight: 400 700;
+        font-display: block;
+        src: url("assets/fonts/cormorant-latin.woff2") format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "Cormorant Garamond";
+        font-style: normal;
+        font-weight: 400 700;
+        font-display: block;
+        src: url("assets/fonts/cormorant-latin-ext.woff2") format("woff2");
+        unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7,
+          U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+          U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+          U+A720-A7FF;
+      }
+      @font-face {
+        font-family: "Inter";
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: block;
+        src: url("assets/fonts/inter-latin.woff2") format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+          U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "Inter";
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: block;
+        src: url("assets/fonts/inter-latin-ext.woff2") format("woff2");
+        unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7,
+          U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+          U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+          U+A720-A7FF;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #11100d;
+      }
+      body {
+        font-family: Inter, sans-serif;
+        color: #e7dfd4;
+        -webkit-font-smoothing: antialiased;
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #11100d;
+      }
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+      .inner {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* ---------- shared background ---------- */
+      #bg {
+        position: absolute;
+        inset: 0;
+        background: #11100d;
+        overflow: hidden;
+      }
+      #watermark {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Cormorant Garamond", serif;
+        font-size: 620px;
+        line-height: 1;
+        color: #f4efe6;
+        opacity: 0.07;
+        -webkit-mask-image: radial-gradient(
+          circle at 50% 50%,
+          #000 45%,
+          transparent 78%
+        );
+        mask-image: radial-gradient(
+          circle at 50% 50%,
+          #000 45%,
+          transparent 78%
+        );
+        user-select: none;
+      }
+      #glow {
+        position: absolute;
+        left: 310px;
+        top: 90px;
+        width: 1300px;
+        height: 900px;
+        background: radial-gradient(
+          ellipse at 50% 50%,
+          rgba(199, 161, 106, 0.14),
+          rgba(199, 161, 106, 0) 65%
+        );
+        opacity: 0.8;
+      }
+
+      /* ---------- shared navbar ---------- */
+      #nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 78px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 60px;
+        background: rgba(17, 16, 13, 0.88);
+        border-bottom: 1px solid #3a312b;
+        z-index: 20;
+      }
+      .nav-brand {
+        font-family: Inter, sans-serif;
+        font-weight: 700;
+        font-size: 20px;
+        letter-spacing: 0.22em;
+        color: #f4efe6;
+      }
+      .nav-items {
+        display: flex;
+        gap: 44px;
+        font-size: 16px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #b7ac98;
+      }
+      .nav-items .active {
+        color: #f4efe6;
+      }
+      .nav-search {
+        width: 44px;
+        height: 44px;
+        border: 1px solid #3a312b;
+        border-radius: 999px;
+        background: #1b1714;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* ---------- scene 1 ---------- */
+      #s1 {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-top: 78px;
+      }
+      .s1-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 26px;
+        margin-bottom: 46px;
+      }
+      .s1-eyebrow .rule {
+        display: block;
+        width: 78px;
+        height: 1px;
+        background: #3a312b;
+      }
+      .s1-eyebrow .eyebrow-text {
+        font-family: monospace;
+        font-size: 18px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: #b7ac98;
+      }
+      .s1-h1 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 136px;
+        font-weight: 500;
+        line-height: 0.94;
+        color: #f4efe6;
+        text-align: center;
+        letter-spacing: -0.01em;
+      }
+      .s1-h1 .line {
+        display: block;
+      }
+      .s1-h1 em {
+        font-style: italic;
+        font-weight: 400;
+        color: #c7a16a;
+      }
+      .s1-stat {
+        display: flex;
+        gap: 20px;
+        margin-top: 58px;
+        font-family: monospace;
+        font-size: 20px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: #b7ac98;
+      }
+      .s1-stat .dot {
+        color: #c7a16a;
+      }
+
+      /* ---------- scene 2 : search ---------- */
+      #s2-eyebrow {
+        font-family: monospace;
+        font-size: 17px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: #b7ac98;
+        margin-bottom: 20px;
+      }
+      #s2-head {
+        position: absolute;
+        left: 360px;
+        top: 210px;
+        width: 1200px;
+      }
+      .field {
+        display: flex;
+        align-items: center;
+        height: 96px;
+        padding: 0 16px 0 30px;
+        border: 1.5px solid #3a312b;
+        border-radius: 26px;
+        background: #161310;
+        box-shadow: 0 22px 44px rgba(15, 12, 10, 0.18);
+      }
+      .field-ico {
+        width: 30px;
+        height: 30px;
+        color: #c7a16a;
+        flex: none;
+      }
+      .field-input {
+        position: relative;
+        flex: 1;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        margin-left: 20px;
+        font-family: Inter, sans-serif;
+        font-size: 27px;
+      }
+      .placeholder {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        color: #b7ac98;
+      }
+      #s2-typed {
+        color: #f4efe6;
+        white-space: pre;
+      }
+      #s2-typed span {
+        display: inline-block;
+      }
+      .field-btn {
+        flex: none;
+        height: 62px;
+        padding: 0 34px;
+        margin-left: 22px;
+        border: 0;
+        border-radius: 14px;
+        background: #c7a16a;
+        color: #1a140f;
+        font-family: Inter, sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      #s2-results {
+        position: absolute;
+        left: 360px;
+        top: 430px;
+        width: 1200px;
+        display: flex;
+        gap: 36px;
+        align-items: flex-start;
+      }
+      .res-col {
+        width: 700px;
+      }
+      .res-row {
+        background: #161310;
+        border: 1px solid #3a312b;
+        border-radius: 20px;
+        padding: 36px;
+      }
+      .res-cat {
+        font-family: monospace;
+        font-size: 15px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: #b7ac98;
+      }
+      .res-title {
+        margin-top: 16px;
+        font-family: Inter, sans-serif;
+        font-size: 31px;
+        font-weight: 700;
+        line-height: 1.25;
+        color: #e7dfd4;
+      }
+      .res-snip {
+        margin-top: 18px;
+        font-family: Inter, sans-serif;
+        font-size: 19px;
+        line-height: 1.75;
+        color: #b7ac98;
+      }
+      .prev {
+        width: 464px;
+        background: #1b1714;
+        border: 1px solid #3a312b;
+        border-radius: 20px;
+        padding: 34px;
+      }
+      .prev-label {
+        font-family: monospace;
+        font-size: 15px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: #b7ac98;
+      }
+      .prev-title {
+        margin-top: 20px;
+        font-family: Inter, sans-serif;
+        font-size: 25px;
+        font-weight: 700;
+        line-height: 1.3;
+        color: #e7dfd4;
+      }
+      .prev-snip {
+        margin-top: 18px;
+        font-family: Inter, sans-serif;
+        font-size: 18px;
+        line-height: 1.75;
+        color: #b7ac98;
+      }
+      mark {
+        background: rgba(199, 161, 106, 0.25);
+        color: #c7a16a;
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-weight: 600;
+      }
+
+      /* ---------- scene 3 : archive grid ---------- */
+      #s3 {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 156px;
+      }
+      .s3-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 26px;
+        font-family: monospace;
+        font-size: 18px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: #f4efe6;
+      }
+      .s3-eyebrow .num {
+        color: #b7ac98;
+      }
+      .s3-stat {
+        margin-top: 30px;
+        font-family: "Cormorant Garamond", serif;
+        font-size: 84px;
+        font-weight: 500;
+        color: #f4efe6;
+        letter-spacing: -0.01em;
+      }
+      .s3-stat .dot {
+        color: #c7a16a;
+      }
+      .s3-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 344px);
+        gap: 24px;
+        margin-top: 66px;
+      }
+      .cat-card {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        min-height: 134px;
+        padding: 24px;
+        border: 1px solid #3a312b;
+        border-radius: 22px;
+        background: rgba(27, 23, 20, 0.85);
+      }
+      .cat-ico {
+        flex: none;
+        width: 46px;
+        height: 46px;
+        border: 1px solid #3a312b;
+        border-radius: 13px;
+        background: #11100d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .cat-ico svg {
+        width: 21px;
+        height: 21px;
+        color: #b7ac98;
+      }
+      .cat-label {
+        flex: 1;
+        font-family: Inter, sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 1.35;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #f4efe6;
+      }
+      .cat-count {
+        flex: none;
+        font-family: monospace;
+        font-size: 20px;
+        color: #c7a16a;
+      }
+
+      /* ---------- scene 4 : outro ---------- */
+      .s4-block {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+      .s4-pre {
+        font-family: monospace;
+        font-size: 21px;
+        letter-spacing: 0.34em;
+        text-transform: uppercase;
+        color: #b7ac98;
+      }
+      .s4-punch {
+        margin-top: 30px;
+        font-family: "Cormorant Garamond", serif;
+        font-size: 116px;
+        font-style: italic;
+        font-weight: 400;
+        line-height: 1.05;
+        color: #f4efe6;
+      }
+      .wordmark {
+        font-family: Inter, sans-serif;
+        font-size: 96px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        color: #f4efe6;
+        text-indent: 0.2em;
+      }
+      .wm-rule {
+        width: 190px;
+        height: 3px;
+        margin-top: 34px;
+        background: #c7a16a;
+      }
+      .wm-url {
+        margin-top: 30px;
+        font-family: monospace;
+        font-size: 27px;
+        letter-spacing: 0.1em;
+        color: #c7a16a;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-width="1920"
+      data-height="1080"
+      data-duration="21.5"
+      data-fps="30"
+    >
+      <!-- shared background: not a clip, lives for the whole composition -->
+      <div id="bg">
+        <div id="glow"></div>
+        <div id="watermark" data-layout-allow-occlusion>Å</div>
+      </div>
+
+      <!-- shared navbar: also not a clip, faded in/out from the timeline -->
+      <div id="nav">
+        <div class="nav-brand">ADAM</div>
+        <div class="nav-items">
+          <span>Tagovi</span>
+          <span class="active">Kategorije</span>
+          <span>O nama</span>
+          <span>Kontakt</span>
+          <span>Besplatan Kur’an</span>
+        </div>
+        <div class="nav-search">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            width="20"
+            height="20"
+            style="color: #c7a16a"
+          >
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- ================= scene 1 : hero ================= -->
+      <section
+        id="scene-hero"
+        class="clip"
+        data-start="0"
+        data-duration="4.1"
+        data-track-index="1"
+      >
+        <div class="inner" id="s1">
+          <div class="s1-eyebrow" id="s1-eyebrow">
+            <span class="rule" id="s1-rule-l"></span>
+            <span class="eyebrow-text">Naučna baza znanja</span>
+            <span class="rule" id="s1-rule-r"></span>
+          </div>
+          <h1 class="s1-h1">
+            <span class="line" id="s1-l1">Uspostavljanje</span>
+            <span class="line" id="s1-l2"><em>Istine</em> kroz dokaze</span>
+          </h1>
+          <div class="s1-stat" id="s1-stat">
+            <span>204 članka</span>
+            <span class="dot">·</span>
+            <span>8 kategorija</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= scene 2 : search ================= -->
+      <section
+        id="scene-search"
+        class="clip"
+        data-start="4"
+        data-duration="7"
+        data-track-index="2"
+      >
+        <div class="inner" id="s2">
+          <div id="s2-head">
+            <div id="s2-eyebrow">Pretraga</div>
+            <div class="field" id="s2-field">
+              <svg
+                class="field-ico"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              >
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="m21 21-4.3-4.3"></path>
+              </svg>
+              <div class="field-input">
+                <span class="placeholder" id="s2-ph"
+                  >npr. Meka i Jesrib u Bibliji</span
+                ><span id="s2-typed"
+                  ><span>M</span><span>e</span><span>k</span><span>a</span
+                  ><span>&nbsp;</span><span>i</span><span>&nbsp;</span
+                  ><span>J</span><span>e</span><span>s</span><span>r</span
+                  ><span>i</span><span>b</span><span>&nbsp;</span><span>u</span
+                  ><span>&nbsp;</span><span>B</span><span>i</span><span>b</span
+                  ><span>l</span><span>i</span><span>j</span><span>i</span></span
+                >
+              </div>
+              <button class="field-btn" id="s2-btn">Pretraži članke</button>
+            </div>
+          </div>
+
+          <div id="s2-results">
+            <div class="res-col">
+              <article class="res-row">
+                <div class="res-cat">Spisi</div>
+                <h3 class="res-title">
+                  <mark>Meka</mark> i Jesrib u Bibliji
+                </h3>
+                <p class="res-snip">
+                  Postanje 10:30 i naziv Mesa, prevod iz Njukasla iz 1811. koji
+                  donosi <mark>Meka</mark> i Medina, Rasijevo poistovecivanje i
+                  kumranski rukopis o buducem Domu Bozijem.
+                </p>
+              </article>
+            </div>
+            <aside class="prev">
+              <div class="prev-label">Pronađeno u tekstu</div>
+              <div class="prev-title"><mark>Meka</mark> i Jesrib u Bibliji</div>
+              <p class="prev-snip">
+                Postanje 10:30 i naziv Mesa, prevod iz Njukasla iz 1811. koji
+                donosi <mark>Meka</mark> i Medina.
+              </p>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= scene 3 : archive ================= -->
+      <section
+        id="scene-grid"
+        class="clip"
+        data-start="10.9"
+        data-duration="5.7"
+        data-track-index="3"
+      >
+        <div class="inner" id="s3">
+          <div class="s3-eyebrow" id="s3-head">
+            <span class="num">01</span>
+            <span>Pregledaj kategorije</span>
+          </div>
+          <div class="s3-stat" id="s3-stat">
+            204 članka <span class="dot">·</span> 8 kategorija
+          </div>
+          <div class="s3-grid">
+            <div class="cat-card" id="cat-1">
+              <span class="cat-ico"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M4 20h16a2 2 0 0 0 1.9-1.4l1.6-5A1 1 0 0 0 22.6 12H7.4a1 1 0 0 0-.95.68L4 20Z"
+                  ></path>
+                  <path
+                    d="M4 20V6a2 2 0 0 1 2-2h3.6a2 2 0 0 1 1.5.7L13 7h5a2 2 0 0 1 2 2v2"
+                  ></path></svg
+              ></span>
+              <span class="cat-label">Kuran</span>
+              <span class="cat-count">55</span>
+            </div>
+            <div class="cat-card" id="cat-2">
+              <span class="cat-ico"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M4 20h16a2 2 0 0 0 1.9-1.4l1.6-5A1 1 0 0 0 22.6 12H7.4a1 1 0 0 0-.95.68L4 20Z"
+                  ></path>
+                  <path
+                    d="M4 20V6a2 2 0 0 1 2-2h3.6a2 2 0 0 1 1.5.7L13 7h5a2 2 0 0 1 2 2v2"
+                  ></path></svg
+              ></span>
+              <span class="cat-label">Istorija</span>
+              <span class="cat-count">41</span>
+            </div>
+            <div class="cat-card" id="cat-3">
+              <span class="cat-ico"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M4 20h16a2 2 0 0 0 1.9-1.4l1.6-5A1 1 0 0 0 22.6 12H7.4a1 1 0 0 0-.95.68L4 20Z"
+                  ></path>
+                  <path
+                    d="M4 20V6a2 2 0 0 1 2-2h3.6a2 2 0 0 1 1.5.7L13 7h5a2 2 0 0 1 2 2v2"
+                  ></path></svg
+              ></span>
+              <span class="cat-label">Ateizam</span>
+              <span class="cat-count">40</span>
+            </div>
+            <div class="cat-card" id="cat-4">
+              <span class="cat-ico"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M4 20h16a2 2 0 0 0 1.9-1.4l1.6-5A1 1 0 0 0 22.6 12H7.4a1 1 0 0 0-.95.68L4 20Z"
+                  ></path>
+                  <path
+                    d="M4 20V6a2 2 0 0 1 2-2h3.6a2 2 0 0 1 1.5.7L13 7h5a2 2 0 0 1 2 2v2"
+                  ></path></svg
+              ></span>
+              <span class="cat-label">Opovrgavanje</span>
+              <span class="cat-count">24</span>
+            </div>
+            <div class="cat-card" id="cat-5">
+              <span class="cat-ico"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M4 20h16a2 2 0 0 0 1.9-1.4l1.6-5A1 1 0 0 0 22.6 12H7.4a1 1 0 0 0-.95.68L4 20Z"
+                  ></path>
+                  <path
+                    d="M4 20V6a2 2 0 0 1 2-2h3.6a2 2 0 0 1 1.5.7L13 7h5a2 2 0 0 1 2 2v2"
+                  ></path></svg
+              ></span>
+              <span class="cat-label">Spisi</span>
+              <span class="cat-count">18</span>
+            </div>
+            <div class="cat-card" id="cat-6">
+              <span class="cat-ico"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M4 20h16a2 2 0 0 0 1.9-1.4l1.6-5A1 1 0 0 0 22.6 12H7.4a1 1 0 0 0-.95.68L4 20Z"
+                  ></path>
+                  <path
+                    d="M4 20V6a2 2 0 0 1 2-2h3.6a2 2 0 0 1 1.5.7L13 7h5a2 2 0 0 1 2 2v2"
+                  ></path></svg
+              ></span>
+              <span class="cat-label">Ahmedije</span>
+              <span class="cat-count">11</span>
+            </div>
+            <div class="cat-card" id="cat-7">
+              <span class="cat-ico"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M4 20h16a2 2 0 0 0 1.9-1.4l1.6-5A1 1 0 0 0 22.6 12H7.4a1 1 0 0 0-.95.68L4 20Z"
+                  ></path>
+                  <path
+                    d="M4 20V6a2 2 0 0 1 2-2h3.6a2 2 0 0 1 1.5.7L13 7h5a2 2 0 0 1 2 2v2"
+                  ></path></svg
+              ></span>
+              <span class="cat-label">Hadiske nauke</span>
+              <span class="cat-count">9</span>
+            </div>
+            <div class="cat-card" id="cat-8">
+              <span class="cat-ico"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M4 20h16a2 2 0 0 0 1.9-1.4l1.6-5A1 1 0 0 0 22.6 12H7.4a1 1 0 0 0-.95.68L4 20Z"
+                  ></path>
+                  <path
+                    d="M4 20V6a2 2 0 0 1 2-2h3.6a2 2 0 0 1 1.5.7L13 7h5a2 2 0 0 1 2 2v2"
+                  ></path></svg
+              ></span>
+              <span class="cat-label">Hrišćanstvo</span>
+              <span class="cat-count">6</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= scene 4 : outro ================= -->
+      <section
+        id="scene-outro"
+        class="clip"
+        data-start="16.4"
+        data-duration="5.1"
+        data-track-index="4"
+      >
+        <div class="s4-block" id="s4-line">
+          <div class="s4-pre" id="s4-pre">Za tragaoce za istinom</div>
+          <div class="s4-punch" id="s4-punch">u doba organizovane sumnje.</div>
+        </div>
+        <div class="s4-block" id="s4-logo">
+          <div class="wordmark" id="s4-word">ADAM</div>
+          <div class="wm-rule" id="s4-rule"></div>
+          <div class="wm-url" id="s4-url">adam-wiki.github.io/ADAM-Wiki</div>
+        </div>
+      </section>
+
+      <!-- ================= audio ================= -->
+      <audio
+        id="bgm"
+        src="assets/music/happy-beats-business-moves-vol-12-by-ende-dot-app.mp3"
+        data-start="0"
+        data-duration="21.5"
+        data-track-index="10"
+        data-automation='{"version":1,"lanes":[{"target":"volume","points":[{"t":0,"v":0},{"t":1,"v":0.32},{"t":20.3,"v":0.32},{"t":21.5,"v":0}]}]}'
+      ></audio>
+
+      <audio
+        id="key-1"
+        src="assets/sfx/keyboard/keypress-001.wav"
+        data-start="4.6"
+        data-duration="0.16"
+        data-track-index="11"
+        data-volume="0.3"
+      ></audio>
+      <audio
+        id="key-2"
+        src="assets/sfx/keyboard/keypress-004.wav"
+        data-start="4.86"
+        data-duration="0.16"
+        data-track-index="12"
+        data-volume="0.3"
+      ></audio>
+      <audio
+        id="key-3"
+        src="assets/sfx/keyboard/keypress-007.wav"
+        data-start="5.12"
+        data-duration="0.16"
+        data-track-index="11"
+        data-volume="0.3"
+      ></audio>
+      <audio
+        id="key-4"
+        src="assets/sfx/keyboard/keypress-010.wav"
+        data-start="5.38"
+        data-duration="0.16"
+        data-track-index="12"
+        data-volume="0.3"
+      ></audio>
+      <audio
+        id="key-5"
+        src="assets/sfx/keyboard/keypress-002.wav"
+        data-start="5.64"
+        data-duration="0.16"
+        data-track-index="11"
+        data-volume="0.3"
+      ></audio>
+      <audio
+        id="key-6"
+        src="assets/sfx/keyboard/keypress-005.wav"
+        data-start="5.9"
+        data-duration="0.16"
+        data-track-index="12"
+        data-volume="0.3"
+      ></audio>
+      <audio
+        id="key-7"
+        src="assets/sfx/keyboard/keypress-008.wav"
+        data-start="6.16"
+        data-duration="0.16"
+        data-track-index="11"
+        data-volume="0.3"
+      ></audio>
+      <audio
+        id="key-8"
+        src="assets/sfx/keyboard/keypress-011.wav"
+        data-start="6.42"
+        data-duration="0.16"
+        data-track-index="12"
+        data-volume="0.3"
+      ></audio>
+      <audio
+        id="key-9"
+        src="assets/sfx/keyboard/keypress-003.wav"
+        data-start="6.68"
+        data-duration="0.16"
+        data-track-index="11"
+        data-volume="0.3"
+      ></audio>
+      <audio
+        id="key-10"
+        src="assets/sfx/keyboard/keypress-006.wav"
+        data-start="6.94"
+        data-duration="0.16"
+        data-track-index="12"
+        data-volume="0.3"
+      ></audio>
+      <audio
+        id="key-11"
+        src="assets/sfx/keyboard/keypress-009.wav"
+        data-start="7.2"
+        data-duration="0.16"
+        data-track-index="11"
+        data-volume="0.3"
+      ></audio>
+      <audio
+        id="key-12"
+        src="assets/sfx/keyboard/keypress-012.wav"
+        data-start="7.46"
+        data-duration="0.16"
+        data-track-index="12"
+        data-volume="0.3"
+      ></audio>
+
+      <audio
+        id="sfx-click"
+        src="assets/sfx/ui/mouseclick1.ogg"
+        data-start="8.5"
+        data-duration="0.06"
+        data-track-index="14"
+        data-volume="0.6"
+      ></audio>
+      <audio
+        id="sfx-panel"
+        src="assets/sfx/interface/drop_001.ogg"
+        data-start="8.74"
+        data-duration="0.11"
+        data-track-index="15"
+        data-volume="0.5"
+      ></audio>
+      <audio
+        id="sfx-card-in"
+        src="assets/sfx/casino/card-place-1.ogg"
+        data-start="11.46"
+        data-duration="0.69"
+        data-track-index="16"
+        data-volume="0.45"
+      ></audio>
+      <audio
+        id="sfx-card-out"
+        src="assets/sfx/casino/card-place-4.ogg"
+        data-start="15.29"
+        data-duration="0.6"
+        data-track-index="16"
+        data-volume="0.45"
+      ></audio>
+      <audio
+        id="sfx-bell"
+        src="assets/sfx/impact/impactBell_heavy_000.ogg"
+        data-start="19.66"
+        data-duration="1.48"
+        data-track-index="17"
+        data-volume="0.5"
+      ></audio>
+    </div>
+
+    <script src="assets/audio-data.js"></script>
+    <script>
+      (function () {
+        var CHARS = 23; // "Meka i Jesrib u Bibliji"
+        var TYPE_START = 4.6;
+        var TYPE_STEP = 0.13;
+        var CARD_TIMES = [
+          11.46, 12.02, 12.55, 13.11, 13.64, 14.2, 14.73, 15.29,
+        ]; // beat-grid @109.96 BPM
+
+        function build() {
+          var tl = gsap.timeline({ paused: true });
+
+          /* ---------- shared chrome ---------- */
+          tl.fromTo("#nav", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 0.1);
+          tl.to("#nav", { opacity: 0, duration: 0.4 }, 16.4);
+
+          /* ---------- scene 1 : hero ---------- */
+          tl.fromTo(
+            "#s1-rule-l",
+            { scaleX: 0 },
+            { scaleX: 1, duration: 0.45, ease: "power2.out" },
+            0.15,
+          );
+          tl.fromTo(
+            "#s1-rule-r",
+            { scaleX: 0 },
+            { scaleX: 1, duration: 0.45, ease: "power2.out" },
+            0.15,
+          );
+          tl.fromTo(
+            "#s1-eyebrow .eyebrow-text",
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" },
+            0.2,
+          );
+          tl.fromTo(
+            "#s1-l1",
+            { opacity: 0, y: 46 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
+            0.55,
+          );
+          tl.fromTo(
+            "#s1-l2",
+            { opacity: 0, y: 46 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
+            0.78,
+          );
+          tl.fromTo(
+            "#s1-stat",
+            { opacity: 0, y: 16 },
+            { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" },
+            2.15,
+          );
+          tl.to("#s1", { opacity: 0, duration: 0.45 }, 3.6);
+
+          /* ---------- scene 2 : search ---------- */
+          tl.fromTo("#s2", { opacity: 0 }, { opacity: 1, duration: 0.35 }, 4);
+          // field enters centred, then rises to the top of the search page
+          tl.fromTo(
+            "#s2-head",
+            { y: 270 },
+            { y: 0, duration: 0.55, ease: "power3.inOut" },
+            8.6,
+          );
+          tl.to(
+            "#s2-ph",
+            { opacity: 0, duration: 0.12, ease: "none" },
+            TYPE_START,
+          );
+          for (var i = 0; i < CHARS; i++) {
+            tl.fromTo(
+              "#s2-typed span:nth-child(" + (i + 1) + ")",
+              { opacity: 0, y: 7 },
+              { opacity: 1, y: 0, duration: 0.09, ease: "power1.out" },
+              TYPE_START + i * TYPE_STEP,
+            );
+          }
+          tl.fromTo(
+            "#s2-btn",
+            { scale: 1 },
+            {
+              scale: 0.955,
+              duration: 0.09,
+              ease: "power2.out",
+              repeat: 1,
+              yoyo: true,
+            },
+            8.5,
+          );
+          // beat-locked: 8.74s strong cue
+          tl.fromTo(
+            "#s2-results",
+            { opacity: 0, y: 36 },
+            { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+            8.74,
+          );
+          tl.to("#s2", { opacity: 0, duration: 0.3 }, 10.65);
+
+          /* ---------- scene 3 : archive ---------- */
+          tl.fromTo("#s3", { opacity: 0 }, { opacity: 1, duration: 0.35 }, 10.9);
+          tl.fromTo(
+            "#s3-head",
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" },
+            11.0,
+          );
+          tl.fromTo(
+            "#s3-stat",
+            { opacity: 0, y: 24 },
+            { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+            11.16,
+          );
+          for (var c = 0; c < CARD_TIMES.length; c++) {
+            // beat-grid: one card per beat, full set held on screen
+            tl.fromTo(
+              "#cat-" + (c + 1),
+              { opacity: 0, y: 30 },
+              { opacity: 1, y: 0, duration: 0.42, ease: "power3.out" },
+              CARD_TIMES[c],
+            );
+          }
+          tl.to("#s3", { opacity: 0, duration: 0.35 }, 16.2);
+
+          /* ---------- scene 4 : outro ---------- */
+          tl.fromTo(
+            "#s4-pre",
+            { opacity: 0, y: 14 },
+            { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
+            16.85,
+          );
+          // beat-locked: settles on the 17.47s strong cue
+          tl.fromTo(
+            "#s4-punch",
+            { opacity: 0, y: 38 },
+            { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+            16.97,
+          );
+          tl.to(
+            "#s4-line",
+            { opacity: 0, duration: 0.35, ease: "power1.in" },
+            19.1,
+          );
+          // beat-locked: 19.66s strong cue
+          tl.fromTo(
+            "#s4-word",
+            { opacity: 0, y: 26 },
+            { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+            19.66,
+          );
+          tl.fromTo(
+            "#s4-rule",
+            { scaleX: 0 },
+            { scaleX: 1, duration: 0.5, ease: "power2.out" },
+            20.0,
+          );
+          tl.fromTo(
+            "#s4-url",
+            { opacity: 0, y: 12 },
+            { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
+            20.25,
+          );
+
+          /* ---------- audio-reactive: music energy -> warmth ---------- */
+          var AD = window.AUDIO_DATA;
+          if (AD && AD.frames && AD.frames.length > 1) {
+            var glowFrames = [];
+            var markFrames = [];
+            for (var f = 0; f < AD.frames.length; f++) {
+              var bands = AD.frames[f].bands;
+              var bass = bands[0];
+              var mids = (bands[4] + bands[5] + bands[6]) / 3;
+              glowFrames.push({
+                opacity: Math.min(1, 0.55 + bass * 0.9),
+                duration: 1 / AD.fps,
+                ease: "none",
+              });
+              markFrames.push({
+                opacity: Math.min(0.13, 0.055 + mids * 0.07),
+                duration: 1 / AD.fps,
+                ease: "none",
+              });
+            }
+            tl.to("#glow", { keyframes: glowFrames, ease: "none" }, 0);
+            tl.to("#watermark", { keyframes: markFrames, ease: "none" }, 0);
+          }
+
+          window.__timelines["main"] = tl;
+        }
+
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(build);
+        } else {
+          build();
+        }
+      })();
+    </script>
+  </body>
+</html>

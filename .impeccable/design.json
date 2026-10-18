@@ -1,0 +1,754 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-09T23:41:01.353Z",
+  "title": "Design System: ADAM — Research Database",
+  "extensions": {
+    "colorMeta": {
+      "lampblack": {
+        "role": "neutral",
+        "displayName": "Lampblack",
+        "canonical": "#11100d",
+        "tonalRamp": [
+          "#0c0b08",
+          "#262522",
+          "#43423e",
+          "#62615d",
+          "#84827e",
+          "#a6a5a1",
+          "#cac9c5",
+          "#f0eeea"
+        ]
+      },
+      "umber-surface": {
+        "role": "neutral",
+        "displayName": "Umber Surface",
+        "canonical": "#1b1714",
+        "tonalRamp": [
+          "#0e0a08",
+          "#282421",
+          "#46413d",
+          "#65605c",
+          "#86817d",
+          "#a9a4a0",
+          "#cec8c4",
+          "#f3ede9"
+        ]
+      },
+      "umber-surface-hover": {
+        "role": "neutral",
+        "displayName": "Umber Surface Hover",
+        "canonical": "#261f1c",
+        "tonalRamp": [
+          "#100a07",
+          "#2a2320",
+          "#48403d",
+          "#685f5c",
+          "#89807c",
+          "#aca39f",
+          "#d0c7c3",
+          "#f6ece8"
+        ]
+      },
+      "umber-muted": {
+        "role": "neutral",
+        "displayName": "Umber Muted",
+        "canonical": "#201b18",
+        "tonalRamp": [
+          "#0f0a08",
+          "#292421",
+          "#46413d",
+          "#66605c",
+          "#87817d",
+          "#aaa39f",
+          "#cfc8c3",
+          "#f4ede9"
+        ]
+      },
+      "umber-rule": {
+        "role": "neutral",
+        "displayName": "Umber Rule",
+        "canonical": "#3a312b",
+        "tonalRamp": [
+          "#110905",
+          "#2c231d",
+          "#49403a",
+          "#695f58",
+          "#8b8079",
+          "#aea39b",
+          "#d2c7bf",
+          "#f8ece4"
+        ]
+      },
+      "umber-rule-strong": {
+        "role": "neutral",
+        "displayName": "Umber Rule Strong",
+        "canonical": "#5a4a3d",
+        "tonalRamp": [
+          "#140801",
+          "#302216",
+          "#4e3f32",
+          "#6e5e50",
+          "#907f70",
+          "#b4a192",
+          "#d8c5b6",
+          "#feeadb"
+        ]
+      },
+      "ivory-ink": {
+        "role": "neutral",
+        "displayName": "Ivory Ink",
+        "canonical": "#f4efe6",
+        "tonalRamp": [
+          "#0e0b06",
+          "#28251e",
+          "#45413a",
+          "#656159",
+          "#86827a",
+          "#a9a49c",
+          "#cdc8c0",
+          "#f3eee5"
+        ]
+      },
+      "parchment-ink": {
+        "role": "neutral",
+        "displayName": "Parchment Ink",
+        "canonical": "#e7dfd4",
+        "tonalRamp": [
+          "#0f0a04",
+          "#2a241c",
+          "#474138",
+          "#676057",
+          "#888177",
+          "#aba499",
+          "#d0c8bd",
+          "#f5ede2"
+        ]
+      },
+      "faded-parchment": {
+        "role": "neutral",
+        "displayName": "Faded Parchment",
+        "canonical": "#b7ac98",
+        "tonalRamp": [
+          "#110a00",
+          "#2c2413",
+          "#4a412f",
+          "#6a604e",
+          "#8b816e",
+          "#afa490",
+          "#d3c8b3",
+          "#f9edd8"
+        ]
+      },
+      "antique-bronze": {
+        "role": "primary",
+        "displayName": "Antique Bronze",
+        "canonical": "#c7a16a",
+        "tonalRamp": [
+          "#140800",
+          "#352000",
+          "#5a3b00",
+          "#7d5a22",
+          "#a07b45",
+          "#c49e67",
+          "#e9c28a",
+          "#ffebd0"
+        ]
+      },
+      "bronze-ink": {
+        "role": "primary",
+        "displayName": "Bronze Ink",
+        "canonical": "#1a140f",
+        "tonalRamp": [
+          "#0f0a06",
+          "#2a241e",
+          "#48403b",
+          "#676059",
+          "#89817a",
+          "#aca39c",
+          "#d0c7c0",
+          "#f6ede5"
+        ]
+      },
+      "lampblack-veil": {
+        "role": "neutral",
+        "displayName": "Lampblack Veil",
+        "canonical": "rgba(17,16,13,0.88)"
+      },
+      "uncoated-cream": {
+        "role": "neutral",
+        "displayName": "Uncoated Cream",
+        "canonical": "#f5f1e8",
+        "tonalRamp": [
+          "#0d0b06",
+          "#28251e",
+          "#45423a",
+          "#646159",
+          "#86827a",
+          "#a8a59c",
+          "#cdc9c0",
+          "#f2eee5"
+        ]
+      },
+      "cream-surface": {
+        "role": "neutral",
+        "displayName": "Cream Surface",
+        "canonical": "#fbf8f3",
+        "tonalRamp": [
+          "#0d0b08",
+          "#272521",
+          "#44423e",
+          "#63615d",
+          "#85827d",
+          "#a7a5a0",
+          "#ccc9c4",
+          "#f1eee9"
+        ]
+      },
+      "cream-surface-hover": {
+        "role": "neutral",
+        "displayName": "Cream Surface Hover",
+        "canonical": "#e9e0cf",
+        "tonalRamp": [
+          "#100a02",
+          "#2b2417",
+          "#484133",
+          "#686052",
+          "#8a8172",
+          "#ada494",
+          "#d1c8b7",
+          "#f7eddc"
+        ]
+      },
+      "cream-muted": {
+        "role": "neutral",
+        "displayName": "Cream Muted",
+        "canonical": "#efe5d4",
+        "tonalRamp": [
+          "#110a02",
+          "#2b2417",
+          "#494133",
+          "#696051",
+          "#8a8172",
+          "#ada494",
+          "#d2c8b7",
+          "#f7eddc"
+        ]
+      },
+      "parchment-rule": {
+        "role": "neutral",
+        "displayName": "Parchment Rule",
+        "canonical": "#d7c5a7",
+        "tonalRamp": [
+          "#130900",
+          "#302208",
+          "#4f3f25",
+          "#6f5f44",
+          "#918064",
+          "#b4a385",
+          "#d9c7a9",
+          "#ffeccd"
+        ]
+      },
+      "parchment-rule-strong": {
+        "role": "neutral",
+        "displayName": "Parchment Rule Strong",
+        "canonical": "#b88c5b",
+        "tonalRamp": [
+          "#160700",
+          "#381e00",
+          "#5e3800",
+          "#805726",
+          "#a47948",
+          "#c89b6a",
+          "#eec08d",
+          "#ffebd6"
+        ]
+      },
+      "cocoa-ink": {
+        "role": "neutral",
+        "displayName": "Cocoa Ink",
+        "canonical": "#2e2019",
+        "tonalRamp": [
+          "#140803",
+          "#2f211a",
+          "#4e3e36",
+          "#6e5d55",
+          "#907e76",
+          "#b3a198",
+          "#d8c5bb",
+          "#feeae0"
+        ]
+      },
+      "clay-ink": {
+        "role": "neutral",
+        "displayName": "Clay Ink",
+        "canonical": "#3d2f2a",
+        "tonalRamp": [
+          "#130805",
+          "#2f221d",
+          "#4d3e39",
+          "#6d5d58",
+          "#8f7e78",
+          "#b2a19b",
+          "#d7c5be",
+          "#fdeae3"
+        ]
+      },
+      "graphite-ink": {
+        "role": "neutral",
+        "displayName": "Graphite Ink",
+        "canonical": "#665e54",
+        "tonalRamp": [
+          "#100a04",
+          "#2b241b",
+          "#484137",
+          "#686056",
+          "#898176",
+          "#aca499",
+          "#d1c8bc",
+          "#f6ede1"
+        ]
+      },
+      "deep-bronze": {
+        "role": "primary",
+        "displayName": "Deep Bronze",
+        "canonical": "#9e7040",
+        "tonalRamp": [
+          "#160700",
+          "#391e00",
+          "#603700",
+          "#825625",
+          "#a67747",
+          "#cb9a69",
+          "#f1be8d",
+          "#ffebd7"
+        ]
+      },
+      "cream-on-bronze": {
+        "role": "primary",
+        "displayName": "Cream on Bronze",
+        "canonical": "#fffaf4",
+        "tonalRamp": [
+          "#0e0b07",
+          "#282420",
+          "#45413d",
+          "#65605b",
+          "#86817c",
+          "#a9a49f",
+          "#cdc8c2",
+          "#f3eee8"
+        ]
+      },
+      "cocoa-veil": {
+        "role": "neutral",
+        "displayName": "Cocoa Veil",
+        "canonical": "rgba(46,32,25,0.6)"
+      },
+      "note-green": {
+        "role": "secondary",
+        "displayName": "Note Green",
+        "canonical": "#9db08b",
+        "tonalRamp": [
+          "#050f00",
+          "#1c2a0a",
+          "#384827",
+          "#576846",
+          "#778966",
+          "#9aad88",
+          "#bdd1ab",
+          "#e2f7cf"
+        ]
+      },
+      "note-green-paper": {
+        "role": "secondary",
+        "displayName": "Note Green, Paper",
+        "canonical": "#5c6d4b",
+        "tonalRamp": [
+          "#050f00",
+          "#1c2a0a",
+          "#384828",
+          "#576846",
+          "#788966",
+          "#9aac88",
+          "#bdd1ab",
+          "#e2f7d0"
+        ]
+      },
+      "info-slate": {
+        "role": "secondary",
+        "displayName": "Info Slate",
+        "canonical": "#8cae9f",
+        "tonalRamp": [
+          "#001008",
+          "#0c2c20",
+          "#2a493d",
+          "#49695c",
+          "#6a8b7d",
+          "#8cae9f",
+          "#b0d3c3",
+          "#d4f8e8"
+        ]
+      },
+      "info-slate-paper": {
+        "role": "secondary",
+        "displayName": "Info Slate, Paper",
+        "canonical": "#4b6763",
+        "tonalRamp": [
+          "#000f0d",
+          "#0f2a27",
+          "#2d4844",
+          "#4c6864",
+          "#6c8985",
+          "#8eaca8",
+          "#b2d1cc",
+          "#d7f6f1"
+        ]
+      },
+      "warn-ochre": {
+        "role": "secondary",
+        "displayName": "Warn Ochre",
+        "canonical": "#d7b36b",
+        "tonalRamp": [
+          "#130900",
+          "#322200",
+          "#563d00",
+          "#7c5b04",
+          "#9f7d33",
+          "#c3a058",
+          "#e8c47c",
+          "#ffecc8"
+        ]
+      },
+      "warn-ochre-paper": {
+        "role": "secondary",
+        "displayName": "Warn Ochre, Paper",
+        "canonical": "#8a6513",
+        "tonalRamp": [
+          "#130900",
+          "#332200",
+          "#573d00",
+          "#7e5a00",
+          "#a17b30",
+          "#c69e55",
+          "#ebc379",
+          "#ffeccb"
+        ]
+      },
+      "scholar-gold": {
+        "role": "secondary",
+        "displayName": "Scholar Gold",
+        "canonical": "#d8b774",
+        "tonalRamp": [
+          "#130900",
+          "#322200",
+          "#553e00",
+          "#7a5c13",
+          "#9d7d3a",
+          "#c1a05e",
+          "#e6c581",
+          "#ffecc8"
+        ]
+      },
+      "scholar-gold-paper": {
+        "role": "secondary",
+        "displayName": "Scholar Gold, Paper",
+        "canonical": "#7a5b16",
+        "tonalRamp": [
+          "#130900",
+          "#322200",
+          "#563d00",
+          "#7b5c17",
+          "#9d7d3d",
+          "#c1a060",
+          "#e7c483",
+          "#ffecca"
+        ]
+      },
+      "quran-blue": {
+        "role": "secondary",
+        "displayName": "Quran Blue",
+        "canonical": "#9fb7d9",
+        "tonalRamp": [
+          "#000a22",
+          "#122540",
+          "#2f435f",
+          "#4d6281",
+          "#6d84a4",
+          "#8fa7c8",
+          "#b3cbee",
+          "#e5efff"
+        ]
+      },
+      "quran-blue-paper": {
+        "role": "secondary",
+        "displayName": "Quran Blue, Paper",
+        "canonical": "#405d87",
+        "tonalRamp": [
+          "#000827",
+          "#092449",
+          "#27426a",
+          "#45628d",
+          "#6584b0",
+          "#87a7d5",
+          "#aacbfb",
+          "#e5efff"
+        ]
+      },
+      "bible-rose": {
+        "role": "secondary",
+        "displayName": "Bible Rose",
+        "canonical": "#d28a7a",
+        "tonalRamp": [
+          "#210000",
+          "#480c02",
+          "#6a2c20",
+          "#8e4c3e",
+          "#b26d5e",
+          "#d89080",
+          "#ffb4a3",
+          "#ffe9e4"
+        ]
+      },
+      "bible-rose-paper": {
+        "role": "secondary",
+        "displayName": "Bible Rose, Paper",
+        "canonical": "#9b4a42",
+        "tonalRamp": [
+          "#210000",
+          "#4e0002",
+          "#71241f",
+          "#96453d",
+          "#bb675d",
+          "#e2897f",
+          "#ffb3a9",
+          "#ffe9e5"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Home hero headline only, with one italic bronze word."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Every page h1, and the article title at 600/36px on wide screens."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Article h2 sections and card titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Article prose in Lexend, 17.6px / 1.9 inside a ~65ch measure."
+      },
+      "ui": {
+        "displayName": "Interface",
+        "purpose": "Paragraphs outside the article, forms, descriptions — Inter at 14px."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Eyebrows, index numbers, metadata, chips and button text. Always uppercase."
+      }
+    },
+    "shadows": [
+      {
+        "name": "floating-panel",
+        "value": "0 25px 50px -12px rgba(0,0,0,0.25)",
+        "purpose": "Fixed panels that cover content: the Kuran promo panel, the pagination popover."
+      },
+      {
+        "name": "floating-control",
+        "value": "0 10px 15px -3px rgba(0,0,0,0.1)",
+        "purpose": "Small floating controls: back-to-top buttons, the mobile TOC trigger."
+      },
+      {
+        "name": "floating-popover",
+        "value": "0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)",
+        "purpose": "The footnote popover."
+      },
+      {
+        "name": "hero-card",
+        "value": "0 22px 44px rgba(15,12,10,0.18)",
+        "purpose": "Bespoke: the framed image on the home hero. Used once."
+      }
+    ],
+    "motion": [
+      {
+        "name": "page-rise",
+        "value": "0.55s cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Listing-page entrance: heading first, cards staggered behind. CSS, not JS — these pages are prerendered."
+      },
+      {
+        "name": "page-fade",
+        "value": "0.25s ease-out",
+        "purpose": "Reduced-motion substitute for page-rise: the travel goes, a short cross-fade stays."
+      },
+      {
+        "name": "state",
+        "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Colour, border and background transitions on hover/focus/active."
+      },
+      {
+        "name": "anchor-scroll",
+        "value": "800ms",
+        "purpose": "Smooth scroll to a heading or anchor, with scroll-spy standing down while it runs."
+      },
+      {
+        "name": "anchor-flash",
+        "value": "1.2s",
+        "purpose": "The brief tint that confirms where a deep link landed."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      },
+      {
+        "name": "2xl",
+        "value": "1536px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single commit action on a page — a form submit or a promo CTA.",
+      "html": "<button class=\"ds-btn-primary\">Pošalji poruku</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border:0;border-radius:8px;background:var(--color-brand-accent);color:var(--color-brand-on-accent);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;cursor:pointer;transition:opacity 150ms cubic-bezier(0.4,0,0.2,1)}\n.ds-btn-primary:hover{opacity:0.9}\n.ds-btn-primary:disabled{opacity:0.5;cursor:not-allowed}\n.ds-btn-primary:focus-visible{outline:2px solid var(--color-brand-accent);outline-offset:2px;border-radius:3px}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action: outlined, quiet at rest, bronze on hover.",
+      "html": "<button class=\"ds-btn-ghost\">Vidi sve</button>",
+      "css": ".ds-btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;border:1px solid var(--color-brand-border);border-radius:8px;background:transparent;color:var(--color-brand-dim);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;cursor:pointer;transition:color 150ms cubic-bezier(0.4,0,0.2,1),border-color 150ms cubic-bezier(0.4,0,0.2,1)}\n.ds-btn-ghost:hover{border-color:var(--color-brand-accent);color:var(--color-brand-accent)}\n.ds-btn-ghost:focus-visible{outline:2px solid var(--color-brand-accent);outline-offset:2px;border-radius:3px}"
+    },
+    {
+      "name": "Tag Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Tags, hero topic pills, search filters and the article meta row. Never filled at rest.",
+      "html": "<a class=\"ds-chip\"># hadis <span class=\"ds-chip-n\">309 REČI</span></a>",
+      "css": ".ds-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--color-brand-border);border-radius:9999px;background:var(--color-brand-surface);color:var(--color-brand-dim);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;transition:color 150ms cubic-bezier(0.4,0,0.2,1),border-color 150ms cubic-bezier(0.4,0,0.2,1)}\n.ds-chip:hover{border-color:var(--color-brand-accent);color:var(--color-brand-accent)}\n.ds-chip-n{color:var(--color-brand-dim);opacity:.8}\n.ds-chip:focus-visible{outline:2px solid var(--color-brand-accent);outline-offset:2px;border-radius:3px}"
+    },
+    {
+      "name": "Article Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "A listing entry: serif title, mono metadata, tag chips. Flat — the border does the framing.",
+      "html": "<a class=\"ds-card\">\n  <span class=\"ds-card-meta\">ATEIZAM · 6. AVGUST 2026. · 2 MIN ČITANJA</span>\n  <h3 class=\"ds-card-title\">Da li je Allah bog Meseca?</h3>\n  <p class=\"ds-card-excerpt\">Ime Allah nema paganskog porekla. Hiljade arapskih hrišćana i pre islama obožavale su jednog Boga.</p>\n  <span class=\"ds-card-tags\"><span class=\"ds-chip\"># biblija</span></span>\n</a>",
+      "css": ".ds-card{display:block;padding:24px;border:1px solid var(--color-brand-border);border-radius:8px;background:var(--color-brand-surface);text-decoration:none;transition:border-color 150ms cubic-bezier(0.4,0,0.2,1)}\n.ds-card:hover{border-color:var(--color-brand-border-strong)}\n.ds-card-meta{display:block;margin-bottom:12px;color:var(--color-brand-dim);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase}\n.ds-card-title{margin:0 0 8px;font-family:var(--font-serif);font-size:24px;font-weight:500;line-height:1.25;color:var(--color-brand-heading);transition:color 150ms cubic-bezier(0.4,0,0.2,1)}\n.ds-card:hover .ds-card-title{color:var(--color-brand-accent)}\n.ds-card-excerpt{margin:0 0 16px;font-family:var(--font-sans);font-size:14px;line-height:1.6;color:var(--color-brand-dim);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}\n.ds-card-tags{display:flex;flex-wrap:wrap;gap:8px}\n.ds-card:focus-visible{outline:2px solid var(--color-brand-accent);outline-offset:2px;border-radius:3px}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Every form field on the site. The border turns bronze on focus; the global ring follows.",
+      "html": "<input class=\"ds-input\" type=\"email\" placeholder=\"vasa@email.adresa\" />",
+      "css": ".ds-input{width:100%;box-sizing:border-box;padding:12px 16px;border:1px solid var(--color-brand-border);border-radius:8px;background:var(--color-brand-surface);color:var(--color-brand-heading);font-family:var(--font-sans);font-size:14px;transition:border-color 150ms cubic-bezier(0.4,0,0.2,1)}\n.ds-input::placeholder{color:var(--color-brand-dim)}\n.ds-input:focus{border-color:var(--color-brand-accent)}\n.ds-input:focus-visible{outline:2px solid var(--color-brand-accent);outline-offset:2px;border-radius:3px}"
+    },
+    {
+      "name": "Nav Link",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Fixed 64px bar, serif wordmark, uppercase mono links that turn bronze on hover and current.",
+      "html": "<nav class=\"ds-nav\">\n  <a class=\"ds-nav-mark\">ADAM</a>\n  <a class=\"ds-nav-link\" aria-current=\"page\">Kategorije</a>\n  <a class=\"ds-nav-link\">Tagovi</a>\n</nav>",
+      "css": ".ds-nav{display:flex;align-items:center;gap:24px;height:64px;padding:0 24px;border-bottom:1px solid var(--color-brand-border);background:var(--color-brand-bg)}\n.ds-nav-mark{font-family:var(--font-serif);font-size:24px;font-weight:500;color:var(--color-brand-heading);text-decoration:none}\n.ds-nav-link{color:var(--color-brand-dim);text-decoration:none;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;transition:color 150ms cubic-bezier(0.4,0,0.2,1)}\n.ds-nav-link:hover,.ds-nav-link[aria-current=\"page\"]{color:var(--color-brand-accent)}\n.ds-nav-mark:focus-visible{outline:2px solid var(--color-brand-accent);outline-offset:2px;border-radius:3px}\n.ds-nav-link:focus-visible{outline:2px solid var(--color-brand-accent);outline-offset:2px;border-radius:3px}"
+    },
+    {
+      "name": "MDX Callout (Scholar)",
+      "kind": "custom",
+      "refersTo": "callout",
+      "description": "Unfilled marginal note with a 4px side rule in a semantic ink. Six tones ship: note, info, warn, scholar, quran, bible.",
+      "html": "<div class=\"ds-callout\">\n  <div class=\"ds-callout-head\">\n    <svg class=\"ds-callout-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\n      <path d=\"M15 12h-5\"/><path d=\"M15 8h-5\"/><path d=\"M19 17V5a2 2 0 0 0-2-2H4\"/>\n      <path d=\"M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3\"/>\n    </svg>\n    <span>dr Albert van den Branden</span>\n  </div>\n  <p>Malo je verovatno da je poslanik Muhammed ime Allah pozajmio iz paganskog sveta.</p>\n</div>",
+      "css": ".ds-callout{border-left:4px solid var(--color-brand-scholar-fg);padding:16px 20px;background:transparent}\n.ds-callout-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;color:var(--color-brand-scholar-fg);font-family:var(--font-sans);font-size:14px;font-weight:600;letter-spacing:0.025em}\n.ds-callout-icon{width:20px;height:20px;flex-shrink:0}\n.ds-callout p{margin:0;font-family:var(--font-sans);font-size:17.6px;line-height:1.7;color:var(--color-brand-text)}"
+    },
+    {
+      "name": "Table of Contents Item",
+      "kind": "custom",
+      "refersTo": "toc-item",
+      "description": "One row of the outline, rendered identically in the desktop margin column and the mobile sheet. Arabic-Indic numbering.",
+      "html": "<div class=\"ds-toc\">\n  <button class=\"ds-toc-item is-active\" aria-current=\"location\"><span class=\"ds-toc-n\">١</span><span>Optužba</span></button>\n  <button class=\"ds-toc-item\"><span class=\"ds-toc-n\">٢</span><span>Ime Allah nema pagansko poreklo</span></button>\n  <button class=\"ds-toc-item is-sub\"><span class=\"ds-toc-d\"></span><span>Egipatsko božanstvo Meseca Jah</span></button>\n</div>",
+      "css": ".ds-toc{padding:16px;border-top:1px solid var(--color-brand-muted);border-bottom:1px solid var(--color-brand-muted);background:var(--color-brand-bg)}\n.ds-toc-item{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;padding:6px 12px;border:0;border-radius:8px;background:transparent;color:var(--color-brand-text);font-family:var(--font-sans);font-size:12px;line-height:1.375;text-align:left;cursor:pointer;transition:color 150ms cubic-bezier(0.4,0,0.2,1),background-color 150ms cubic-bezier(0.4,0,0.2,1),transform 200ms cubic-bezier(0.4,0,0.2,1)}\n.ds-toc-item:hover{transform:translateX(3px)}\n.ds-toc-item.is-active{background:var(--color-brand-muted);color:var(--color-brand-accent)}\n.ds-toc-n{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;flex-shrink:0;border:1px solid var(--color-brand-dim);border-radius:6px;font-size:11px;font-weight:500}\n.ds-toc-item.is-active .ds-toc-n{border-color:var(--color-brand-accent);background:color-mix(in srgb,var(--color-brand-accent) 10%,transparent);color:var(--color-brand-accent)}\n.ds-toc-item.is-sub{padding-left:32px}\n.ds-toc-d{width:6px;height:6px;flex-shrink:0;background:var(--color-brand-dim);transform:rotate(45deg)}\n.ds-toc-item.is-sub.is-active .ds-toc-d,.ds-toc-item.is-sub:hover .ds-toc-d{background:var(--color-brand-accent)}\n.ds-toc-item:focus-visible{outline:2px solid var(--color-brand-accent);outline-offset:2px;border-radius:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Annotated Manuscript",
+    "overview": "Every surface in this system is a page of a working codex. Headings carry a mono marginalia label above them, the way a scribe's rubric sits above the passage it names; sections are marked with a small bronze diamond rotated 45°, standing in for the rubrication marks of a manuscript; the article body is set in a single 65-character measure with a numbered table of contents hanging beside it in the margin. The two themes are the two states of that page: Lampblack (#11100d) is the reading room after dark, Uncoated Cream (#f5f1e8) is the sheet itself, carrying a 5%-opacity fractal grain that is applied as a fixed overlay and never in dark mode.\n\nPersonality: formal, calm and unhurried. Authority comes from the serif headings, the whitespace and the typographic scale — never from colour, effects or ornament. Content density is that of a reference archive: long articles, source citations, tables of isnad chains, and a metadata row on every page. Confirmed visual rejections: no gloss. No gradients, no glassmorphism, no glow, no drop shadows on content, no marketing-page energy.",
+    "keyCharacteristics": [
+      "Two reading grounds — Lampblack dark and Uncoated Cream paper — that share one token vocabulary and one accent hue.",
+      "Antique Bronze as the only interactive colour; it marks state, it never fills a surface.",
+      "Serif headings (Cormorant Garamond) over sans/serif-adjacent body text (Lexend for articles, Inter for interface), with Amiri as the Arabic fallback inside every stack.",
+      "Mono uppercase marginalia at 12px for every label, index number and piece of metadata.",
+      "Flat document, shadowed floaters: content sits on the page, only genuinely floating layers are lifted off it.",
+      "1px rules and one-step tonal shifts instead of boxes and cards wherever either will do."
+    ],
+    "rules": [
+      {
+        "name": "The Bronze Minority Rule",
+        "section": "colors",
+        "body": "Bronze is a state colour, not a surface colour. If more than a few percent of a viewport is bronze, something is wrong: the accent earns its power by being the only saturated thing on the page."
+      },
+      {
+        "name": "The Two-Script Rule",
+        "section": "colors",
+        "body": "Amiri sits in every font stack as the last resolvable face, so an Arabic glyph — or the ﷺ ligature — always lands on a Naskh face that matches the serif headings. Latin resolves in front of it and is unaffected."
+      },
+      {
+        "name": "The Marginalia Rule",
+        "section": "typography",
+        "body": "Anything that is bookkeeping rather than content — a date, a reading time, a word count, a category, an index number, a button label — is set in uppercase mono at 12px in Faded Parchment. Anything that is content is set in Lexend. The two never mix inside one line except in the article meta row, where the mono labels sit under the serif title."
+      },
+      {
+        "name": "The Measure Rule",
+        "section": "layout",
+        "body": "Article prose is capped at roughly 65 characters per line. Headers, meta rows, related-article grids and footers align to the prose column's left edge so the page reads as one margin."
+      },
+      {
+        "name": "The Floating-Layer Rule",
+        "section": "elevation",
+        "body": "A shadow is only ever a declaration that a layer is above the document. Content that scrolls with the page never gets one."
+      },
+      {
+        "name": "The Diamond Rule",
+        "section": "shapes",
+        "body": "The recurring mark of this system is a small square rotated 45° in Antique Bronze: it bullets list items, separates table-of-contents sub-headings, divides sections, and labels the article's summary block. New marks should be diamonds unless there is a reason not to be."
+      }
+    ],
+    "dos": [
+      "Do separate structure with a 1px Umber Rule before reaching for a border, a fill or a shadow.",
+      "Do set metadata, labels, index numbers and button text in uppercase mono at 12px in Faded Parchment.",
+      "Do use Antique Bronze only to mark state — current, hover, focus, selected — and keep it under a few percent of any viewport.",
+      "Do keep article prose at 17.6px with 1.9 line-height inside a ~65ch measure.",
+      "Do give every keyboard-reachable element the global focus ring (:focus-visible, 2px Antique Bronze, 2px offset).",
+      "Do express elevation with the tonal step from ground to surface (#11100d → #1b1714).",
+      "Do reuse the diamond mark for new bullets, dividers and status marks."
+    ],
+    "donts": [
+      "Don't put a shadow on anything that scrolls with the page.",
+      "Don't fill a card, callout or chip with colour at rest.",
+      "Don't introduce a second saturated hue outside the six MDX callout inks.",
+      "Don't add gradients, glassmorphism, glow or any other gloss.",
+      "Don't set a sentence in uppercase mono, or metadata in the serif.",
+      "Don't let Arabic fall through to a mismatched fallback — Amiri stays in the stack.",
+      "Don't use a radius other than 8px for controls, or a pill for anything that is not a chip."
+    ]
+  }
+}
