@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import readingTime from "reading-time";
+import { createHeadingIdAllocator } from "../../src/utils/headingIds";
 
 /**
  * Shared generator for every article category.
@@ -52,35 +53,19 @@ function chunkText(text: string, maxWords = 120): string[] {
   return chunks.length ? chunks : [text];
 }
 
-/**
- * Must stay byte-identical to slugifyHeading in the article pages, which
- * derives heading ids from rendered textContent at runtime. If the two drift,
- * search results will link to anchors that do not exist.
- */
-function slugifyHeading(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "dj")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-}
-
 type Section = { headingId: string; headingText: string; lines: string[] };
 
 /**
- * Splits an MDX body at markdown h2/h3 boundaries, replicating the numbering
- * the article page applies when it de-duplicates repeated heading text.
+ * Splits an MDX body at markdown h2/h3 boundaries. The id allocator is the
+ * shared implementation (src/utils/headingIds.ts) - the runtime assigns the
+ * same ids from the rendered headings.
  *
  * Only ## and ### are considered, because the page's table of contents is built
  * from querySelectorAll("h2, h3").
  */
 function splitIntoSections(source: string): Section[] {
   const headingPattern = /^(#{2,3})\s+(.+?)\s*$/;
-  const counts: Record<string, number> = {};
+  const nextHeadingId = createHeadingIdAllocator();
   const sections: Section[] = [];
 
   let current: Section = { headingId: "", headingText: "", lines: [] };
@@ -95,12 +80,9 @@ function splitIntoSections(source: string): Section[] {
     sections.push(current);
 
     const headingText = match[2].trim();
-    const base = slugifyHeading(headingText);
-    const seen = counts[base] ?? 0;
-    counts[base] = seen + 1;
 
     current = {
-      headingId: seen === 0 ? base : `${base}-${seen}`,
+      headingId: nextHeadingId(headingText),
       headingText,
       // The heading itself stays searchable within its own section.
       lines: [headingText],

@@ -14,11 +14,12 @@
     "generate:meta": "tsx scripts/generate-meta.ts",
     "check:search": "tsx scripts/check-search.ts",
     "check:registry": "tsx scripts/check-registry.ts",
+    "check:anchors": "tsx scripts/check-anchors.ts",
     "generate:sitemap": "tsx scripts/generate-sitemap.ts",
     "generate:og-image": "tsx scripts/generate-og-image.ts",
     "generate:image-sizes": "tsx scripts/generate-image-sizes.ts",
     "prerender": "tsx scripts/prerender.ts",
-    "build": "npm run generate:meta && npm run check:registry && npm run generate:og-image && npm run generate:image-sizes && npm run generate:sitemap && vite build && npm run prerender"
+    "build": "npm run generate:meta && npm run check:registry && npm run check:anchors && npm run generate:og-image && npm run generate:image-sizes && npm run generate:sitemap && vite build && npm run prerender"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",

@@ -18,6 +18,7 @@ import { isSmoothScrolling } from "../utils/smoothScroll";
 import { SITE_NAME, SITE_URL } from "../utils/siteConfig";
 import { getOgImage } from "../utils/ogImage";
 import { getCategoryById } from "../utils/categoriesData";
+import { createHeadingIdAllocator } from "../utils/headingIds";
 import type { CategoryArticles } from "../lib/categoryArticles";
 
 type TocItem = {
@@ -50,18 +51,6 @@ const truncateDescription = (text: string, maxLength = 155): string => {
   return `${text.slice(0, maxLength).trimEnd()}…`;
 };
 
-// Must stay byte-identical to slugifyHeading in scripts/lib/generate-category-meta.ts,
-// otherwise search results link to heading ids that do not exist on the page.
-const slugifyHeading = (text: string): string =>
-  text
-    .toLowerCase()
-    .trim()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "dj")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
 
 /**
  * One article view, shared by every category.
@@ -97,14 +86,12 @@ export default function ArticlePage({
     if (!articleRef.current) return;
 
     const headings = Array.from(articleRef.current.querySelectorAll("h2, h3"));
-    const counts: Record<string, number> = {};
+    // Fresh per effect run (per article), so the dedup counters reset.
+    const nextHeadingId = createHeadingIdAllocator();
 
     const items = headings.map((heading) => {
       const text = heading.textContent?.trim() ?? "";
-      const baseId = slugifyHeading(text);
-      const count = counts[baseId] ?? 0;
-      counts[baseId] = count + 1;
-      const id = count === 0 ? baseId : `${baseId}-${count}`;
+      const id = nextHeadingId(text);
 
       heading.id = id;
 

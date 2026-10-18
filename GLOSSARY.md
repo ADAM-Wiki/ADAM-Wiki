@@ -42,3 +42,27 @@ legitimate scaffolding, not an error.
 ~120 words of article text generated per heading section, carrying the
 `headingId` a search result links to. Lives in `searchIndex.ts` /
 `<id>Search.ts`; ~1.4 MB total, imported only by the search worker.
+
+## Heading anchor
+
+**The DOM id on an article's h2/h3**, shared by three features: TOC jumps,
+in-page scrolling (`useScrollToHash`), and search-result deep links (the
+`headingId` stored in each search chunk).
+
+One implementation: `slugifyHeading` + `createHeadingIdAllocator` in
+`src/utils/headingIds.ts`. Two callers derive ids from **different text** and
+must agree exactly:
+
+- **build** (`scripts/lib/generate-category-meta.ts`): parses the markdown
+  heading line, stores the id in the generated search index
+- **runtime** (`src/components/ArticlePage.tsx`): reads the rendered DOM
+  `textContent`
+
+They only agree while headings are plain text — `[ < & {` (links, tags,
+entities, MDX expressions) render differently than the raw markdown line.
+`npm run check:anchors` (wired into `build`) fails on any such heading and on
+any index/DOM id mismatch.
+
+The dedup rule (first occurrence keeps the bare id, repeats get `-1`, `-2`)
+is frozen: four `hriscanstvo` articles repeat headings up to three times and
+their existing anchors carry the suffixes.
